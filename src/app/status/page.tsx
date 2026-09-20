@@ -34,6 +34,9 @@ interface HealthData {
       configured: boolean
       bucket: string | null
     }
+    imgbb?: {
+      configured: boolean
+    }
   }
 }
 
@@ -205,7 +208,12 @@ export default function StatusPage() {
                 <StatusRow
                   label="Cloudflare R2 Cache"
                   ok={data.storage.r2?.configured ?? false}
-                  extra={data.storage.r2?.configured ? `Active (${data.storage.r2.bucket})` : "Not Configured (Fallback to Memory/CDN)"}
+                  extra={data.storage.r2?.configured ? `Active (${data.storage.r2.bucket})` : "Not Configured"}
+                />
+                <StatusRow
+                  label="ImgBB Free Storage Cache"
+                  ok={data.storage.imgbb?.configured ?? false}
+                  extra={data.storage.imgbb?.configured ? "Active (100% Free CDN)" : "Not Configured"}
                 />
               </div>
             </div>

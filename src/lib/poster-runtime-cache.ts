@@ -3,6 +3,7 @@ import { cacheGet, cacheGetStale, cacheSet } from "@/lib/cache"
 import { createLogger } from "@/lib/logger"
 import { envWithFallback } from "@/lib/env-compat"
 import { isR2Configured, getR2Poster, putR2Poster, deleteR2Poster } from "@/lib/r2-storage"
+import { isImgBBConfigured, uploadToImgBB, getImgBBCachedUrl, setImgBBCachedUrl } from "@/lib/imgbb-storage"
 import { hashKey } from "@/lib/poster-render-helpers"
 
 const log = createLogger("poster-cache")
@@ -178,7 +179,28 @@ export async function readCachedPosterAsync(
     return local
   }
 
-  // 2. Check L2 Cloudflare R2 storage cache
+  // 2. Check ImgBB free image storage cache
+  if (isImgBBConfigured()) {
+    const imgbbUrl = getImgBBCachedUrl(cacheKey)
+    if (imgbbUrl) {
+      try {
+        const res = await fetch(imgbbUrl, { signal: AbortSignal.timeout(5000) })
+        if (res.ok) {
+          const arrayBuf = await res.arrayBuffer()
+          const buffer = Buffer.from(arrayBuf)
+          const etag = res.headers.get("etag") || `"${hashKey(cacheKey)}"`
+          const payload: PosterCachePayload = { buffer, etag }
+          writeCachedPoster(cacheKey, payload, undefined, format, true)
+          log.debug("ImgBB poster cache hit", { cacheKey, imgbbUrl })
+          return { payload, stale: false }
+        }
+      } catch (err) {
+        log.warn("Failed fetching poster from ImgBB CDN", { imgbbUrl, err })
+      }
+    }
+  }
+
+  // 3. Check Cloudflare R2 storage cache
   if (isR2Configured()) {
     const r2Key = makeR2ObjectKey(cacheKey, format)
     const r2Result = await getR2Poster(r2Key)
@@ -210,7 +232,7 @@ export function writeCachedPoster(
   payload: PosterCachePayload,
   mappingTag?: string,
   format: PosterImageFormat = "jpeg",
-  skipR2: boolean = false
+  skipExternal: boolean = false
 ): void {
   const tags = mappingTag ? ["poster", mappingTag] : ["poster"]
   // TTL esplicito solo per i non-mappati: per i mappati resta il refresh
@@ -219,7 +241,17 @@ export function writeCachedPoster(
   cacheSet(cacheKey, payload.buffer, tags, ttl)
   cacheSet(`${cacheKey}:headers`, { etag: payload.etag }, tags, ttl)
 
-  if (!skipR2 && isR2Configured()) {
+  if (!skipExternal && isImgBBConfigured()) {
+    uploadToImgBB(payload.buffer, hashKey(cacheKey)).then((res) => {
+      if (res?.displayUrl) {
+        setImgBBCachedUrl(cacheKey, res.displayUrl, ttl)
+      }
+    }).catch((err) => {
+      log.warn("Async ImgBB poster upload failed", { cacheKey, err })
+    })
+  }
+
+  if (!skipExternal && isR2Configured()) {
     const r2Key = makeR2ObjectKey(cacheKey, format)
     const contentType = FORMAT_MIME_TYPES[format] || "image/jpeg"
     putR2Poster(r2Key, payload.buffer, contentType, { etag: payload.etag }).catch((err) => {

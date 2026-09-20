@@ -9,6 +9,7 @@ import { getJWRankings } from "@/lib/justwatch"
 import { getTop10 } from "@/lib/flixpatrol"
 import { getServerDefaults } from "@/lib/server-defaults"
 import { getR2Config } from "@/lib/r2-storage"
+import { isImgBBConfigured } from "@/lib/imgbb-storage"
 
 export const dynamic = "force-dynamic"
 
@@ -147,6 +148,9 @@ export async function GET(request: Request) {
     r2: {
       configured: !!getR2Config(),
       bucket: getR2Config()?.bucket ?? null,
+    },
+    imgbb: {
+      configured: isImgBBConfigured(),
     },
   }
 
