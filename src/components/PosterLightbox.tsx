@@ -41,7 +41,7 @@ export function PosterLightbox({
   const posterKey = mapping ? `${mapping.mediaType}:${mapping.tmdbId}` : null
   const mediaSrc = imgFailed
     ? null
-    : (mapping?.posterPath ? posterUrlFn(mapping.posterPath, "w500") : null)
+    : (mapping?.imgbbUrl || (mapping?.posterPath ? posterUrlFn(mapping.posterPath, "w500") : null))
 
   // Start animation on mount
   useEffect(() => {
