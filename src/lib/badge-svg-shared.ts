@@ -287,13 +287,13 @@ export function buildRankingBarSvg(fullText: string, pw: number, fs: number, tex
 }
 
 export function buildRankingDefaultSvg(fullText: string, fs: number, textColor: string, bg: string) {
-  const px = Math.round(fs * 1.0)
-  const pt = Math.round(fs * 0.5)
+  const px = Math.round(fs * 1.15)
+  const pt = Math.round(fs * 0.52)
   const pb = pt
   const textW = estimateTextWidth(fullText, fs)
   const totalW = textW + px * 2
   const svgH = fs + pt + pb
-  const r = Math.round(fs * 0.7)
+  const r = Math.round(fs * 0.65)
   const shadowBlur = Math.round(fs * 0.6)
   const shadowOff = Math.round(fs * 0.2)
   const renderW = totalW + shadowBlur * 2
@@ -309,8 +309,8 @@ export function buildRankingDefaultSvg(fullText: string, fs: number, textColor: 
 }
 
 export function buildRankingPillSvg(fullText: string, fs: number, textColor: string, bg: string) {
-  const px = Math.round(fs * 0.75)
-  const pt = Math.round(fs * 0.35)
+  const px = Math.round(fs * 1.15)
+  const pt = Math.round(fs * 0.52)
   const pb = pt
   const textW = Math.max(estimateTextWidth(fullText, fs), fs)
   const totalW = textW + px * 2
@@ -319,7 +319,7 @@ export function buildRankingPillSvg(fullText: string, fs: number, textColor: str
   const renderW = totalW
   const ox = 0
   const oy = 0
-  const textEl = `<text x="${renderW / 2}" y="${svgH / 2}" text-anchor="middle" dominant-baseline="central" font-family="${fontFamilyFor(fullText)}" font-weight="700" font-size="${fs}" fill="${textColor}"${textFitAttrs(textW)}>${escSvg(fullText)}</text>`
+  const textEl = `<text x="${renderW / 2}" y="${svgH / 2}" text-anchor="middle" dominant-baseline="central" font-family="${fontFamilyFor(fullText)}" font-weight="${RANKING_FONT_WEIGHT}" font-size="${fs}" fill="${textColor}"${textFitAttrs(textW)}>${escSvg(fullText)}</text>`
   const bgEl = `<rect x="${ox}" y="${oy}" width="${totalW}" height="${svgH}" rx="${r}" fill="${bg}" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>`
   return { svg: `<svg xmlns="http://www.w3.org/2000/svg" width="${renderW}" height="${svgH}">${bgEl}${textEl}</svg>`, w: renderW, h: svgH }
 }
@@ -378,13 +378,13 @@ export function buildExtraBarSvg(label: string, pw: number, fs: number, textColo
 }
 
 export function buildExtraDefaultSvg(label: string, fs: number, textColor: string, bg: string) {
-  const px = Math.round(fs * 1.0)
-  const pt = Math.round(fs * 0.5)
+  const px = Math.round(fs * 1.15)
+  const pt = Math.round(fs * 0.52)
   const pb = pt
   const textW = Math.max(estimateTextWidth(label, fs), fs)
   const totalW = textW + px * 2
   const svgH = fs + pt + pb
-  const r = Math.round(fs * 0.7)
+  const r = Math.round(fs * 0.65)
   const shadowBlur = Math.round(fs * 0.6)
   const shadowOff = Math.round(fs * 0.2)
   const renderW = totalW + shadowBlur * 2
@@ -395,20 +395,20 @@ export function buildExtraDefaultSvg(label: string, fs: number, textColor: strin
   const centerX = ox + totalW / 2
   const centerY = oy + svgH / 2
   const defs = `<defs><filter id="ds" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="rgba(0,0,0,0.6)"/><feDropShadow dx="0" dy="${shadowOff}" stdDeviation="${shadowBlur / 2}" flood-color="rgba(0,0,0,0.35)"/></filter></defs>`
-  const textEl = `<text x="${centerX}" y="${centerY}" text-anchor="middle" dominant-baseline="central" font-family="${fontFamilyFor(label)}" font-weight="700" font-size="${fs}" fill="${textColor}"${textFitAttrs(textW)}>${escSvg(label)}</text>`
+  const textEl = `<text x="${centerX}" y="${centerY}" text-anchor="middle" dominant-baseline="central" font-family="${fontFamilyFor(label)}" font-weight="800" font-size="${fs}" fill="${textColor}"${textFitAttrs(textW)}>${escSvg(label)}</text>`
   return { svg: `<svg xmlns="http://www.w3.org/2000/svg" width="${renderW}" height="${renderH}">${defs}<path d="${pathD}" fill="${bg}" stroke="rgba(255,255,255,0.15)" stroke-width="1" filter="url(#ds)"/>${textEl}</svg>`, w: renderW, h: renderH }
 }
 
 export function buildExtraPillSvg(label: string, fs: number, textColor: string, bg: string) {
-  const px = Math.round(fs * 1.0)
-  const pt = Math.round(fs * 0.4)
+  const px = Math.round(fs * 1.15)
+  const pt = Math.round(fs * 0.52)
   const pb = pt
   const textW = Math.max(estimateTextWidth(label, fs), fs)
   const totalW = textW + px * 2
   const svgH = fs + pt + pb
   const r = svgH / 2
   const renderW = totalW
-  const textEl = `<text x="${renderW / 2}" y="${svgH / 2}" text-anchor="middle" dominant-baseline="central" font-family="${fontFamilyFor(label)}" font-weight="700" font-size="${fs}" fill="${textColor}"${textFitAttrs(textW)}>${escSvg(label)}</text>`
+  const textEl = `<text x="${renderW / 2}" y="${svgH / 2}" text-anchor="middle" dominant-baseline="central" font-family="${fontFamilyFor(label)}" font-weight="800" font-size="${fs}" fill="${textColor}"${textFitAttrs(textW)}>${escSvg(label)}</text>`
   const bgEl = `<rect x="0" y="0" width="${totalW}" height="${svgH}" rx="${r}" fill="${bg}" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>`
   return { svg: `<svg xmlns="http://www.w3.org/2000/svg" width="${renderW}" height="${svgH}">${bgEl}${textEl}</svg>`, w: renderW, h: svgH }
 }
