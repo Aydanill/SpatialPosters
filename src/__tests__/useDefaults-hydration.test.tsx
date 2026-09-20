@@ -41,6 +41,7 @@ const USER_SAVED = {
   networkLogo: true,
   ribbonSide: "left",
   episodeMetadataSource: "tvdb",
+  badgeFormat: "",
   region: "IT",
 }
 

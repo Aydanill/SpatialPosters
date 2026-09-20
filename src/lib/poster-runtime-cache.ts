@@ -2,6 +2,8 @@ import type { NextRequest } from "next/server"
 import { cacheGet, cacheGetStale, cacheSet } from "@/lib/cache"
 import { createLogger } from "@/lib/logger"
 import { envWithFallback } from "@/lib/env-compat"
+import { isR2Configured, getR2Poster, putR2Poster, deleteR2Poster } from "@/lib/r2-storage"
+import { hashKey } from "@/lib/poster-render-helpers"
 
 const log = createLogger("poster-cache")
 
@@ -152,6 +154,10 @@ export function posterResponse(payload: PosterCachePayload, immutable: boolean, 
   return new Response(new Uint8Array(payload.buffer), { headers: posterHeaders(payload.etag, immutable, isPreview, dynamic, format) })
 }
 
+export function makeR2ObjectKey(cacheKey: string, format: PosterImageFormat = "jpeg"): string {
+  return `posters/${hashKey(cacheKey)}.${format}`
+}
+
 export function readCachedPoster(cacheKey: string): { readonly payload: PosterCachePayload | null; readonly stale: boolean } {
   const cached = cacheGetStale<Buffer>(cacheKey)
   const cachedHeaders = cacheGetStale<{ etag: string }>(`${cacheKey}:headers`)
@@ -162,6 +168,35 @@ export function readCachedPoster(cacheKey: string): { readonly payload: PosterCa
   }
 }
 
+export async function readCachedPosterAsync(
+  cacheKey: string,
+  format: PosterImageFormat = "jpeg"
+): Promise<{ readonly payload: PosterCachePayload | null; readonly stale: boolean }> {
+  // 1. Check L1 in-memory cache
+  const local = readCachedPoster(cacheKey)
+  if (local.payload) {
+    return local
+  }
+
+  // 2. Check L2 Cloudflare R2 storage cache
+  if (isR2Configured()) {
+    const r2Key = makeR2ObjectKey(cacheKey, format)
+    const r2Result = await getR2Poster(r2Key)
+    if (r2Result) {
+      const payload: PosterCachePayload = {
+        buffer: r2Result.buffer,
+        etag: r2Result.etag,
+      }
+      // Populate L1 memory cache (skipping re-upload to R2)
+      writeCachedPoster(cacheKey, payload, undefined, format, true)
+      log.debug("R2 poster cache hit", { cacheKey, r2Key })
+      return { payload, stale: false }
+    }
+  }
+
+  return { payload: null, stale: false }
+}
+
 // Poster non-mappati (composti al volo con dati dinamici): TTL esplicito
 // (fix M3). Prima writeCachedPoster non passava alcun TTL → il tag "poster"
 // finiva nel refresh schedulato giornaliero alle 3 UTC (cache.ts) e l'header
@@ -170,13 +205,36 @@ export function readCachedPoster(cacheKey: string): { readonly payload: PosterCa
 // DYNAMIC_POSTER_TTL_MS è definito in testa al modulo (env-parametrizzato) e
 // genera anche gli header dynamic, così header e storage restano sincronizzati.
 
-export function writeCachedPoster(cacheKey: string, payload: PosterCachePayload, mappingTag?: string): void {
+export function writeCachedPoster(
+  cacheKey: string,
+  payload: PosterCachePayload,
+  mappingTag?: string,
+  format: PosterImageFormat = "jpeg",
+  skipR2: boolean = false
+): void {
   const tags = mappingTag ? ["poster", mappingTag] : ["poster"]
   // TTL esplicito solo per i non-mappati: per i mappati resta il refresh
   // schedulato giornaliero (immutable per un anno alla CDN, invalido per tag).
   const ttl = mappingTag ? undefined : DYNAMIC_POSTER_TTL_MS
   cacheSet(cacheKey, payload.buffer, tags, ttl)
   cacheSet(`${cacheKey}:headers`, { etag: payload.etag }, tags, ttl)
+
+  if (!skipR2 && isR2Configured()) {
+    const r2Key = makeR2ObjectKey(cacheKey, format)
+    const contentType = FORMAT_MIME_TYPES[format] || "image/jpeg"
+    putR2Poster(r2Key, payload.buffer, contentType, { etag: payload.etag }).catch((err) => {
+      log.warn("Async R2 poster cache write failed", { r2Key, err })
+    })
+  }
+}
+
+export function invalidateCachedPoster(cacheKey: string, format: PosterImageFormat = "jpeg"): void {
+  if (isR2Configured()) {
+    const r2Key = makeR2ObjectKey(cacheKey, format)
+    deleteR2Poster(r2Key).catch((err) => {
+      log.warn("Async R2 poster deletion failed", { r2Key, err })
+    })
+  }
 }
 
 // ---------------------------------------------------------------------------

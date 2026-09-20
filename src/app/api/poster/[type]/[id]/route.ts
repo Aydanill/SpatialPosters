@@ -33,6 +33,7 @@ import {
   posterNotModifiedHeaders,
   posterResponse,
   readCachedPoster,
+  readCachedPosterAsync,
   readPosterError,
   recordZombieRenderStart,
   schedulePosterRefresh,
@@ -194,8 +195,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<RouteP
   // stantii per un giorno intero. Il flag non cambia per tutta la richiesta.
   const dynamicPoster = !mapping
 
-  // 3. Memory cache check
-  const cachedPoster = readCachedPoster(cacheKey)
+  // 3. Cache check (L1 Memory + L2 R2 Storage)
+  const cachedPoster = await readCachedPosterAsync(cacheKey, outputFormat)
   if (cachedPoster.payload) {
     recordPosterRequest(true, outputFormat)
     if (!isPreview && req.headers.get("If-None-Match") === cachedPoster.payload.etag) {
@@ -974,7 +975,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<RouteP
     // 11. Cache + response
     const payload = { buffer: composited, etag }
     const mappingTag = mapping ? `poster:${mediaType}:${tmdbId}` : undefined
-    writeCachedPoster(cacheKey, payload, mappingTag)
+    writeCachedPoster(cacheKey, payload, mappingTag, outputFormat, isPreview)
     completePosterRender(payload)
     recordPosterRequest(false, outputFormat)
     log.info("Poster rendered", { mediaType, tmdbId, ms: Date.now() - startTime, bytes: composited.byteLength, cached: !!mappingTag, format: outputFormat })
