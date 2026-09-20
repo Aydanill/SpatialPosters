@@ -242,21 +242,60 @@ export function writeCachedPoster(
   cacheSet(`${cacheKey}:headers`, { etag: payload.etag }, tags, ttl)
 
   if (!skipExternal && isImgBBConfigured()) {
-    uploadToImgBB(payload.buffer, hashKey(cacheKey)).then((res) => {
+    const task = uploadToImgBB(payload.buffer, hashKey(cacheKey)).then(async (res) => {
       if (res?.displayUrl) {
         setImgBBCachedUrl(cacheKey, res.displayUrl, ttl)
+        if (mappingTag?.startsWith("poster:")) {
+          const parts = mappingTag.split(":")
+          if (parts.length === 3) {
+            const mediaType = parts[1] as "movie" | "tv"
+            const tmdbId = parseInt(parts[2], 10)
+            if (Number.isFinite(tmdbId)) {
+              try {
+                const { getById, upsert } = await import("@/lib/store")
+                const existing = await getById(mediaType, tmdbId)
+                if (existing && existing.imgbbUrl !== res.displayUrl) {
+                  await upsert({ ...existing, imgbbUrl: res.displayUrl })
+                  log.info("Attached ImgBB URL to mapping in store", { mediaType, tmdbId, imgbbUrl: res.displayUrl })
+                }
+              } catch (err) {
+                log.warn("Failed to update mapping imgbbUrl in store", { err })
+              }
+            }
+          }
+        }
       }
     }).catch((err) => {
       log.warn("Async ImgBB poster upload failed", { cacheKey, err })
     })
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { after } = require("next/server")
+      if (typeof after === "function") {
+        after(() => task)
+      }
+    } catch {
+      // Ignore if after() is unavailable in context
+    }
   }
 
   if (!skipExternal && isR2Configured()) {
     const r2Key = makeR2ObjectKey(cacheKey, format)
     const contentType = FORMAT_MIME_TYPES[format] || "image/jpeg"
-    putR2Poster(r2Key, payload.buffer, contentType, { etag: payload.etag }).catch((err) => {
+    const task = putR2Poster(r2Key, payload.buffer, contentType, { etag: payload.etag }).catch((err) => {
       log.warn("Async R2 poster cache write failed", { r2Key, err })
     })
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { after } = require("next/server")
+      if (typeof after === "function") {
+        after(() => task)
+      }
+    } catch {
+      // Ignore
+    }
   }
 }
 
