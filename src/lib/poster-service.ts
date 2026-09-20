@@ -933,14 +933,13 @@ export async function generatePosterBuffer(input: GenerationInput): Promise<Buff
 
   const pipeline = sharp(posterBuf)
     .modulate({ brightness: 1.01, saturation: 1.06 })
-    .sharpen({ sigma: 0.6, m1: 0.5, m2: 1.0 })
     .composite(layers)
 
   if (input.format === "avif") {
-    return await pipeline.avif({ quality: 75, effort: 2 }).toBuffer()
+    return await pipeline.sharpen({ sigma: 0.4 }).avif({ quality: 75, effort: 2 }).toBuffer()
   }
   if (input.format === "webp") {
-    return await pipeline.webp({ quality: 80, effort: 2 }).toBuffer()
+    return await pipeline.sharpen({ sigma: 0.4 }).webp({ quality: 80, effort: 2 }).toBuffer()
   }
-  return await pipeline.jpeg({ quality: 70 }).toBuffer()
+  return await pipeline.sharpen({ sigma: 0.4 }).jpeg({ quality: 70 }).toBuffer()
 }
