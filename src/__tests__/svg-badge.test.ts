@@ -320,7 +320,7 @@ describe("buildRankingDefaultSvg", () => {
   it("uses a lighter text weight for trend badges", () => {
     const { svg } = buildRankingDefaultSvg("#1 Oggi", 60, "rgba(255,255,255,0.80)", "rgba(0,0,0,0.80)")
 
-    expect(svg).toContain('font-weight="700"')
+    expect(svg).toContain('font-weight="600"')
   })
 
   it("locks text to the measured badge width", () => {
