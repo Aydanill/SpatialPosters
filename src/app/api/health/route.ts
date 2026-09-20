@@ -8,6 +8,7 @@ import { checkTmdbEndpoint } from "@/lib/tmdb"
 import { getJWRankings } from "@/lib/justwatch"
 import { getTop10 } from "@/lib/flixpatrol"
 import { getServerDefaults } from "@/lib/server-defaults"
+import { getR2Config } from "@/lib/r2-storage"
 
 export const dynamic = "force-dynamic"
 
@@ -143,6 +144,10 @@ export async function GET(request: Request) {
     mappingCount: mappings.length,
     mappingsCount: mappings.length,
     lastMappingUpdatedAt,
+    r2: {
+      configured: !!getR2Config(),
+      bucket: getR2Config()?.bucket ?? null,
+    },
   }
 
   const health = {

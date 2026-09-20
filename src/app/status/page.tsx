@@ -30,6 +30,10 @@ interface HealthData {
     mode: "kv" | "file"
     mappingsCount: number
     dataFileExists: boolean | null
+    r2?: {
+      configured: boolean
+      bucket: string | null
+    }
   }
 }
 
@@ -198,6 +202,11 @@ export default function StatusPage() {
                     </>
                 }
                 <StatusRow label={t("ui.statusSavedPosters")} ok={data.storage.mappingsCount > 0 || data.storage.mode === "kv" || !data.storage.dataFileExists} extra={<>{t("ui.statusPosterCount", { count: data.storage.mappingsCount })}</>} />
+                <StatusRow
+                  label="Cloudflare R2 Cache"
+                  ok={data.storage.r2?.configured ?? false}
+                  extra={data.storage.r2?.configured ? `Active (${data.storage.r2.bucket})` : "Not Configured (Fallback to Memory/CDN)"}
+                />
               </div>
             </div>
 
