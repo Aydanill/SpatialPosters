@@ -232,7 +232,8 @@ export function writeCachedPoster(
   payload: PosterCachePayload,
   mappingTag?: string,
   format: PosterImageFormat = "jpeg",
-  skipExternal: boolean = false
+  skipExternal: boolean = false,
+  topLight?: boolean
 ): void {
   const tags = mappingTag ? ["poster", mappingTag] : ["poster"]
   // TTL esplicito solo per i non-mappati: per i mappati resta il refresh
@@ -254,9 +255,14 @@ export function writeCachedPoster(
               try {
                 const { getById, upsert } = await import("@/lib/store")
                 const existing = await getById(mediaType, tmdbId)
-                if (existing && existing.imgbbUrl !== res.displayUrl) {
-                  await upsert({ ...existing, imgbbUrl: res.displayUrl })
-                  log.info("Attached ImgBB URL to mapping in store", { mediaType, tmdbId, imgbbUrl: res.displayUrl })
+                if (existing) {
+                  const needsUpdate = existing.imgbbUrl !== res.displayUrl || (topLight !== undefined && existing.topLight !== topLight)
+                  if (needsUpdate) {
+                    const updated = { ...existing, imgbbUrl: res.displayUrl }
+                    if (topLight !== undefined) (updated as Record<string, unknown>).topLight = topLight
+                    await upsert(updated)
+                    log.info("Attached ImgBB URL to mapping in store", { mediaType, tmdbId, imgbbUrl: res.displayUrl, topLight })
+                  }
                 }
               } catch (err) {
                 log.warn("Failed to update mapping imgbbUrl in store", { err })
@@ -269,6 +275,9 @@ export function writeCachedPoster(
       log.warn("Async ImgBB poster upload failed", { cacheKey, err })
     })
 
+    // after() schedules the task to run after the response is sent (ideal for production).
+    // In dev mode or non-request contexts, after() throws — we catch that and let the
+    // Promise run freely (it was already started above; the catch just ensures it fires).
     try {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { after } = require("next/server")
@@ -276,7 +285,9 @@ export function writeCachedPoster(
         after(() => task)
       }
     } catch {
-      // Ignore if after() is unavailable in context
+      // after() unavailable (dev mode / non-request scope): task already running as Promise,
+      // just suppress the unhandled-rejection warning so Node doesn't log noise.
+      void task
     }
   }
 
