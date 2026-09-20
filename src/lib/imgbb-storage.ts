@@ -14,14 +14,24 @@ export function isImgBBConfigured(): boolean {
   return typeof key === "string" && key.trim().length > 0
 }
 
+const urlRegistryMap = new Map<string, string>()
+
 export function getImgBBCachedUrl(cacheKey: string): string | null {
   const storeKey = `imgbb:url:${hashKey(cacheKey)}`
+  const memoryUrl = urlRegistryMap.get(storeKey)
+  if (memoryUrl) return memoryUrl
+
   const cached = cacheGet<string>(storeKey)
-  return cached ?? null
+  if (cached) {
+    urlRegistryMap.set(storeKey, cached)
+    return cached
+  }
+  return null
 }
 
 export function setImgBBCachedUrl(cacheKey: string, url: string, ttlMs?: number): void {
   const storeKey = `imgbb:url:${hashKey(cacheKey)}`
+  urlRegistryMap.set(storeKey, url)
   cacheSet(storeKey, url, ["imgbb"], ttlMs)
 }
 
