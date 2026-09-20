@@ -39,7 +39,7 @@ export function MoodBoardTile({
     : (m.genreName || "").toLowerCase().includes("anim")
       ? t("ui.filterAnime")
       : t("ui.tvSeries")
-  const displaySrc = m.imgbbUrl || (m.posterPath ? posterUrl(m.posterPath, "w342") : null)
+  const displaySrc = m.posterPath ? posterUrl(m.posterPath, "w342") : null
 
   return (
     <div
@@ -73,7 +73,7 @@ export function MoodBoardTile({
       <div className="aspect-[2/3] bg-surface/80 overflow-hidden relative">
         {/* Poster image clean TMDB */}
         {displaySrc ? (
-          // eslint-disable-next-line @next/next/no-img-element -- TMDB or ImgBB dynamic URL
+          // eslint-disable-next-line @next/next/no-img-element -- TMDB dynamic URL
           <img
             src={displaySrc}
             alt={m.title}
@@ -147,26 +147,15 @@ export function MoodBoardTile({
           </button>
         )}
 
-        {/* Enhanced icon / Collection badge — bottom right */}
+        {/* Collection badge — bottom right */}
         {!selectMode && (
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); onQuickView(e) }}
             aria-label={t("ui.collections")}
-            className={`absolute bottom-2 right-2 flex items-center gap-1.5 px-2 py-1 rounded-lg backdrop-blur-md transition-all duration-200 active:scale-90 cursor-pointer z-10 ${
-              m.topLight
-                ? "bg-white/80 border border-black/15 text-zinc-900 hover:bg-white shadow-md"
-                : "bg-black/60 border border-white/15 text-zinc-200 hover:text-white hover:bg-black/85 shadow-md"
-            }`}
+            className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 text-zinc-300 hover:text-white hover:bg-black/85 transition-all duration-200 active:scale-90 cursor-pointer z-10"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element -- local icon asset */}
-            <img
-              src="/icon/enhanced.webp"
-              alt=""
-              className={`w-3.5 h-3.5 object-contain transition-all duration-200 ${
-                m.topLight ? "brightness-0 opacity-85" : "brightness-0 invert opacity-95"
-              }`}
-            />
+            <Folder className="w-3 h-3" />
             {collectionCount > 0 && (
               <span className="text-[10px] font-semibold tabular-nums">{collectionCount}</span>
             )}

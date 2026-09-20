@@ -975,7 +975,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<RouteP
     // 11. Cache + response
     const payload = { buffer: composited, etag }
     const mappingTag = mapping ? `poster:${mediaType}:${tmdbId}` : undefined
-    writeCachedPoster(cacheKey, payload, mappingTag, outputFormat, isPreview, topLight)
+    writeCachedPoster(cacheKey, payload, mappingTag, outputFormat, isPreview)
     completePosterRender(payload)
     recordPosterRequest(false, outputFormat)
     log.info("Poster rendered", { mediaType, tmdbId, ms: Date.now() - startTime, bytes: composited.byteLength, cached: !!mappingTag, format: outputFormat })

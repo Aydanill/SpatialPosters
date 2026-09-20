@@ -232,8 +232,7 @@ export function writeCachedPoster(
   payload: PosterCachePayload,
   mappingTag?: string,
   format: PosterImageFormat = "jpeg",
-  skipExternal: boolean = false,
-  topLight?: boolean
+  skipExternal: boolean = false
 ): void {
   const tags = mappingTag ? ["poster", mappingTag] : ["poster"]
   // TTL esplicito solo per i non-mappati: per i mappati resta il refresh
@@ -243,70 +242,21 @@ export function writeCachedPoster(
   cacheSet(`${cacheKey}:headers`, { etag: payload.etag }, tags, ttl)
 
   if (!skipExternal && isImgBBConfigured()) {
-    const task = uploadToImgBB(payload.buffer, hashKey(cacheKey)).then(async (res) => {
+    uploadToImgBB(payload.buffer, hashKey(cacheKey)).then((res) => {
       if (res?.displayUrl) {
         setImgBBCachedUrl(cacheKey, res.displayUrl, ttl)
-        if (mappingTag?.startsWith("poster:")) {
-          const parts = mappingTag.split(":")
-          if (parts.length === 3) {
-            const mediaType = parts[1] as "movie" | "tv"
-            const tmdbId = parseInt(parts[2], 10)
-            if (Number.isFinite(tmdbId)) {
-              try {
-                const { getById, upsert } = await import("@/lib/store")
-                const existing = await getById(mediaType, tmdbId)
-                if (existing) {
-                  const needsUpdate = existing.imgbbUrl !== res.displayUrl || (topLight !== undefined && existing.topLight !== topLight)
-                  if (needsUpdate) {
-                    const updated = { ...existing, imgbbUrl: res.displayUrl }
-                    if (topLight !== undefined) (updated as Record<string, unknown>).topLight = topLight
-                    await upsert(updated)
-                    log.info("Attached ImgBB URL to mapping in store", { mediaType, tmdbId, imgbbUrl: res.displayUrl, topLight })
-                  }
-                }
-              } catch (err) {
-                log.warn("Failed to update mapping imgbbUrl in store", { err })
-              }
-            }
-          }
-        }
       }
     }).catch((err) => {
       log.warn("Async ImgBB poster upload failed", { cacheKey, err })
     })
-
-    // after() schedules the task to run after the response is sent (ideal for production).
-    // In dev mode or non-request contexts, after() throws — we catch that and let the
-    // Promise run freely (it was already started above; the catch just ensures it fires).
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { after } = require("next/server")
-      if (typeof after === "function") {
-        after(() => task)
-      }
-    } catch {
-      // after() unavailable (dev mode / non-request scope): task already running as Promise,
-      // just suppress the unhandled-rejection warning so Node doesn't log noise.
-      void task
-    }
   }
 
   if (!skipExternal && isR2Configured()) {
     const r2Key = makeR2ObjectKey(cacheKey, format)
     const contentType = FORMAT_MIME_TYPES[format] || "image/jpeg"
-    const task = putR2Poster(r2Key, payload.buffer, contentType, { etag: payload.etag }).catch((err) => {
+    putR2Poster(r2Key, payload.buffer, contentType, { etag: payload.etag }).catch((err) => {
       log.warn("Async R2 poster cache write failed", { r2Key, err })
     })
-
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { after } = require("next/server")
-      if (typeof after === "function") {
-        after(() => task)
-      }
-    } catch {
-      // Ignore
-    }
   }
 }
 
