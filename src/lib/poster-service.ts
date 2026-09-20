@@ -933,6 +933,7 @@ export async function generatePosterBuffer(input: GenerationInput): Promise<Buff
 
   const pipeline = sharp(posterBuf)
     .modulate({ brightness: 1.01, saturation: 1.06 })
+    .sharpen({ sigma: 0.6, m1: 0.5, m2: 1.0 })
     .composite(layers)
 
   if (input.format === "avif") {
