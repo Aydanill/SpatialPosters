@@ -8,6 +8,7 @@ import { usePosterEditor } from "@/lib/contexts/PosterEditorContext"
 import { LANG_FLAGS, LANG_NAMES, UI_LANGUAGES } from "@/lib/utils"
 import { LangPicker } from "@/components/LangPicker"
 import { ToastProvider } from "@/components/Toast"
+import { AmbientBackground } from "@/components/AmbientBackground"
 import { HomeStatusStrip } from "@/components/HomeStatusStrip"
 import { AnimatedSpatialWord } from "@/components/AnimatedSpatialWord"
 import { RefreshCw, Settings, Globe, HeartPulse, Sparkles, Check, QrCode, Palette, Layers } from "lucide-react"
@@ -203,6 +204,7 @@ export function AppShell() {
     <>
     <ToastProvider>
     <div className="app-shell text-foreground relative overflow-x-hidden" style={{ "--bg-accent": accentColor ?? undefined } as CSSProperties}>
+      <AmbientBackground />
       {serviceErrors.tmdb && (
         <div className="mx-auto max-w-lg mt-2 mb-0 px-4 py-2 bg-red-900/40 border border-red-800/50 rounded-xl text-xs text-red-300 text-center">
           {t("ui.statusTmdbUnavailable")}

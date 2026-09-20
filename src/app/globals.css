@@ -1893,3 +1893,80 @@ select:focus-visible {
   }
 }
 
+/* --- Ambient Noise & Smooth Motion Background --- */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+html.light-mode .noise-overlay {
+  opacity: 0.03;
+}
+
+@keyframes ambientFloat1 {
+  0% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
+  }
+  33% {
+    transform: translate(70px, -50px) scale(1.12) rotate(8deg);
+  }
+  66% {
+    transform: translate(-35px, 45px) scale(0.92) rotate(-8deg);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes ambientFloat2 {
+  0% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
+  }
+  33% {
+    transform: translate(-60px, 60px) scale(1.08) rotate(-12deg);
+  }
+  66% {
+    transform: translate(45px, -35px) scale(0.94) rotate(12deg);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes ambientFloat3 {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+    opacity: 0.15;
+  }
+  50% {
+    transform: translate(35px, 25px) scale(1.18);
+    opacity: 0.25;
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+    opacity: 0.15;
+  }
+}
+
+.ambient-blob-1 {
+  animation: ambientFloat1 22s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.ambient-blob-2 {
+  animation: ambientFloat2 28s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.ambient-blob-3 {
+  animation: ambientFloat3 35s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+
+
