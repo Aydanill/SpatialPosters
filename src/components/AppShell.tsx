@@ -10,7 +10,6 @@ import { LangPicker } from "@/components/LangPicker"
 import { ToastProvider } from "@/components/Toast"
 import { AmbientBackground } from "@/components/AmbientBackground"
 import { HomeStatusStrip } from "@/components/HomeStatusStrip"
-import { AnimatedSpatialWord } from "@/components/AnimatedSpatialWord"
 import { RefreshCw, Settings, Globe, HeartPulse, Sparkles, Check, QrCode, Palette, Layers, Sun, Moon } from "lucide-react"
 
 function InstagramIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
@@ -328,36 +327,23 @@ export function AppShell() {
         </div>
       </div>
 
-      <div className="relative z-10 max-w-[1680px] mx-auto px-3 sm:px-4 pt-3 sm:pt-5 md:pt-[68px] pb-24 md:pb-6">
-        {/* Header globale (logo + tagline + toolbar mobile) */}
-        {!(view === "edit" && selected) && (
-        <div className="flex flex-col items-center pb-3 sm:pb-4 animate-fade-scale-in relative">
-          <>
-          {/* eslint-disable-next-line @next/next/no-img-element -- local SVG asset */}
-          <img
-            onClick={goHome}
-            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); goHome() } }}
-            role="button"
-            tabIndex={0}
-            aria-label={t("ui.home")}
-            src="/SpatialPosters.png"
-            alt="SpatialPosters"
-            decoding="async"
-            className="header-logo h-10 sm:h-14 md:h-24 w-auto cursor-pointer hover:brightness-110 active:scale-95 transition-all duration-150 mb-1.5 md:mb-2"
-          />
-          <p className="header-tagline text-center text-xs sm:text-sm md:text-base mb-3.5 sm:mb-5 md:mb-6 max-w-xl text-zinc-300 flex items-center justify-center gap-2 flex-wrap font-medium">
-            <span>Enhance your Poster Experience with</span>
-            <AnimatedSpatialWord />
-          </p>
-          {mobileToolbar}
-          </>
-        </div>
-        )}
-
+      <div className="relative z-10 max-w-[1680px] mx-auto pb-24 md:pb-6">
         <ProxyModal isOpen={proxyOpen} onClose={() => setProxyOpen(false)} />
         <InstallModal isOpen={installOpen} onClose={() => setInstallOpen(false)} posterUrlPattern={urlPattern} />
         <div key={view} className="animate-view-enter">
-          {view === "search" ? <SearchView /> : view === "myposters" ? <MyPostersView /> : view === "cataloghi" ? <CataloghiView /> : <EditView />}
+          {view === "search" ? (
+            <SearchView mobileToolbar={mobileToolbar} />
+          ) : view === "myposters" ? (
+            <div className="px-3 sm:px-4 pt-3 sm:pt-5 md:pt-[68px]">
+              <MyPostersView />
+            </div>
+          ) : view === "cataloghi" ? (
+            <div className="px-3 sm:px-4 pt-3 sm:pt-5 md:pt-[68px]">
+              <CataloghiView />
+            </div>
+          ) : (
+            <EditView />
+          )}
         </div>
         {/* Strip di stato: presente nelle viste principali, nascosto in editor poster */}
         {!(view === "edit" && selected) && <HomeStatusStrip />}
