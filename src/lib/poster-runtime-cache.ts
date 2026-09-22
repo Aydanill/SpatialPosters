@@ -3,7 +3,7 @@ import { cacheGet, cacheGetStale, cacheSet } from "@/lib/cache"
 import { createLogger } from "@/lib/logger"
 import { envWithFallback } from "@/lib/env-compat"
 import { isR2Configured, getR2Poster, putR2Poster, deleteR2Poster } from "@/lib/r2-storage"
-import { isImgBBConfigured, uploadToImgBB, getImgBBCachedUrl, setImgBBCachedUrl } from "@/lib/imgbb-storage"
+import { isImgBBConfigured, uploadToImgBB, getImgBBCachedUrl, getImgBBCachedUrlAsync, setImgBBCachedUrlAsync } from "@/lib/imgbb-storage"
 import { hashKey } from "@/lib/poster-render-helpers"
 
 const log = createLogger("poster-cache")
@@ -172,31 +172,20 @@ export function readCachedPoster(cacheKey: string): { readonly payload: PosterCa
 export async function readCachedPosterAsync(
   cacheKey: string,
   format: PosterImageFormat = "jpeg"
-): Promise<{ readonly payload: PosterCachePayload | null; readonly stale: boolean }> {
+): Promise<{ readonly payload: PosterCachePayload | null; readonly imgbbUrl?: string | null; readonly stale: boolean }> {
   // 1. Check L1 in-memory cache
   const local = readCachedPoster(cacheKey)
   if (local.payload) {
-    return local
+    const memoryImgbbUrl = getImgBBCachedUrl(cacheKey)
+    return { ...local, imgbbUrl: memoryImgbbUrl }
   }
 
-  // 2. Check ImgBB free image storage cache
+  // 2. Check ImgBB free image storage cache (persistent URL from KV / RAM)
   if (isImgBBConfigured()) {
-    const imgbbUrl = getImgBBCachedUrl(cacheKey)
+    const imgbbUrl = await getImgBBCachedUrlAsync(cacheKey)
     if (imgbbUrl) {
-      try {
-        const res = await fetch(imgbbUrl, { signal: AbortSignal.timeout(5000) })
-        if (res.ok) {
-          const arrayBuf = await res.arrayBuffer()
-          const buffer = Buffer.from(arrayBuf)
-          const etag = res.headers.get("etag") || `"${hashKey(cacheKey)}"`
-          const payload: PosterCachePayload = { buffer, etag }
-          writeCachedPoster(cacheKey, payload, undefined, format, true)
-          log.debug("ImgBB poster cache hit", { cacheKey, imgbbUrl })
-          return { payload, stale: false }
-        }
-      } catch (err) {
-        log.warn("Failed fetching poster from ImgBB CDN", { imgbbUrl, err })
-      }
+      log.debug("ImgBB poster cache hit (URL ready)", { cacheKey, imgbbUrl })
+      return { payload: null, imgbbUrl, stale: false }
     }
   }
 
@@ -212,11 +201,11 @@ export async function readCachedPosterAsync(
       // Populate L1 memory cache (skipping re-upload to R2)
       writeCachedPoster(cacheKey, payload, undefined, format, true)
       log.debug("R2 poster cache hit", { cacheKey, r2Key })
-      return { payload, stale: false }
+      return { payload, imgbbUrl: null, stale: false }
     }
   }
 
-  return { payload: null, stale: false }
+  return { payload: null, imgbbUrl: null, stale: false }
 }
 
 // Poster non-mappati (composti al volo con dati dinamici): TTL esplicito
@@ -232,7 +221,8 @@ export function writeCachedPoster(
   payload: PosterCachePayload,
   mappingTag?: string,
   format: PosterImageFormat = "jpeg",
-  skipExternal: boolean = false
+  skipExternal: boolean = false,
+  topLight?: boolean
 ): void {
   const tags = mappingTag ? ["poster", mappingTag] : ["poster"]
   // TTL esplicito solo per i non-mappati: per i mappati resta il refresh
@@ -242,21 +232,65 @@ export function writeCachedPoster(
   cacheSet(`${cacheKey}:headers`, { etag: payload.etag }, tags, ttl)
 
   if (!skipExternal && isImgBBConfigured()) {
-    uploadToImgBB(payload.buffer, hashKey(cacheKey)).then((res) => {
+    const task = uploadToImgBB(payload.buffer, hashKey(cacheKey)).then(async (res) => {
       if (res?.displayUrl) {
-        setImgBBCachedUrl(cacheKey, res.displayUrl, ttl)
+        await setImgBBCachedUrlAsync(cacheKey, res.displayUrl, ttl)
+        if (mappingTag?.startsWith("poster:")) {
+          const parts = mappingTag.split(":")
+          if (parts.length === 3) {
+            const mediaType = parts[1] as "movie" | "tv"
+            const tmdbId = parseInt(parts[2], 10)
+            if (Number.isFinite(tmdbId)) {
+              try {
+                const { getById, upsert } = await import("@/lib/store")
+                const existing = await getById(mediaType, tmdbId)
+                if (existing) {
+                  const needsUpdate = existing.imgbbUrl !== res.displayUrl || (topLight !== undefined && existing.topLight !== topLight)
+                  if (needsUpdate) {
+                    const updated = { ...existing, imgbbUrl: res.displayUrl }
+                    if (topLight !== undefined) updated.topLight = topLight
+                    await upsert(updated)
+                    log.info("Attached ImgBB URL to mapping in store", { mediaType, tmdbId, imgbbUrl: res.displayUrl, topLight })
+                  }
+                }
+              } catch (err) {
+                log.warn("Failed to update mapping imgbbUrl in store", { err })
+              }
+            }
+          }
+        }
       }
     }).catch((err) => {
       log.warn("Async ImgBB poster upload failed", { cacheKey, err })
     })
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { after } = require("next/server")
+      if (typeof after === "function") {
+        after(() => task)
+      }
+    } catch {
+      void task
+    }
   }
 
   if (!skipExternal && isR2Configured()) {
     const r2Key = makeR2ObjectKey(cacheKey, format)
     const contentType = FORMAT_MIME_TYPES[format] || "image/jpeg"
-    putR2Poster(r2Key, payload.buffer, contentType, { etag: payload.etag }).catch((err) => {
+    const task = putR2Poster(r2Key, payload.buffer, contentType, { etag: payload.etag }).catch((err) => {
       log.warn("Async R2 poster cache write failed", { r2Key, err })
     })
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { after } = require("next/server")
+      if (typeof after === "function") {
+        after(() => task)
+      }
+    } catch {
+      // Ignore
+    }
   }
 }
 

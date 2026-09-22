@@ -110,6 +110,8 @@ export interface Mapping {
   bestFitScore?: number | null
   bestFitReasons?: string[] | null
   episodeGroupId?: string | null
+  imgbbUrl?: string | null
+  topLight?: boolean | null
 }
 
 export type CustomCatalogType = "movie" | "series" | "mixed"

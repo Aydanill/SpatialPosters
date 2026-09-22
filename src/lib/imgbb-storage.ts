@@ -14,6 +14,7 @@ export function isImgBBConfigured(): boolean {
   return typeof key === "string" && key.trim().length > 0
 }
 
+const useKv = !!process.env.KV_REST_API_URL && !!process.env.KV_REST_API_TOKEN
 const urlRegistryMap = new Map<string, string>()
 
 export function getImgBBCachedUrl(cacheKey: string): string | null {
@@ -29,10 +30,48 @@ export function getImgBBCachedUrl(cacheKey: string): string | null {
   return null
 }
 
+export async function getImgBBCachedUrlAsync(cacheKey: string): Promise<string | null> {
+  const memoryUrl = getImgBBCachedUrl(cacheKey)
+  if (memoryUrl) return memoryUrl
+
+  if (useKv) {
+    try {
+      const storeKey = `imgbb:url:${hashKey(cacheKey)}`
+      const { kv } = await import("@vercel/kv")
+      const raw = await kv.get<string>(storeKey)
+      if (typeof raw === "string" && raw) {
+        urlRegistryMap.set(storeKey, raw)
+        cacheSet(storeKey, raw, ["imgbb"], 30 * 24 * 60 * 60 * 1000)
+        return raw
+      }
+    } catch (e) {
+      log.warn("KV imgbbUrl read failed", { error: e instanceof Error ? e.message : String(e) })
+    }
+  }
+
+  return null
+}
+
 export function setImgBBCachedUrl(cacheKey: string, url: string, ttlMs?: number): void {
+  void setImgBBCachedUrlAsync(cacheKey, url, ttlMs)
+}
+
+export async function setImgBBCachedUrlAsync(cacheKey: string, url: string, ttlMs?: number): Promise<void> {
   const storeKey = `imgbb:url:${hashKey(cacheKey)}`
   urlRegistryMap.set(storeKey, url)
-  cacheSet(storeKey, url, ["imgbb"], ttlMs)
+  const defaultTtlMs = 30 * 24 * 60 * 60 * 1000 // 30 days
+  const effectiveTtlMs = ttlMs ?? defaultTtlMs
+  cacheSet(storeKey, url, ["imgbb"], effectiveTtlMs)
+
+  if (useKv) {
+    try {
+      const { kv } = await import("@vercel/kv")
+      const ttlSec = Math.max(60, Math.round(effectiveTtlMs / 1000))
+      await kv.set(storeKey, url, { ex: ttlSec })
+    } catch (e) {
+      log.warn("KV imgbbUrl write failed", { error: e instanceof Error ? e.message : String(e) })
+    }
+  }
 }
 
 export interface ImgBBUploadResult {

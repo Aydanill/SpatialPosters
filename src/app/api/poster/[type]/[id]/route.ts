@@ -195,8 +195,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<RouteP
   // stantii per un giorno intero. Il flag non cambia per tutta la richiesta.
   const dynamicPoster = !mapping
 
-  // 3. Cache check (L1 Memory + L2 R2 Storage)
+  // 3. Cache check (L1 Memory + L2 ImgBB Storage + L3 R2 Storage)
   const cachedPoster = await readCachedPosterAsync(cacheKey, outputFormat)
+  if (cachedPoster.imgbbUrl && !isPreview && req.nextUrl.searchParams.get("redirect") !== "0") {
+    log.debug("Poster cache hit: 307 Redirect to ImgBB", { mediaType, tmdbId, imgbbUrl: cachedPoster.imgbbUrl, ms: Date.now() - startTime })
+    recordPosterRequest(true, outputFormat)
+    return Response.redirect(cachedPoster.imgbbUrl, 307)
+  }
   if (cachedPoster.payload) {
     recordPosterRequest(true, outputFormat)
     if (!isPreview && req.headers.get("If-None-Match") === cachedPoster.payload.etag) {
@@ -975,7 +980,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<RouteP
     // 11. Cache + response
     const payload = { buffer: composited, etag }
     const mappingTag = mapping ? `poster:${mediaType}:${tmdbId}` : undefined
-    writeCachedPoster(cacheKey, payload, mappingTag, outputFormat, isPreview)
+    writeCachedPoster(cacheKey, payload, mappingTag, outputFormat, isPreview, topLight)
     completePosterRender(payload)
     recordPosterRequest(false, outputFormat)
     log.info("Poster rendered", { mediaType, tmdbId, ms: Date.now() - startTime, bytes: composited.byteLength, cached: !!mappingTag, format: outputFormat })

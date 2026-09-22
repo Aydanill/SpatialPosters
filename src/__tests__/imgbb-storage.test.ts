@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest"
-import { isImgBBConfigured, uploadToImgBB, getImgBBCachedUrl, setImgBBCachedUrl } from "@/lib/imgbb-storage"
+import { isImgBBConfigured, uploadToImgBB, getImgBBCachedUrl, setImgBBCachedUrl, getImgBBCachedUrlAsync, setImgBBCachedUrlAsync } from "@/lib/imgbb-storage"
 
 describe("ImgBB Storage Adapter", () => {
   const origEnv = { ...process.env }
@@ -23,13 +23,15 @@ describe("ImgBB Storage Adapter", () => {
     expect(isImgBBConfigured()).toBe(true)
   })
 
-  it("stores and retrieves key-to-URL mappings", () => {
+  it("stores and retrieves key-to-URL mappings synchronously and asynchronously", async () => {
     const key = "test_cache_key_999"
     const url = "https://i.ibb.co/abc1234/poster.webp"
     expect(getImgBBCachedUrl(key)).toBeNull()
+    expect(await getImgBBCachedUrlAsync(key)).toBeNull()
 
-    setImgBBCachedUrl(key, url)
+    await setImgBBCachedUrlAsync(key, url)
     expect(getImgBBCachedUrl(key)).toBe(url)
+    expect(await getImgBBCachedUrlAsync(key)).toBe(url)
   })
 
   it("uploads image buffer to ImgBB API successfully", async () => {
