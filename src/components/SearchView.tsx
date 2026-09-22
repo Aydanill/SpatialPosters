@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useRef, useEffect, useCallback } from "react"
+import { useState, useRef, useEffect, useCallback, useMemo } from "react"
+import { useRouter } from "next/navigation"
 import { usePSelector } from "@/lib/context"
 import { useT } from "@/lib/contexts/TranslationContext"
 import { useSearchCtx } from "@/lib/contexts/SearchContext"
@@ -11,6 +12,7 @@ import { Clock, X, Check, ChevronDown, Clapperboard, Tv, Star, Trash2, Loader2 }
 import { PosterDepthEdge } from "@/components/PosterDepthGlow"
 
 export function SearchView() {
+  const router = useRouter()
   const { t } = useT()
   const s = useSearchCtx()
   const { setQuery } = s
@@ -35,6 +37,15 @@ export function SearchView() {
       if (queryDebounceRef.current) clearTimeout(queryDebounceRef.current)
     }
   }, [])
+
+  // Prepare random saved posters for the idle state (max 15)
+  const randomSavedPosters = useMemo(() => {
+    const all = Array.from(mappingsMap.values()).filter(m => m.tmdbId && m.posterPath)
+    if (all.length === 0) return []
+    // Shuffle
+    const shuffled = [...all].sort(() => 0.5 - Math.random())
+    return shuffled.slice(0, 15)
+  }, [mappingsMap])
 
   // Deep-link ?q=: precompila la ricerca dalla URL (es. /search?q=interstellar)
   useEffect(() => {
@@ -274,6 +285,58 @@ export function SearchView() {
           </div>
           <p className="text-muted text-sm font-medium mb-1.5">{t("ui.noKey")}</p>
           <p className="text-zinc-500 text-xs max-w-xs mx-auto leading-relaxed">{t("ui.noKeySub")}</p>
+        </div>
+      )}
+
+      {/* Homepage Idle State: Yours SpatialPosters */}
+      {tmdbKey && s.results.length === 0 && !s.searching && s.query.length < 2 && randomSavedPosters.length > 0 && !s.error && (
+        <div className="animate-fade-scale-in max-w-5xl mx-auto mt-2">
+          <button
+            type="button"
+            onClick={() => router.replace("myposters")}
+            className="w-full text-left group relative surface-card rounded-2xl md:rounded-[32px] p-4 md:p-8 hover:bg-white/[0.04] transition-all duration-300 border border-white/[0.04] overflow-hidden"
+          >
+            {/* Ambient Background Glow */}
+            <div className="absolute -top-40 -right-40 w-96 h-96 bg-accent/10 rounded-full blur-[100px] pointer-events-none group-hover:bg-accent/20 transition-all duration-700" />
+            <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-accent-orange/10 rounded-full blur-[100px] pointer-events-none group-hover:bg-accent-orange/20 transition-all duration-700" />
+
+            <div className="relative z-10 flex items-center justify-between mb-6 md:mb-8">
+              <div>
+                <h2 className="text-xl md:text-3xl font-bold bg-gradient-to-br from-white to-zinc-400 bg-clip-text text-transparent inline-block">Yours SpatialPosters</h2>
+                <p className="text-xs md:text-sm text-zinc-500 mt-1.5 md:mt-2 font-medium">Revisit your saved collection</p>
+              </div>
+              <div className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-white/[0.03] border border-white/[0.08] flex items-center justify-center text-zinc-400 group-hover:text-white group-hover:bg-white/[0.08] group-hover:border-white/[0.15] group-hover:scale-105 transition-all duration-300 shadow-xl group-hover:shadow-accent/20">
+                <ChevronDown className="w-5 h-5 -rotate-90" />
+              </div>
+            </div>
+
+            {/* Staggered Masonry/Collage Preview */}
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 md:gap-5">
+              {randomSavedPosters.map((mapping, idx) => {
+                const imgUrl = mapping.imgbbUrl || `https://image.tmdb.org/t/p/w342${mapping.posterPath}`
+                const delay = idx * 50
+                // Subtle staggered translation for a dynamic feel
+                const translateY = idx % 2 !== 0 ? 'translate-y-3 md:translate-y-6' : ''
+                
+                return (
+                  <div 
+                    key={`${mapping.tmdbId}-${mapping.posterPath}`} 
+                    className={`relative aspect-[2/3] rounded-xl overflow-hidden shadow-2xl transition-all duration-500 ease-out group-hover:shadow-accent/10 ${translateY} group-hover:-translate-y-1`}
+                    style={{ animationDelay: `${delay}ms` }}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img 
+                      src={imgUrl} 
+                      alt="Poster Preview" 
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-50 group-hover:opacity-0 transition-opacity duration-300" />
+                    <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-xl" />
+                  </div>
+                )
+              })}
+            </div>
+          </button>
         </div>
       )}
       {s.error && (

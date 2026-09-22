@@ -204,7 +204,14 @@ export function AppShell() {
         type="button"
         aria-label={theme === "light" ? "Dark Mode" : "Light Mode"}
         title={theme === "light" ? "Dark Mode" : "Light Mode"}
-        onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+        onClick={() => {
+          const next = theme === "light" ? "dark" : "light"
+          if (document.startViewTransition) {
+            document.startViewTransition(() => setTheme(next))
+          } else {
+            setTheme(next)
+          }
+        }}
         className="p-1.5 rounded-xl bg-white/[0.05] border border-white/10 text-zinc-300 active:scale-90 transition-all cursor-pointer"
       >
         {theme === "light" ? <Moon className="w-3.5 h-3.5 text-zinc-800" /> : <Sun className="w-3.5 h-3.5 text-amber-400" />}
@@ -306,7 +313,14 @@ export function AppShell() {
             type="button"
             aria-label={theme === "light" ? "Dark Mode" : "Light Mode"}
             title={theme === "light" ? "Dark Mode" : "Light Mode"}
-            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            onClick={() => {
+              const next = theme === "light" ? "dark" : "light"
+              if (document.startViewTransition) {
+                document.startViewTransition(() => setTheme(next))
+              } else {
+                setTheme(next)
+              }
+            }}
             className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/[0.08] active:scale-90 transition-all duration-150 cursor-pointer"
           >
             {theme === "light" ? <Moon className="w-4 h-4 text-zinc-700 hover:text-zinc-900" /> : <Sun className="w-4 h-4 text-amber-400 hover:text-amber-300" />}
