@@ -11,7 +11,7 @@ import { ToastProvider } from "@/components/Toast"
 import { AmbientBackground } from "@/components/AmbientBackground"
 import { HomeStatusStrip } from "@/components/HomeStatusStrip"
 import { AnimatedSpatialWord } from "@/components/AnimatedSpatialWord"
-import { RefreshCw, Settings, Globe, HeartPulse, Sparkles, Check, QrCode, Palette, Layers, Sun, Moon } from "lucide-react"
+import { RefreshCw, Settings, Globe, HeartPulse, Sparkles, Check, QrCode, Palette, Layers, Sun, Moon, Home } from "lucide-react"
 
 function InstagramIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
   return (
@@ -233,62 +233,97 @@ export function AppShell() {
         />
       )}
 
-      {/* Desktop Toolbar — Floating Island */}
-      <div className="hidden md:flex absolute top-4 right-4 z-20">
-        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-zinc-950/70 backdrop-blur-xl border border-white/10 shadow-2xl shadow-black/60 relative z-50">
-          {/* Installa Pictorium Hub Pill Button */}
+      {/* Primary Navigation Dock (Centered at Top) */}
+      <div className="hidden md:flex fixed top-4 left-1/2 -translate-x-1/2 z-50">
+        <div className="flex items-center gap-1 p-1.5 rounded-2xl bg-zinc-950/60 backdrop-blur-2xl border border-white/10 shadow-2xl shadow-black/50 relative">
+          {/* Home Button */}
+          <button
+            type="button"
+            onClick={() => { goHome(); router.push("edit") }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-300 ease-out cursor-pointer ${
+              view === "edit" && !selected
+                ? "bg-white text-zinc-950 shadow-md shadow-white/10 scale-[1.02]"
+                : "text-zinc-300 hover:text-white hover:bg-white/[0.08]"
+            }`}
+          >
+            <Home className="w-3.5 h-3.5" />
+            <span>Home</span>
+          </button>
+
+          <div className="h-4 w-px bg-white/10 mx-0.5" />
+
+          {/* Install Hub Pill Button */}
           <button
             type="button"
             onClick={handleInstallCatalog}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-zinc-100 hover:bg-white text-zinc-950 font-semibold text-xs shadow-md shadow-white/10 hover:shadow-white/20 hover:scale-[1.02] active:scale-[0.97] transition-all duration-150 border border-white/40 cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-zinc-300 hover:text-white hover:bg-white/[0.08] transition-all duration-300 ease-out cursor-pointer"
           >
-            <QrCode className="w-3.5 h-3.5 text-zinc-950" />
-            <span>{t("ui.installHub")}</span>
+            <QrCode className="w-3.5 h-3.5 text-zinc-300" />
+            <span>Install Hub</span>
           </button>
 
           <div className="h-4 w-px bg-white/10 mx-0.5" />
 
-          {/* Cataloghi Button */}
+          {/* SpatialPosters (My Posters) Button */}
           <button
             type="button"
-            onClick={() => { if (view === "cataloghi") { router.push("edit") } else { router.push("cataloghi") } }}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium transition-all duration-150 active:scale-[0.95] cursor-pointer ${
-              view === "cataloghi"
-                ? "bg-white/15 text-white font-semibold border border-white/20"
-                : "text-zinc-300 hover:text-white hover:bg-white/[0.08]"
-            }`}
-          >
-            <Layers className="w-3.5 h-3.5 text-zinc-300" />
-            <span>{t("ui.catalogs") || "Cataloghi"}</span>
-          </button>
-
-          <div className="h-4 w-px bg-white/10 mx-0.5" />
-
-          {/* I Miei Poster Badge */}
-          <button
-            type="button"
-            aria-label={t("ui.myPostersBtn")}
-            title={t("ui.myPostersBtn")}
-            onClick={() => { if (view === "myposters") { router.push("edit") } else { router.push("myposters") } }}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium transition-all duration-150 active:scale-[0.95] cursor-pointer ${
+            onClick={() => router.push("myposters")}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-300 ease-out cursor-pointer ${
               view === "myposters"
-                ? "bg-white/15 text-white font-semibold border border-white/20"
+                ? "bg-white text-zinc-950 shadow-md shadow-white/10 scale-[1.02]"
                 : "text-zinc-300 hover:text-white hover:bg-white/[0.08]"
             }`}
           >
-            <Palette className="w-3.5 h-3.5 text-zinc-300" />
-            <span>{mappings.length}</span>
+            <Palette className={`w-3.5 h-3.5 ${view === "myposters" ? "text-zinc-950" : "text-amber-400"}`} />
+            <span>SpatialPosters</span>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold ${
+              view === "myposters" ? "bg-zinc-900 text-white" : "bg-white/15 text-zinc-300"
+            }`}>
+              {mappings.length}
+            </span>
           </button>
 
-          {/* Proxy Modal */}
+          <div className="h-4 w-px bg-white/10 mx-0.5" />
+
+          {/* Catalogs Button */}
+          <button
+            type="button"
+            onClick={() => router.push("cataloghi")}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-300 ease-out cursor-pointer ${
+              view === "cataloghi"
+                ? "bg-white text-zinc-950 shadow-md shadow-white/10 scale-[1.02]"
+                : "text-zinc-300 hover:text-white hover:bg-white/[0.08]"
+            }`}
+          >
+            <Layers className={`w-3.5 h-3.5 ${view === "cataloghi" ? "text-zinc-950" : "text-cyan-400"}`} />
+            <span>Catalogs</span>
+          </button>
+
+          <div className="h-4 w-px bg-white/10 mx-0.5" />
+
+          {/* Status Page Access */}
+          <a
+            href="/status"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-zinc-300 hover:text-white hover:bg-white/[0.08] transition-all duration-300 ease-out cursor-pointer"
+          >
+            <HeartPulse className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Status</span>
+          </a>
+        </div>
+      </div>
+
+      {/* Utility & Settings Dock (Right Side) */}
+      <div className="hidden md:flex fixed top-4 right-4 z-50">
+        <div className="flex items-center gap-1 p-1.5 rounded-2xl bg-zinc-950/60 backdrop-blur-2xl border border-white/10 shadow-2xl shadow-black/50 relative">
+          {/* Addon Proxy Modal */}
           <button
             type="button"
             aria-label={t("ui.addonProxy")}
             title={t("ui.addonProxy")}
             onClick={() => setProxyOpen(true)}
-            className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/[0.08] active:scale-90 transition-all duration-150 cursor-pointer"
+            className="p-2 rounded-xl text-zinc-300 hover:text-white hover:bg-white/[0.08] active:scale-90 transition-all duration-300 cursor-pointer"
           >
-            <Sparkles className="w-4 h-4" />
+            <Sparkles className="w-4 h-4 text-amber-400" />
           </button>
 
           {/* Light / Dark Mode Toggle */}
@@ -312,8 +347,8 @@ export function AppShell() {
             aria-label={t("ui.settings")}
             title={t("ui.settings")}
             onClick={(e) => { e.stopPropagation(); setSettingsOpen((o) => !o) }}
-            className={`p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/[0.08] active:scale-90 transition-all duration-150 cursor-pointer ${
-              settingsOpen ? "bg-white/10 text-white" : ""
+            className={`p-2 rounded-xl transition-all duration-300 cursor-pointer ${
+              settingsOpen ? "bg-white text-zinc-950 font-bold shadow-md shadow-white/10" : "text-zinc-300 hover:text-white hover:bg-white/[0.08]"
             }`}
           >
             <Settings className="w-4 h-4" />
