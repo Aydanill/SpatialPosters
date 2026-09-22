@@ -10,6 +10,7 @@ import { LangPicker } from "@/components/LangPicker"
 import { ToastProvider } from "@/components/Toast"
 import { AmbientBackground } from "@/components/AmbientBackground"
 import { HomeStatusStrip } from "@/components/HomeStatusStrip"
+import { AnimatedSpatialWord } from "@/components/AnimatedSpatialWord"
 import { RefreshCw, Settings, Globe, HeartPulse, Sparkles, Check, QrCode, Palette, Layers, Sun, Moon } from "lucide-react"
 
 function InstagramIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
@@ -37,6 +38,8 @@ export function AppShell() {
   const setLangOpen = usePSelector((v) => v.setLangOpen)
   const setSettingsOpen = usePSelector((v) => v.setSettingsOpen)
   const accentColor = usePSelector((v) => v.accentColor)
+  const theme = usePSelector((v) => v.theme)
+  const setTheme = usePSelector((v) => v.setTheme)
   const settingsOpen = usePSelector((v) => v.settingsOpen)
   const serviceErrors = usePSelector((v) => v.serviceErrors)
 
@@ -52,8 +55,6 @@ export function AppShell() {
   const refreshLists = usePSelector((v) => v.refreshLists)
   const langRef = usePSelector((v) => v.langRef)
   const langOpen = usePSelector((v) => v.langOpen)
-  const theme = usePSelector((v) => v.theme)
-  const setTheme = usePSelector((v) => v.setTheme)
   const { t, lang, pickLang } = useT()
   const ed = usePosterEditor()
   const setShowLangPicker = usePSelector((v) => v.setShowLangPicker)
@@ -201,19 +202,15 @@ export function AppShell() {
 
       <button
         type="button"
-        aria-label={theme === "light" ? "Dark Mode" : "Light Mode"}
-        title={theme === "light" ? "Dark Mode" : "Light Mode"}
-        onClick={() => {
-          const next = theme === "light" ? "dark" : "light"
-          if (document.startViewTransition) {
-            document.startViewTransition(() => setTheme(next))
-          } else {
-            setTheme(next)
-          }
-        }}
-        className="p-1.5 rounded-xl bg-white/[0.05] border border-white/10 text-zinc-300 active:scale-90 transition-all cursor-pointer"
+        aria-label={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+        onClick={() => setTheme((t) => (t === "light" ? "dark" : "light"))}
+        className="p-1.5 rounded-xl bg-white/[0.05] border border-white/10 text-zinc-300 active:scale-90 transition-all"
       >
-        {theme === "light" ? <Moon className="w-3.5 h-3.5 text-zinc-800" /> : <Sun className="w-3.5 h-3.5 text-amber-400" />}
+        {theme === "light" ? (
+          <Moon className="w-3.5 h-3.5 text-indigo-400" />
+        ) : (
+          <Sun className="w-3.5 h-3.5 text-amber-400" />
+        )}
       </button>
     </div>
   )
@@ -294,6 +291,21 @@ export function AppShell() {
             <Sparkles className="w-4 h-4" />
           </button>
 
+          {/* Light / Dark Mode Toggle */}
+          <button
+            type="button"
+            aria-label={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+            title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+            onClick={() => setTheme((t) => (t === "light" ? "dark" : "light"))}
+            className="p-2 rounded-xl text-zinc-300 hover:text-white hover:bg-white/[0.08] active:scale-90 transition-all duration-300 cursor-pointer"
+          >
+            {theme === "light" ? (
+              <Moon className="w-4 h-4 text-indigo-400 transition-transform duration-300 hover:rotate-12" />
+            ) : (
+              <Sun className="w-4 h-4 text-amber-400 transition-transform duration-300 hover:rotate-45" />
+            )}
+          </button>
+
           {/* Settings Button */}
           <button
             type="button"
@@ -306,44 +318,39 @@ export function AppShell() {
           >
             <Settings className="w-4 h-4" />
           </button>
-
-          {/* Theme Toggle Button */}
-          <button
-            type="button"
-            aria-label={theme === "light" ? "Dark Mode" : "Light Mode"}
-            title={theme === "light" ? "Dark Mode" : "Light Mode"}
-            onClick={() => {
-              const next = theme === "light" ? "dark" : "light"
-              if (document.startViewTransition) {
-                document.startViewTransition(() => setTheme(next))
-              } else {
-                setTheme(next)
-              }
-            }}
-            className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/[0.08] active:scale-90 transition-all duration-150 cursor-pointer"
-          >
-            {theme === "light" ? <Moon className="w-4 h-4 text-zinc-700 hover:text-zinc-900" /> : <Sun className="w-4 h-4 text-amber-400 hover:text-amber-300" />}
-          </button>
         </div>
       </div>
 
-      <div className="relative z-10 max-w-[1680px] mx-auto pb-24 md:pb-6">
+      <div className="relative z-10 max-w-[1680px] mx-auto px-3 sm:px-4 pt-3 sm:pt-5 md:pt-[68px] pb-24 md:pb-6">
+        {/* Header globale (logo + tagline + toolbar mobile) */}
+        {!(view === "edit" && selected) && (
+        <div className="flex flex-col items-center pb-3 sm:pb-4 animate-fade-scale-in relative">
+          <>
+          {/* eslint-disable-next-line @next/next/no-img-element -- local SVG asset */}
+          <img
+            onClick={goHome}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); goHome() } }}
+            role="button"
+            tabIndex={0}
+            aria-label={t("ui.home")}
+            src="/SpatialPosters.png"
+            alt="SpatialPosters"
+            decoding="async"
+            className="header-logo h-10 sm:h-14 md:h-24 w-auto cursor-pointer hover:brightness-110 active:scale-95 transition-all duration-150 mb-1.5 md:mb-2"
+          />
+          <p className="header-tagline text-center text-xs sm:text-sm md:text-base mb-3.5 sm:mb-5 md:mb-6 max-w-xl text-zinc-300 flex items-center justify-center gap-2 flex-wrap font-medium">
+            <span>Enhance your Poster Experience with</span>
+            <AnimatedSpatialWord />
+          </p>
+          {mobileToolbar}
+          </>
+        </div>
+        )}
+
         <ProxyModal isOpen={proxyOpen} onClose={() => setProxyOpen(false)} />
         <InstallModal isOpen={installOpen} onClose={() => setInstallOpen(false)} posterUrlPattern={urlPattern} />
         <div key={view} className="animate-view-enter">
-          {view === "search" ? (
-            <SearchView mobileToolbar={mobileToolbar} />
-          ) : view === "myposters" ? (
-            <div className="px-3 sm:px-4 pt-3 sm:pt-5 md:pt-[68px]">
-              <MyPostersView />
-            </div>
-          ) : view === "cataloghi" ? (
-            <div className="px-3 sm:px-4 pt-3 sm:pt-5 md:pt-[68px]">
-              <CataloghiView />
-            </div>
-          ) : (
-            <EditView />
-          )}
+          {view === "search" ? <SearchView /> : view === "myposters" ? <MyPostersView /> : view === "cataloghi" ? <CataloghiView /> : <EditView />}
         </div>
         {/* Strip di stato: presente nelle viste principali, nascosto in editor poster */}
         {!(view === "edit" && selected) && <HomeStatusStrip />}

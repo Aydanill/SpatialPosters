@@ -5,7 +5,6 @@ import { createPortal } from "react-dom"
 import { usePSelector } from "@/lib/context"
 import { useT } from "@/lib/contexts/TranslationContext"
 import { usePosterEditor } from "@/lib/contexts/PosterEditorContext"
-import { toSearchResult } from "@/lib/types"
 import { PosterOptions } from "@/components/PosterOptions"
 import { LogoOptions } from "@/components/LogoOptions"
 import { EditorPanel } from "@/components/EditorPanel"
@@ -16,6 +15,7 @@ import { ScrollReveal } from "@/components/ScrollReveal"
 import { HomeHero } from "@/components/HomeHero"
 import { HomeFeaturesGrid } from "@/components/HomeFeaturesGrid"
 import { CompatiblePlatforms } from "@/components/CompatiblePlatforms"
+import { SavedPostersBundle } from "@/components/SavedPostersBundle"
 import { AnimatedSpatialWord } from "@/components/AnimatedSpatialWord"
 import { PosterPreview } from "@/components/PosterPreview"
 import { PosterDepthEdge, PosterDepthSheen } from "@/components/PosterDepthGlow"
@@ -24,8 +24,7 @@ import { TransformControls } from "@/components/TransformControls"
 import { EpisodeGroupControls } from "@/components/EpisodeGroupControls"
 import { JwRankBadge } from "@/components/JwRankBadge"
 import { usePosterPreview } from "@/lib/usePosterPreview"
-import { MoodBoardTile } from "@/components/MoodBoardTile"
-import { Check, Clock, ExternalLink, Save, Trash2, X, ChevronLeft, Palette, ChevronRight } from "lucide-react"
+import { Check, Clock, ExternalLink, Save, Trash2, X, ChevronLeft } from "lucide-react"
 
 export default function EditView() {
   const accentColor = usePSelector((v) => v.accentColor)
@@ -34,7 +33,6 @@ export default function EditView() {
   const goHome = usePSelector((v) => v.goHome)
   const loadingImages = usePSelector((v) => v.loadingImages)
   const logos = usePSelector((v) => v.logos)
-  const mappings = usePSelector((v) => v.mappings)
   const mappingsMap = usePSelector((v) => v.mappingsMap)
   const mdblistAnimeList = usePSelector((v) => v.mdblistAnimeList)
   const metaInfo = usePSelector((v) => v.metaInfo)
@@ -478,55 +476,13 @@ export default function EditView() {
       )}
       {!selected && tmdbKey && (
         <>
-          {mappings.length > 0 && (
-            <section className="my-10 md:my-14 animate-fade-scale-in">
-              <div className="flex items-center justify-between mb-6 px-1">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-2xl bg-amber-500/15 border border-amber-500/20 flex items-center justify-center text-amber-500 shadow-sm">
-                    <Palette className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h2 className="text-lg md:text-xl font-bold text-foreground tracking-tight flex items-center gap-2">
-                      <span>{t("ui.mySavedPosters") || "I Miei Poster Salvati"}</span>
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-accent-orange/10 border border-accent-orange/20 text-accent-orange font-semibold">
-                        {mappings.length}
-                      </span>
-                    </h2>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => router.push("myposters")}
-                  className="text-xs font-semibold text-accent-orange hover:underline flex items-center gap-1 cursor-pointer"
-                >
-                  <span>{t("ui.viewAll") || "Vedi tutti"}</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
+          <ScrollReveal animation="fade-up" threshold={0.05}>
+            <SavedPostersBundle />
+          </ScrollReveal>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                {mappings.slice(0, 12).map((m, idx) => (
-                  <MoodBoardTile
-                    key={`${m.mediaType}:${m.tmdbId}`}
-                    mapping={m}
-                    idx={idx}
-                    selected={new Set<string>()}
-                    selectMode={false}
-                    collectionCount={0}
-                    onSelect={() => {}}
-                    onOpen={() => navigateToPoster(toSearchResult({ id: m.tmdbId, media_type: m.mediaType, title: m.title, poster_path: m.posterPath }))}
-                    onQuickView={() => navigateToPoster(toSearchResult({ id: m.tmdbId, media_type: m.mediaType, title: m.title, poster_path: m.posterPath }))}
-                    onRemove={(e) => { e.stopPropagation(); void removeMapping(m) }}
-                    t={t}
-                  />
-                ))}
-              </div>
-            </section>
-          )}
-
-          <div className="mt-12 md:mt-16">
+          <ScrollReveal animation="fade-up" threshold={0.05}>
             <CompatiblePlatforms />
-          </div>
+          </ScrollReveal>
         </>
       )}
 

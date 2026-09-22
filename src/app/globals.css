@@ -19,38 +19,29 @@
   --font-mono: var(--font-geist-mono);
 }
 
-html.light-mode {
-  --color-background: #eeeeef;
-  --color-foreground: #18181b;
-  --color-surface: #ffffff;
-  --color-surface2: #e4e4e7;
-  --color-border: rgba(0, 0, 0, 0.08);
-  --color-muted: #71717a;
-  --color-panel: rgba(255, 255, 255, 0.85);
-  --color-panel-strong: rgba(255, 255, 255, 0.95);
-  --glass-grad: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(244,244,246,0.65));
-  --glass-tint: rgba(255,255,255,0.92);
-  --glass-border: rgba(0,0,0,0.08);
-  --glass-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255,255,255,0.9);
-}
-
-body,
-.app-shell,
-.glass-panel,
-.editor-panel,
-.surface-card,
-.poster-tile,
-.preview-frame,
-.floating-action,
-.floating-group,
-.search-shell,
-header,
-nav,
-footer {
+/* Buttery smooth theme transition */
+html, body, .app-shell, .glass-panel, .surface-card, .search-shell, header, footer, nav, button, input {
   transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
               border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
               color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+html.light-mode {
+  --color-background: #f8fafc;
+  --color-foreground: #0f172a;
+  --color-surface: #ffffff;
+  --color-surface2: #f1f5f9;
+  --color-border: #e2e8f0;
+  --color-muted: #64748b;
+  --color-panel: rgba(255, 255, 255, 0.88);
+  --color-panel-strong: rgba(255, 255, 255, 0.98);
+  --color-border-subtle: rgba(0, 0, 0, 0.08);
+  --color-border-strong: rgba(0, 0, 0, 0.15);
+  --glass-grad: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.75));
+  --glass-tint: rgba(255,255,255,0.88);
+  --glass-border: rgba(0,0,0,0.08);
+  --glass-shadow: 0 10px 30px -10px rgba(0,0,0,0.06);
 }
 
 /* Light mode — famiglia glass con override locali (tonalità chiare) */
@@ -64,10 +55,31 @@ html.light-mode .floating-group,
 html.light-mode .search-shell,
 html.light-mode .simkl-list-card,
 html.light-mode .carousel-card {
-  --glass-grad: linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0.12));
+  --glass-grad: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.75));
   --glass-tint: rgba(255,255,255,0.88);
   --glass-border: rgba(0,0,0,0.08);
-  --glass-shadow: inset 0 1px 0 rgba(255,255,255,0.70);
+  --glass-shadow: 0 10px 30px -10px rgba(0,0,0,0.06);
+}
+
+html.light-mode .text-zinc-100,
+html.light-mode .text-zinc-200,
+html.light-mode .text-zinc-300,
+html.light-mode .text-zinc-50 {
+  color: #0f172a !important;
+}
+
+html.light-mode .text-zinc-400,
+html.light-mode .text-zinc-500 {
+  color: #475569 !important;
+}
+
+html.light-mode .bg-zinc-900\/60,
+html.light-mode .bg-zinc-900\/40,
+html.light-mode .bg-black\/60,
+html.light-mode .bg-zinc-950\/70,
+html.light-mode .bg-surface\/80 {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
 }
 
 /* Quiet dark: griglia e vignette rimosse (anche in light mode) */
@@ -1992,27 +2004,4 @@ html.light-mode .noise-overlay {
   will-change: transform, opacity;
 }
 
-/* View Transitions for Smooth Dark/Light Mode */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 0.5s;
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-}
 
-::view-transition-old(root) {
-  animation-name: fadeOut;
-}
-
-::view-transition-new(root) {
-  animation-name: fadeIn;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}

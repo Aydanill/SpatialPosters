@@ -27,7 +27,8 @@ describe("EditView", () => {
 
   it("shows compatible platforms when no item selected and has tmdbKey", () => {
     renderWithCtx(<EditView />)
-    expect(screen.getByText("Compatible Platforms")).toBeInTheDocument()
+    const title = screen.getByRole("heading", { level: 2, name: /Compatible Platforms/i })
+    expect(title).toBeInTheDocument()
   })
 
   it("shows preview section when item selected", () => {
