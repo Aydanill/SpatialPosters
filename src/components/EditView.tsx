@@ -5,6 +5,7 @@ import { createPortal } from "react-dom"
 import { usePSelector } from "@/lib/context"
 import { useT } from "@/lib/contexts/TranslationContext"
 import { usePosterEditor } from "@/lib/contexts/PosterEditorContext"
+import { toSearchResult } from "@/lib/types"
 import { PosterOptions } from "@/components/PosterOptions"
 import { LogoOptions } from "@/components/LogoOptions"
 import { EditorPanel } from "@/components/EditorPanel"
@@ -507,15 +508,15 @@ export default function EditView() {
                 {mappings.slice(0, 12).map((m, idx) => (
                   <MoodBoardTile
                     key={`${m.mediaType}:${m.tmdbId}`}
-                    m={m}
+                    mapping={m}
                     idx={idx}
                     selected={new Set<string>()}
                     selectMode={false}
                     collectionCount={0}
                     onSelect={() => {}}
-                    onOpen={() => navigateToPoster({ id: m.tmdbId, media_type: m.mediaType, title: m.title })}
-                    onQuickView={() => navigateToPoster({ id: m.tmdbId, media_type: m.mediaType, title: m.title })}
-                    onRemove={(e) => { e.stopPropagation(); removeMapping(m.mediaType, m.tmdbId) }}
+                    onOpen={() => navigateToPoster(toSearchResult({ id: m.tmdbId, media_type: m.mediaType, title: m.title, poster_path: m.posterPath }))}
+                    onQuickView={() => navigateToPoster(toSearchResult({ id: m.tmdbId, media_type: m.mediaType, title: m.title, poster_path: m.posterPath }))}
+                    onRemove={(e) => { e.stopPropagation(); void removeMapping(m) }}
                     t={t}
                   />
                 ))}

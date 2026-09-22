@@ -25,10 +25,9 @@ describe("EditView", () => {
     expect(screen.getByText("ui.noKey")).toBeInTheDocument()
   })
 
-  it("shows trending when no item selected and has tmdbKey", () => {
+  it("shows compatible platforms when no item selected and has tmdbKey", () => {
     renderWithCtx(<EditView />)
-    const title = screen.getByRole("heading", { level: 1 })
-    expect(title.textContent).toContain("ui.heroTitleLead")
+    expect(screen.getByText("Compatible Platforms")).toBeInTheDocument()
   })
 
   it("shows preview section when item selected", () => {
@@ -60,11 +59,5 @@ describe("EditView", () => {
     const transformTab = screen.getByText("ui.transform")
     await u.click(transformTab)
     expect(transformTab.closest("button")).toHaveClass("tab-chip-active")
-  })
-
-  it("shows home hero when no item selected and has tmdbKey", () => {
-    renderWithCtx(<EditView />, { trending: [] })
-    const title = screen.getByRole("heading", { level: 1 })
-    expect(title.textContent).toContain("ui.heroTitleLead")
   })
 })
