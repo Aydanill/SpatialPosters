@@ -1,47 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #09090b;
-  --color-foreground: #f4f4f5;
-  --color-surface: #121215;
-  --color-surface2: #1c1c21;
-  --color-border: #27272a;
-  --color-muted: #a1a1aa;
-  --color-accent-orange: #e4e4e7;
-  --color-accent: #ffffff;
-  --color-panel: rgba(18, 18, 22, 0.74);
-  --color-panel-strong: rgba(21, 21, 26, 0.92);
+  --color-background: #0d0d12;
+  --color-foreground: #f0f0f5;
+  --color-surface: rgba(255, 255, 255, 0.06);
+  --color-surface2: rgba(255, 255, 255, 0.10);
+  --color-border: rgba(255, 255, 255, 0.10);
+  --color-muted: #a0a0b8;
+  --color-accent-orange: #ff6b6b;
+  --color-accent: #4f8cff;
+  --color-panel: rgba(255, 255, 255, 0.06);
+  --color-panel-strong: rgba(255, 255, 255, 0.10);
   --color-border-subtle: rgba(255, 255, 255, 0.08);
   --color-border-strong: rgba(255, 255, 255, 0.14);
-  --color-danger: #f87171;
+  --color-danger: #ff6b6b;
   --color-warning: #fbbf24;
-  --font-sans: var(--font-geist-sans);
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Inter", sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
 /* Buttery smooth theme transition */
 html, body, .app-shell, .glass-panel, .surface-card, .search-shell, header, footer, nav, button, input {
-  transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: background-color 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+              border-color 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+              color 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+              box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
 }
 
 html.light-mode {
-  --color-background: #f8fafc;
-  --color-foreground: #0f172a;
-  --color-surface: #ffffff;
-  --color-surface2: #f1f5f9;
-  --color-border: #e2e8f0;
-  --color-muted: #64748b;
-  --color-panel: rgba(255, 255, 255, 0.88);
-  --color-panel-strong: rgba(255, 255, 255, 0.98);
-  --color-border-subtle: rgba(0, 0, 0, 0.08);
-  --color-border-strong: rgba(0, 0, 0, 0.15);
-  --glass-grad: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.75));
-  --glass-tint: rgba(255,255,255,0.88);
-  --glass-border: rgba(0,0,0,0.08);
-  --glass-shadow: 0 10px 30px -10px rgba(0,0,0,0.06);
+  --color-background: #b8c6d4;
+  --color-foreground: #1a1a2e;
+  --color-surface: rgba(255, 255, 255, 0.35);
+  --color-surface2: rgba(255, 255, 255, 0.50);
+  --color-border: rgba(255, 255, 255, 0.45);
+  --color-muted: #3a3a5c;
+  --color-panel: rgba(255, 255, 255, 0.35);
+  --color-panel-strong: rgba(255, 255, 255, 0.50);
+  --color-border-subtle: rgba(255, 255, 255, 0.35);
+  --color-border-strong: rgba(255, 255, 255, 0.50);
+  --glass-grad: linear-gradient(180deg, rgba(255,255,255,0.45), rgba(255,255,255,0.25));
+  --glass-tint: rgba(240, 244, 248, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.45);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
 }
 
 /* Light mode — famiglia glass con override locali (tonalità chiare) */
@@ -55,22 +56,22 @@ html.light-mode .floating-group,
 html.light-mode .search-shell,
 html.light-mode .simkl-list-card,
 html.light-mode .carousel-card {
-  --glass-grad: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.75));
-  --glass-tint: rgba(255,255,255,0.88);
-  --glass-border: rgba(0,0,0,0.08);
-  --glass-shadow: 0 10px 30px -10px rgba(0,0,0,0.06);
+  --glass-grad: linear-gradient(180deg, rgba(255,255,255,0.45), rgba(255,255,255,0.25));
+  --glass-tint: rgba(240, 244, 248, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.45);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
 }
 
 html.light-mode .text-zinc-100,
 html.light-mode .text-zinc-200,
 html.light-mode .text-zinc-300,
 html.light-mode .text-zinc-50 {
-  color: #0f172a !important;
+  color: #1a1a2e !important;
 }
 
 html.light-mode .text-zinc-400,
 html.light-mode .text-zinc-500 {
-  color: #475569 !important;
+  color: #3a3a5c !important;
 }
 
 html.light-mode .bg-zinc-900\/60,
@@ -78,8 +79,8 @@ html.light-mode .bg-zinc-900\/40,
 html.light-mode .bg-black\/60,
 html.light-mode .bg-zinc-950\/70,
 html.light-mode .bg-surface\/80 {
-  background-color: rgba(255, 255, 255, 0.85) !important;
-  border-color: rgba(0, 0, 0, 0.08) !important;
+  background-color: rgba(255, 255, 255, 0.45) !important;
+  border-color: rgba(255, 255, 255, 0.45) !important;
 }
 
 /* Quiet dark: griglia e vignette rimosse (anche in light mode) */
