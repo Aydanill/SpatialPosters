@@ -20,14 +20,37 @@
 }
 
 html.light-mode {
-  --color-background: #f4f4f5;
+  --color-background: #eeeeef;
   --color-foreground: #18181b;
-  /* Quiet light: superfici piatte chiare con hairline scura (stessa
-     riduzione del dark: niente gradiente, solo bordo + highlight). */
-  --glass-grad: linear-gradient(180deg, rgba(255,255,255,0.30), rgba(255,255,255,0.10));
-  --glass-tint: rgba(255,255,255,0.85);
+  --color-surface: #ffffff;
+  --color-surface2: #e4e4e7;
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-muted: #71717a;
+  --color-panel: rgba(255, 255, 255, 0.85);
+  --color-panel-strong: rgba(255, 255, 255, 0.95);
+  --glass-grad: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(244,244,246,0.65));
+  --glass-tint: rgba(255,255,255,0.92);
   --glass-border: rgba(0,0,0,0.08);
-  --glass-shadow: inset 0 1px 0 rgba(255,255,255,0.70);
+  --glass-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+body,
+.app-shell,
+.glass-panel,
+.editor-panel,
+.surface-card,
+.poster-tile,
+.preview-frame,
+.floating-action,
+.floating-group,
+.search-shell,
+header,
+nav,
+footer {
+  transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Light mode — famiglia glass con override locali (tonalità chiare) */

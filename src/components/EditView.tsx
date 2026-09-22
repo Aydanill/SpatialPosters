@@ -23,7 +23,8 @@ import { TransformControls } from "@/components/TransformControls"
 import { EpisodeGroupControls } from "@/components/EpisodeGroupControls"
 import { JwRankBadge } from "@/components/JwRankBadge"
 import { usePosterPreview } from "@/lib/usePosterPreview"
-import { Check, Clock, ExternalLink, Save, Trash2, X, ChevronLeft } from "lucide-react"
+import { MoodBoardTile } from "@/components/MoodBoardTile"
+import { Check, Clock, ExternalLink, Save, Trash2, X, ChevronLeft, Palette, ChevronRight } from "lucide-react"
 
 export default function EditView() {
   const accentColor = usePSelector((v) => v.accentColor)
@@ -32,6 +33,7 @@ export default function EditView() {
   const goHome = usePSelector((v) => v.goHome)
   const loadingImages = usePSelector((v) => v.loadingImages)
   const logos = usePSelector((v) => v.logos)
+  const mappings = usePSelector((v) => v.mappings)
   const mappingsMap = usePSelector((v) => v.mappingsMap)
   const mdblistAnimeList = usePSelector((v) => v.mdblistAnimeList)
   const metaInfo = usePSelector((v) => v.metaInfo)
@@ -475,36 +477,55 @@ export default function EditView() {
       )}
       {!selected && tmdbKey && (
         <>
-          <HomeHero />
-          
-          <ScrollReveal animation="fade-up" threshold={0.05}>
-            <PosterCarousel />
-          </ScrollReveal>
-
-          <ScrollReveal animation="fade-up" threshold={0.05}>
-            <HomeFeaturesGrid />
-          </ScrollReveal>
-
-          <ScrollReveal animation="fade-up" threshold={0.05}>
-            <CompatiblePlatforms />
-          </ScrollReveal>
-
-          <ScrollReveal animation="fade-up" threshold={0.05}>
-            <section className="py-12 md:py-16 relative overflow-hidden">
-              <div className="absolute inset-0 bg-accent-orange/5 blur-[120px] rounded-full pointer-events-none" />
-              <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-                <h2 className="text-2xl md:text-4xl font-bold text-zinc-100 mb-6 tracking-tight">
-                  About SpatialPosters
-                </h2>
-                <div className="p-8 md:p-10 rounded-3xl bg-white/[0.03] border border-white/10 backdrop-blur-xl shadow-2xl relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-transparent to-purple-500/10 opacity-30 pointer-events-none" />
-                  <p className="text-base md:text-lg text-zinc-300 leading-relaxed relative z-10">
-                    SpatialPosters is the ultimate artwork customization engine, designed to elevate your visual experience. Whether you're curating a personal media library or enhancing your setup, our platform empowers you to create stunning, dynamic posters with ultra-crisp vector logos, real-time ratings, and seamless integrations.
-                  </p>
+          {mappings.length > 0 && (
+            <section className="my-10 md:my-14 animate-fade-scale-in">
+              <div className="flex items-center justify-between mb-6 px-1">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-2xl bg-amber-500/15 border border-amber-500/20 flex items-center justify-center text-amber-500 shadow-sm">
+                    <Palette className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg md:text-xl font-bold text-foreground tracking-tight flex items-center gap-2">
+                      <span>{t("ui.mySavedPosters") || "I Miei Poster Salvati"}</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-accent-orange/10 border border-accent-orange/20 text-accent-orange font-semibold">
+                        {mappings.length}
+                      </span>
+                    </h2>
+                  </div>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => router.push("myposters")}
+                  className="text-xs font-semibold text-accent-orange hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <span>{t("ui.viewAll") || "Vedi tutti"}</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                {mappings.slice(0, 12).map((m, idx) => (
+                  <MoodBoardTile
+                    key={`${m.mediaType}:${m.tmdbId}`}
+                    m={m}
+                    idx={idx}
+                    selected={new Set<string>()}
+                    selectMode={false}
+                    collectionCount={0}
+                    onSelect={() => {}}
+                    onOpen={() => navigateToPoster({ id: m.tmdbId, media_type: m.mediaType, title: m.title })}
+                    onQuickView={() => navigateToPoster({ id: m.tmdbId, media_type: m.mediaType, title: m.title })}
+                    onRemove={(e) => { e.stopPropagation(); removeMapping(m.mediaType, m.tmdbId) }}
+                    t={t}
+                  />
+                ))}
               </div>
             </section>
-          </ScrollReveal>
+          )}
+
+          <div className="mt-12 md:mt-16">
+            <CompatiblePlatforms />
+          </div>
         </>
       )}
 
