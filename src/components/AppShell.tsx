@@ -234,7 +234,11 @@ export function AppShell() {
       )}
 
       {/* Desktop Unified Left Sidebar Dock */}
-      <aside className="hidden md:flex fixed left-5 top-1/2 -translate-y-1/2 z-50 flex-col items-center gap-2 p-2 rounded-3xl bg-zinc-950/75 backdrop-blur-2xl border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.7)] transition-all duration-300">
+      <aside className={`hidden md:flex fixed left-5 top-1/2 -translate-y-1/2 z-50 flex-col items-center gap-2 p-2 rounded-3xl backdrop-blur-2xl transition-all duration-300 ${
+        theme === "light"
+          ? "bg-white/85 border border-black/10 shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
+          : "bg-zinc-950/80 border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.8)]"
+      }`}>
         {/* Top Group: Main Navigation (Dock 1 items) */}
         <div className="flex flex-col items-center gap-1.5">
           {/* Home */}
@@ -244,12 +248,23 @@ export function AppShell() {
             title={t("ui.home") || "Home"}
             className={`relative group p-2.5 rounded-2xl transition-all duration-200 cursor-pointer ${
               view === "edit" && !selected
-                ? "bg-white text-zinc-950 shadow-lg shadow-white/20 scale-105"
-                : "text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95"
+                ? (theme === "light" ? "bg-zinc-950 text-white shadow-lg shadow-black/20 scale-105" : "bg-white text-zinc-950 shadow-lg shadow-white/20 scale-105")
+                : (theme === "light" ? "text-zinc-600 hover:text-zinc-950 hover:bg-black/5 active:scale-95" : "text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95")
             }`}
           >
-            <Home className="w-4 h-4" />
-            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50">
+            {/* eslint-disable-next-line @next/next/no-img-element -- custom icon */}
+            <img
+              src="/icon/enhanced.webp"
+              alt="Home"
+              className={`w-4.5 h-4.5 object-contain transition-all duration-200 ${
+                view === "edit" && !selected
+                  ? (theme === "light" ? "brightness-0 invert" : "brightness-0")
+                  : (theme === "light" ? "brightness-0 opacity-75 group-hover:opacity-100" : "brightness-0 invert opacity-75 group-hover:opacity-100")
+              }`}
+            />
+            <span className={`pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 text-xs font-semibold rounded-xl border opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50 ${
+              theme === "light" ? "bg-white text-zinc-900 border-black/10 shadow-black/10" : "bg-zinc-900 text-zinc-100 border-white/10 shadow-black/80"
+            }`}>
               Home
             </span>
           </button>
@@ -261,17 +276,30 @@ export function AppShell() {
             title={t("ui.myPosters") || "SpatialPosters"}
             className={`relative group p-2.5 rounded-2xl transition-all duration-200 cursor-pointer ${
               view === "myposters"
-                ? "bg-white text-zinc-950 shadow-lg shadow-white/20 scale-105"
-                : "text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95"
+                ? (theme === "light" ? "bg-zinc-950 text-white shadow-lg shadow-black/20 scale-105" : "bg-white text-zinc-950 shadow-lg shadow-white/20 scale-105")
+                : (theme === "light" ? "text-zinc-600 hover:text-zinc-950 hover:bg-black/5 active:scale-95" : "text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95")
             }`}
           >
-            <Palette className={`w-4 h-4 ${view === "myposters" ? "text-zinc-950" : "text-amber-400"}`} />
+            {/* eslint-disable-next-line @next/next/no-img-element -- custom icon */}
+            <img
+              src="/icon/myposter.webp"
+              alt="My Posters"
+              className={`w-4.5 h-4.5 object-contain transition-all duration-200 ${
+                view === "myposters"
+                  ? (theme === "light" ? "brightness-0 invert" : "brightness-0")
+                  : (theme === "light" ? "brightness-0 opacity-75 group-hover:opacity-100" : "brightness-0 invert opacity-75 group-hover:opacity-100")
+              }`}
+            />
             {mappings.length > 0 && (
-              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent-orange text-[9px] font-bold text-white shadow-md">
+              <span className={`absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold shadow-md ${
+                theme === "light" ? "bg-zinc-900 text-white" : "bg-white text-zinc-950"
+              }`}>
                 {mappings.length > 99 ? "99+" : mappings.length}
               </span>
             )}
-            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50">
+            <span className={`pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 text-xs font-semibold rounded-xl border opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50 ${
+              theme === "light" ? "bg-white text-zinc-900 border-black/10 shadow-black/10" : "bg-zinc-900 text-zinc-100 border-white/10 shadow-black/80"
+            }`}>
               SpatialPosters ({mappings.length})
             </span>
           </button>
@@ -283,12 +311,23 @@ export function AppShell() {
             title={t("ui.catalogs") || "Catalogs"}
             className={`relative group p-2.5 rounded-2xl transition-all duration-200 cursor-pointer ${
               view === "cataloghi"
-                ? "bg-white text-zinc-950 shadow-lg shadow-white/20 scale-105"
-                : "text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95"
+                ? (theme === "light" ? "bg-zinc-950 text-white shadow-lg shadow-black/20 scale-105" : "bg-white text-zinc-950 shadow-lg shadow-white/20 scale-105")
+                : (theme === "light" ? "text-zinc-600 hover:text-zinc-950 hover:bg-black/5 active:scale-95" : "text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95")
             }`}
           >
-            <Layers className={`w-4 h-4 ${view === "cataloghi" ? "text-zinc-950" : "text-cyan-400"}`} />
-            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50">
+            {/* eslint-disable-next-line @next/next/no-img-element -- custom icon */}
+            <img
+              src="/icon/collection.webp"
+              alt="Catalogs"
+              className={`w-4.5 h-4.5 object-contain transition-all duration-200 ${
+                view === "cataloghi"
+                  ? (theme === "light" ? "brightness-0 invert" : "brightness-0")
+                  : (theme === "light" ? "brightness-0 opacity-75 group-hover:opacity-100" : "brightness-0 invert opacity-75 group-hover:opacity-100")
+              }`}
+            />
+            <span className={`pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 text-xs font-semibold rounded-xl border opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50 ${
+              theme === "light" ? "bg-white text-zinc-900 border-black/10 shadow-black/10" : "bg-zinc-900 text-zinc-100 border-white/10 shadow-black/80"
+            }`}>
               {t("ui.catalogs") || "Catalogs"}
             </span>
           </button>
@@ -298,17 +337,28 @@ export function AppShell() {
             type="button"
             onClick={handleInstallCatalog}
             title="Install Hub"
-            className="relative group p-2.5 rounded-2xl text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-200 cursor-pointer"
+            className={`relative group p-2.5 rounded-2xl transition-all duration-200 cursor-pointer ${
+              theme === "light" ? "text-zinc-600 hover:text-zinc-950 hover:bg-black/5 active:scale-95" : "text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95"
+            }`}
           >
-            <QrCode className="w-4 h-4 text-emerald-400" />
-            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50">
+            {/* eslint-disable-next-line @next/next/no-img-element -- custom icon */}
+            <img
+              src="/icon/install-hub.webp"
+              alt="Install Hub"
+              className={`w-4.5 h-4.5 object-contain transition-all duration-200 ${
+                theme === "light" ? "brightness-0 opacity-75 group-hover:opacity-100" : "brightness-0 invert opacity-75 group-hover:opacity-100"
+              }`}
+            />
+            <span className={`pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 text-xs font-semibold rounded-xl border opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50 ${
+              theme === "light" ? "bg-white text-zinc-900 border-black/10 shadow-black/10" : "bg-zinc-900 text-zinc-100 border-white/10 shadow-black/80"
+            }`}>
               Install Hub
             </span>
           </button>
         </div>
 
         {/* Divider */}
-        <div className="w-7 h-px bg-white/10 my-0.5" />
+        <div className={`w-7 h-px my-0.5 ${theme === "light" ? "bg-black/10" : "bg-white/10"}`} />
 
         {/* Bottom Group: Status, Settings & Tools (Dock 2 items at the bottom) */}
         <div className="flex flex-col items-center gap-1.5">
@@ -317,10 +367,21 @@ export function AppShell() {
             type="button"
             onClick={() => setProxyOpen(true)}
             title={t("ui.addonProxy")}
-            className="relative group p-2.5 rounded-2xl text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-200 cursor-pointer"
+            className={`relative group p-2.5 rounded-2xl transition-all duration-200 cursor-pointer ${
+              theme === "light" ? "text-zinc-600 hover:text-zinc-950 hover:bg-black/5 active:scale-95" : "text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95"
+            }`}
           >
-            <Sparkles className="w-4 h-4 text-amber-400" />
-            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50">
+            {/* eslint-disable-next-line @next/next/no-img-element -- custom icon */}
+            <img
+              src="/icon/proxy.webp"
+              alt="Addon Proxy"
+              className={`w-4.5 h-4.5 object-contain transition-all duration-200 ${
+                theme === "light" ? "brightness-0 opacity-75 group-hover:opacity-100" : "brightness-0 invert opacity-75 group-hover:opacity-100"
+              }`}
+            />
+            <span className={`pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 text-xs font-semibold rounded-xl border opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50 ${
+              theme === "light" ? "bg-white text-zinc-900 border-black/10 shadow-black/10" : "bg-zinc-900 text-zinc-100 border-white/10 shadow-black/80"
+            }`}>
               {t("ui.addonProxy")}
             </span>
           </button>
@@ -331,10 +392,14 @@ export function AppShell() {
             onClick={async () => { setRefreshing(true); await refreshLists(); setRefreshing(false) }}
             disabled={refreshing}
             title={t("ui.refreshLists")}
-            className="relative group p-2.5 rounded-2xl text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-200 cursor-pointer disabled:opacity-50"
+            className={`relative group p-2.5 rounded-2xl transition-all duration-200 cursor-pointer disabled:opacity-50 ${
+              theme === "light" ? "text-zinc-600 hover:text-zinc-950 hover:bg-black/5 active:scale-95" : "text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95"
+            }`}
           >
-            <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin text-accent-orange" : ""}`} />
-            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50">
+            <RefreshCw className={`w-4.5 h-4.5 transition-all duration-200 ${refreshing ? "animate-spin" : ""} ${theme === "light" ? "text-zinc-700 group-hover:text-zinc-950" : "text-zinc-300 group-hover:text-white"}`} />
+            <span className={`pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 text-xs font-semibold rounded-xl border opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50 ${
+              theme === "light" ? "bg-white text-zinc-900 border-black/10 shadow-black/10" : "bg-zinc-900 text-zinc-100 border-white/10 shadow-black/80"
+            }`}>
               {t("ui.refreshLists")}
             </span>
           </button>
@@ -346,29 +411,50 @@ export function AppShell() {
               onClick={() => setLangOpen((o) => !o)}
               title={LANG_NAMES[lang]}
               className={`p-2.5 rounded-2xl transition-all duration-200 cursor-pointer ${
-                langOpen ? "bg-white/15 text-white" : "text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95"
+                langOpen
+                  ? (theme === "light" ? "bg-zinc-950 text-white" : "bg-white/20 text-white")
+                  : (theme === "light" ? "text-zinc-600 hover:text-zinc-950 hover:bg-black/5 active:scale-95" : "text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95")
               }`}
             >
-              <span className="text-sm leading-none">{LANG_FLAGS[lang] || <Globe className="w-4 h-4" />}</span>
+              {/* eslint-disable-next-line @next/next/no-img-element -- custom icon */}
+              <img
+                src="/icon/lang.webp"
+                alt="Language"
+                className={`w-4.5 h-4.5 object-contain transition-all duration-200 ${
+                  langOpen
+                    ? (theme === "light" ? "brightness-0 invert" : "brightness-0")
+                    : (theme === "light" ? "brightness-0 opacity-75 group-hover:opacity-100" : "brightness-0 invert opacity-75 group-hover:opacity-100")
+                }`}
+              />
             </button>
-            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50">
+            <span className={`pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 text-xs font-semibold rounded-xl border opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50 ${
+              theme === "light" ? "bg-white text-zinc-900 border-black/10 shadow-black/10" : "bg-zinc-900 text-zinc-100 border-white/10 shadow-black/80"
+            }`}>
               {LANG_NAMES[lang]} ({lang.toUpperCase()})
             </span>
 
             {(langOpen || closingLang) && (
-              <div className={`absolute left-full top-0 ml-3 bg-black/90 backdrop-blur-2xl border border-white/15 rounded-2xl p-1.5 shadow-2xl shadow-black/90 z-50 min-w-44 ${closingLang ? "animate-fade-scale-out" : "animate-fade-scale-in"}`}>
+              <div className={`absolute left-full top-0 ml-3 backdrop-blur-2xl border rounded-2xl p-1.5 shadow-2xl z-50 min-w-44 ${
+                theme === "light"
+                  ? "bg-white/95 border-black/10 text-zinc-900 shadow-black/20"
+                  : "bg-zinc-950/95 border-white/15 text-white shadow-black/90"
+              } ${closingLang ? "animate-fade-scale-out" : "animate-fade-scale-in"}`}>
                 {UI_LANGUAGES.map((l) => (
                   <button
                     type="button"
                     key={l.code}
                     onClick={() => { pickLang(l.code); closeLang() }}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all duration-150 text-left hover:bg-white/10 cursor-pointer ${l.code === lang ? "bg-accent-orange/20 text-accent-orange font-bold" : "text-zinc-300"}`}
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all duration-150 text-left hover:bg-black/5 dark:hover:bg-white/10 cursor-pointer ${
+                      l.code === lang
+                        ? (theme === "light" ? "bg-zinc-900 text-white font-bold" : "bg-white text-zinc-950 font-bold")
+                        : (theme === "light" ? "text-zinc-800" : "text-zinc-300")
+                    }`}
                   >
                     <span className="flex items-center gap-2">
                       <span>{l.flag}</span>
                       <span>{l.name}</span>
                     </span>
-                    {l.code === lang && <Check className="w-3.5 h-3.5 text-accent-orange shrink-0" />}
+                    {l.code === lang && <Check className={`w-3.5 h-3.5 shrink-0 ${theme === "light" ? "text-white" : "text-zinc-950"}`} />}
                   </button>
                 ))}
               </div>
@@ -380,26 +466,41 @@ export function AppShell() {
             type="button"
             onClick={() => setTheme((t) => (t === "light" ? "dark" : "light"))}
             title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
-            className="relative group p-2.5 rounded-2xl text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-200 cursor-pointer"
+            className={`relative group p-2.5 rounded-2xl transition-all duration-200 cursor-pointer ${
+              theme === "light" ? "text-zinc-600 hover:text-zinc-950 hover:bg-black/5 active:scale-95" : "text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95"
+            }`}
           >
             {theme === "light" ? (
-              <Moon className="w-4 h-4 text-indigo-400" />
+              <Moon className="w-4.5 h-4.5 text-zinc-800" />
             ) : (
-              <Sun className="w-4 h-4 text-amber-400" />
+              <Sun className="w-4.5 h-4.5 text-zinc-200" />
             )}
-            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50">
+            <span className={`pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 text-xs font-semibold rounded-xl border opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50 ${
+              theme === "light" ? "bg-white text-zinc-900 border-black/10 shadow-black/10" : "bg-zinc-900 text-zinc-100 border-white/10 shadow-black/80"
+            }`}>
               {theme === "light" ? "Dark Mode" : "Light Mode"}
             </span>
           </button>
 
-          {/* Status Page (HeartPulse) */}
+          {/* Status Page (status.webp icon) */}
           <a
             href="/status"
             title={t("ui.statusTitle")}
-            className="relative group p-2.5 rounded-2xl text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-200 cursor-pointer"
+            className={`relative group p-2.5 rounded-2xl transition-all duration-200 cursor-pointer ${
+              theme === "light" ? "text-zinc-600 hover:text-zinc-950 hover:bg-black/5 active:scale-95" : "text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95"
+            }`}
           >
-            <HeartPulse className="w-4 h-4 text-emerald-400" />
-            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50">
+            {/* eslint-disable-next-line @next/next/no-img-element -- custom icon */}
+            <img
+              src="/icon/status.webp"
+              alt="Status"
+              className={`w-4.5 h-4.5 object-contain transition-all duration-200 ${
+                theme === "light" ? "brightness-0 opacity-75 group-hover:opacity-100" : "brightness-0 invert opacity-75 group-hover:opacity-100"
+              }`}
+            />
+            <span className={`pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 text-xs font-semibold rounded-xl border opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50 ${
+              theme === "light" ? "bg-white text-zinc-900 border-black/10 shadow-black/10" : "bg-zinc-900 text-zinc-100 border-white/10 shadow-black/80"
+            }`}>
               Status
             </span>
           </a>
@@ -411,12 +512,18 @@ export function AppShell() {
             title={t("ui.settings")}
             className={`relative group p-2.5 rounded-2xl transition-all duration-200 cursor-pointer ${
               settingsOpen
-                ? "bg-white text-zinc-950 shadow-lg shadow-white/20 scale-105 font-bold"
-                : "text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95"
+                ? (theme === "light" ? "bg-zinc-950 text-white shadow-lg shadow-black/20 scale-105" : "bg-white text-zinc-950 shadow-lg shadow-white/20 scale-105")
+                : (theme === "light" ? "text-zinc-600 hover:text-zinc-950 hover:bg-black/5 active:scale-95" : "text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95")
             }`}
           >
-            <Settings className="w-4 h-4" />
-            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50">
+            <Settings className={`w-4.5 h-4.5 transition-all duration-200 ${
+              settingsOpen
+                ? (theme === "light" ? "text-white" : "text-zinc-950")
+                : (theme === "light" ? "text-zinc-700 group-hover:text-zinc-950" : "text-zinc-300 group-hover:text-white")
+            }`} />
+            <span className={`pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 text-xs font-semibold rounded-xl border opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50 ${
+              theme === "light" ? "bg-white text-zinc-900 border-black/10 shadow-black/10" : "bg-zinc-900 text-zinc-100 border-white/10 shadow-black/80"
+            }`}>
               {t("ui.settings")}
             </span>
           </button>
