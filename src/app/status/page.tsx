@@ -211,6 +211,11 @@ export default function StatusPage() {
                   extra={data.storage.r2?.configured ? `Active (${data.storage.r2.bucket})` : "Not Configured"}
                 />
                 <StatusRow
+                  label="Cloudinary Storage Provider"
+                  ok={(data.storage as unknown as { cloudinary?: { configured: boolean; cloudName: string | null } }).cloudinary?.configured ?? false}
+                  extra={(data.storage as unknown as { cloudinary?: { configured: boolean; cloudName: string | null } }).cloudinary?.configured ? `Active (${(data.storage as unknown as { cloudinary?: { configured: boolean; cloudName: string | null } }).cloudinary?.cloudName ?? "CDN"})` : "Not Configured"}
+                />
+                <StatusRow
                   label="ImgBB Free Storage Cache"
                   ok={data.storage.imgbb?.configured ?? false}
                   extra={data.storage.imgbb?.configured ? "Active (100% Free CDN)" : "Not Configured"}

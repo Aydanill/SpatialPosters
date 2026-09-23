@@ -10,6 +10,7 @@ import { getTop10 } from "@/lib/flixpatrol"
 import { getServerDefaults } from "@/lib/server-defaults"
 import { getR2Config } from "@/lib/r2-storage"
 import { isImgBBConfigured } from "@/lib/imgbb-storage"
+import { isCloudinaryConfigured, getCloudinaryConfig } from "@/lib/cloudinary-storage"
 
 export const dynamic = "force-dynamic"
 
@@ -148,6 +149,10 @@ export async function GET(request: Request) {
     r2: {
       configured: !!getR2Config(),
       bucket: getR2Config()?.bucket ?? null,
+    },
+    cloudinary: {
+      configured: isCloudinaryConfigured(),
+      cloudName: getCloudinaryConfig()?.cloudName ?? null,
     },
     imgbb: {
       configured: isImgBBConfigured(),
