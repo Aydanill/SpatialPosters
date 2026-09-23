@@ -174,6 +174,7 @@ export function MyPostersView() {
         const col = collections.find((c) => c.id === activeCollection)
         return col?.posterIds.includes(key) ?? false
       })
+  }, [mappings, filter, typeFilter, activeCollection, collections])
   const [visibleCount, setVisibleCount] = useState(12)
 
   // Reset batch count on filter / collection change
