@@ -830,6 +830,93 @@ html.light-mode .tactile-btn:active {
     inset -2px -2px 4px rgba(255, 255, 255, 0.95);
 }
 
+/* Sidebar Dock Neumorphic Tactile Effects inspired by Uiverse */
+.sidebar-dock-shell {
+  background-color: #191A1E;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.75rem;
+  box-shadow:
+    4px 4px 14px #08090b,
+    -4px -4px 14px rgba(95, 94, 94, 0.22),
+    inset 0px 0px 0px transparent,
+    inset 0px 0px 0px transparent;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(18px);
+}
+
+html.light-mode .sidebar-dock-shell {
+  background-color: #f2f4f8;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow:
+    5px 5px 14px rgba(165, 175, 195, 0.6),
+    -5px -5px 14px rgba(255, 255, 255, 0.9),
+    inset 0px 0px 0px transparent,
+    inset 0px 0px 0px transparent;
+}
+
+.sidebar-dock-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem;
+  border-radius: 1rem;
+  background-color: transparent;
+  color: #a1a1aa;
+  border: 1px solid transparent;
+  box-shadow:
+    0px 0px 0px transparent,
+    0px 0px 0px transparent,
+    inset 0px 0px 0px transparent,
+    inset 0px 0px 0px transparent;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.sidebar-dock-btn:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.05);
+  box-shadow:
+    2px 2px 5px #0b0c0e,
+    -2px -2px 5px rgba(95, 94, 94, 0.25);
+}
+
+.sidebar-dock-btn:active,
+.sidebar-dock-btn-active {
+  color: #ffffff;
+  background-color: #121316;
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0px 0px 0px transparent,
+    0px 0px 0px transparent,
+    inset 2px 2px 4px #0b0c0e,
+    inset -2px -2px 4px rgba(95, 94, 94, 0.35);
+}
+
+html.light-mode .sidebar-dock-btn {
+  color: #52525b;
+}
+
+html.light-mode .sidebar-dock-btn:hover {
+  color: #09090b;
+  background-color: rgba(0, 0, 0, 0.03);
+  box-shadow:
+    2px 2px 5px rgba(165, 175, 195, 0.5),
+    -2px -2px 5px rgba(255, 255, 255, 0.9);
+}
+
+html.light-mode .sidebar-dock-btn:active,
+html.light-mode .sidebar-dock-btn-active {
+  color: #09090b;
+  background-color: #e4e7ee;
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0px 0px 0px transparent,
+    0px 0px 0px transparent,
+    inset 2px 2px 4px rgba(165, 175, 195, 0.7),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.95);
+}
+
 .surface-card {
   --glass-tint: rgba(19,19,23,0.90);
   --glass-border: rgba(255,255,255,0.06);
