@@ -535,7 +535,8 @@ export function MyPostersView() {
       )}
       {/* Mood Board Grid Layout */}
       <div className="mx-auto max-w-7xl relative">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 relative">
+          {/* Fully visible items */}
           {visibleItems.map((m, idx) => (
             <MoodBoardTile
               key={`${m.mediaType}:${m.tmdbId}`}
@@ -556,41 +557,37 @@ export function MyPostersView() {
               t={t}
             />
           ))}
+
+          {/* 3rd Row Blurred Preview Items */}
+          {hasMore && blurredPreviewItems.map((m, idx) => (
+            <div key={`blur-${m.mediaType}:${m.tmdbId}`} className="relative filter blur-md opacity-50 pointer-events-none select-none">
+              <MoodBoardTile
+                mapping={m}
+                idx={visibleCount + idx}
+                selectMode={false}
+                selected={new Set()}
+                onSelect={() => {}}
+                onOpen={() => {}}
+                onQuickView={() => {}}
+                onRemove={() => {}}
+                collectionCount={0}
+                t={t}
+              />
+            </div>
+          ))}
         </div>
 
-        {/* Blurred Preview Row & View More Button */}
+        {/* Floating Glass View More Overlay over 3rd Row */}
         {hasMore && (
-          <div className="relative mt-3 md:mt-4 overflow-hidden rounded-2xl">
-            {/* Blurred Items Background Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 filter blur-md opacity-25 select-none pointer-events-none h-[220px] sm:h-[260px] overflow-hidden">
-              {blurredPreviewItems.map((m, idx) => (
-                <MoodBoardTile
-                  key={`blur-${m.mediaType}:${m.tmdbId}`}
-                  mapping={m}
-                  idx={visibleCount + idx}
-                  selectMode={false}
-                  selected={new Set()}
-                  onSelect={() => {}}
-                  onOpen={() => {}}
-                  onQuickView={() => {}}
-                  onRemove={() => {}}
-                  collectionCount={0}
-                  t={t}
-                />
-              ))}
-            </div>
-
-            {/* Floating Glass View More Overlay */}
-            <div className="absolute inset-0 z-30 flex flex-col items-center justify-center p-4 bg-gradient-to-t from-background via-background/85 to-transparent">
-              <button
-                type="button"
-                onClick={() => setVisibleCount((prev) => prev + 12)}
-                className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-zinc-100 hover:bg-white text-zinc-950 font-bold text-xs shadow-2xl shadow-black/90 hover:scale-105 active:scale-95 transition-all duration-300 border border-white/40 cursor-pointer group"
-              >
-                <span>View More Posters ({filtered.length - visibleCount} remaining)</span>
-                <ChevronDown className="w-4 h-4 transition-transform group-hover:translate-y-0.5" />
-              </button>
-            </div>
+          <div className="absolute bottom-0 inset-x-0 h-56 z-30 flex flex-col items-center justify-end pb-6 bg-gradient-to-t from-background via-background/80 to-transparent pointer-events-none">
+            <button
+              type="button"
+              onClick={() => setVisibleCount((prev) => prev + 12)}
+              className="pointer-events-auto flex items-center gap-2.5 px-7 py-3.5 rounded-2xl bg-zinc-100 hover:bg-white text-zinc-950 font-bold text-xs shadow-[0_12px_40px_rgba(0,0,0,0.9)] hover:scale-105 active:scale-95 transition-all duration-300 border border-white/50 cursor-pointer group"
+            >
+              <span>View More Posters ({filtered.length - visibleCount} remaining)</span>
+              <ChevronDown className="w-4 h-4 transition-transform group-hover:translate-y-0.5" />
+            </button>
           </div>
         )}
       </div>
