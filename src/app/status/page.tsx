@@ -203,38 +203,41 @@ export default function StatusPage() {
         {error && <p className="text-red-400 mt-4 text-center">{t("ui.statusError", { msg: error })}</p>}
         {data && (
           <div className="mt-6 space-y-6">
-            <div className="bg-white/[0.03] border border-zinc-800 rounded-xl p-4">
-              <div className="flex items-center gap-2 mb-3">
+            <div className="metallic-card p-5 group">
+              <div className="metallic-card-glow" />
+              <div className="flex items-center gap-2 mb-3 relative z-10">
                 <StatusBadge ok={data.tmdb.apiKey} />
                 <h2 className="text-base font-semibold">{t("ui.statusTmdb")}</h2>
                 {data.tmdb.apiKey && <span className="text-xs text-zinc-400">{t("ui.statusApiKeyLength", { count: data.tmdb.apiKeyLength })}</span>}
               </div>
               {data.tmdb.apiKey ? (
-                <div className="space-y-1">
+                <div className="space-y-1 relative z-10">
                   <StatusRow label={t("ui.statusTrending")} ok={data.tmdb.trending.ok} extra={<>{data.tmdb.trending.status} — {data.tmdb.trending.time}ms</>} />
                   <StatusRow label={t("ui.statusSearch")} ok={data.tmdb.search.ok} extra={<>{data.tmdb.search.status} — {data.tmdb.search.time}ms</>} />
                   <StatusRow label={t("ui.statusPopular")} ok={data.tmdb.popular.ok} extra={<>{data.tmdb.popular.status} — {data.tmdb.popular.time}ms</>} />
                   <StatusRow label={t("ui.statusExternalIds")} ok={data.tmdb.externalIds.ok} extra={<>{data.tmdb.externalIds.status} — {data.tmdb.externalIds.time}ms</>} />
                 </div>
               ) : (
-                <div className="space-y-1">
+                <div className="space-y-1 relative z-10">
                   <StatusRow label={t("ui.statusTmdbKeyMissing")} ok={null} />
                 </div>
               )}
             </div>
 
-            <div className="bg-white/[0.03] border border-zinc-800 rounded-xl p-4">
-              <h2 className="text-base font-semibold mb-3">{t("ui.statusStreaming")}</h2>
-              <div className="space-y-1">
+            <div className="metallic-card p-5 group">
+              <div className="metallic-card-glow" />
+              <h2 className="text-base font-semibold mb-3 relative z-10">{t("ui.statusStreaming")}</h2>
+              <div className="space-y-1 relative z-10">
                 <StatusRow label={t("ui.statusJustwatch")} ok={data.tmdb.apiKey ? data.streaming.justwatch.ok : null} extra={data.tmdb.apiKey ? <>{data.streaming.justwatch.status} — {data.streaming.justwatch.time}ms</> : t("ui.statusTmdbKeyMissing")} />
                 <StatusRow label={t("ui.statusFlixpatrol")} ok={data.tmdb.apiKey ? data.streaming.flixpatrol.ok : null} extra={data.tmdb.apiKey ? <>{data.streaming.flixpatrol.status} — {data.streaming.flixpatrol.time}ms</> : t("ui.statusTmdbKeyMissing")} />
 
               </div>
             </div>
 
-            <div className="bg-white/[0.03] border border-zinc-800 rounded-xl p-4">
-              <h2 className="text-base font-semibold mb-3">{t("ui.statusStorage")}</h2>
-              <div className="space-y-1">
+            <div className="metallic-card p-5 group">
+              <div className="metallic-card-glow" />
+              <h2 className="text-base font-semibold mb-3 relative z-10">{t("ui.statusStorage")}</h2>
+              <div className="space-y-1 relative z-10">
                 {data.storage.mode === "kv"
                   ? <StatusRow label={t("ui.statusStorageMode")} ok extra={t("ui.statusStorageKv")} />
                   : <>
@@ -261,23 +264,25 @@ export default function StatusPage() {
               </div>
             </div>
 
-            <div className="bg-white/[0.03] border border-zinc-800 rounded-xl p-4">
-              <h2 className="text-base font-semibold mb-3">{t("ui.statusSystem")}</h2>
-              <div className="space-y-1">
+            <div className="metallic-card p-5 group">
+              <div className="metallic-card-glow" />
+              <h2 className="text-base font-semibold mb-3 relative z-10">{t("ui.statusSystem")}</h2>
+              <div className="space-y-1 relative z-10">
                 <StatusRow label={t("ui.statusOverall")} ok={data.tmdb.apiKey ? data.status === "healthy" : null} extra={data.tmdb.apiKey ? (data.status === "healthy" ? t("ui.statusHealthy") : t("ui.statusDegraded")) : t("ui.statusTmdbKeyMissing")} />
               </div>
             </div>
 
             {/* TMDB Quota & Telemetria */}
             {cacheStatus?.tmdb && (
-              <div className="bg-white/[0.03] border border-zinc-800 rounded-xl p-4">
-                <h2 className="text-base font-semibold mb-3 flex items-center justify-between">
+              <div className="metallic-card p-5 group">
+                <div className="metallic-card-glow" />
+                <h2 className="text-base font-semibold mb-3 flex items-center justify-between relative z-10">
                   <span>{t("ui.statusTmdbTelemetry")}</span>
                   <span className="text-xs px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
                     {t("ui.statusHitRate", { rate: cacheStatus.tmdb.cacheHitRate })}
                   </span>
                 </h2>
-                <div className="space-y-1">
+                <div className="space-y-1 relative z-10">
                   <StatusRow label={t("ui.statusTmdbTotalCalls")} ok extra={cacheStatus.tmdb.totalCalls} />
                   <StatusRow label={t("ui.statusTmdbCacheHits")} ok extra={<>{cacheStatus.tmdb.cacheHits} ({cacheStatus.tmdb.cacheHitRate})</>} />
                   <StatusRow label={t("ui.statusTmdbNetworkCalls")} ok extra={cacheStatus.tmdb.networkCalls} />
@@ -290,14 +295,15 @@ export default function StatusPage() {
 
             {/* Poster Cache Hit Rate & Pipeline */}
             {cacheStatus?.poster && (
-              <div className="bg-white/[0.03] border border-zinc-800 rounded-xl p-4">
-                <div className="flex items-center justify-between mb-3">
+              <div className="metallic-card p-5 group">
+                <div className="metallic-card-glow" />
+                <div className="flex items-center justify-between mb-3 relative z-10">
                   <h2 className="text-base font-semibold">{t("ui.statusPosterHitRateTitle")}</h2>
                   <span className="text-xs px-2 py-0.5 rounded-md bg-accent-orange/15 text-accent-orange border border-accent-orange/30 font-semibold">
                     {t("ui.statusHitRate", { rate: cacheStatus.poster.hitRate })}
                   </span>
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-1 relative z-10">
                   <StatusRow label={t("ui.statusPosterRequests")} ok extra={cacheStatus.poster.requests} />
                   <StatusRow label={t("ui.statusPosterServedCache")} ok extra={<>{cacheStatus.poster.hits} ({cacheStatus.poster.hitRate})</>} />
                   <StatusRow label={t("ui.statusPosterRendersZero")} ok extra={cacheStatus.poster.renders} />

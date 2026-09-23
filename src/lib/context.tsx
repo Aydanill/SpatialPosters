@@ -290,6 +290,10 @@ export function usePictorium(): PictoriumCtx {
   const [tmdbKeyInput, setTmdbKeyInput] = useState("")
   const [showKey, setShowKey] = useState(false)
   const [theme, setTheme] = useState<"dark" | "light">("dark")
+  useEffect(() => {
+    document.documentElement.classList.remove("light-mode")
+    document.documentElement.classList.add("dark")
+  }, [])
   // Lettura differita in useEffect per evitare hydration mismatch client/server
   const [uiAccent, setUiAccent] = useState(false)
   useEffect(() => {

@@ -53,11 +53,7 @@ export function SimklCard({ items, title, totalCount, meta = [], onClick, onItem
 
   return (
     <div
-      className={`group relative rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden p-4 sm:p-5 ${
-        isExpanded
-          ? "bg-zinc-900/90 border-white/25 shadow-2xl shadow-black/80 scale-[1.01]"
-          : "bg-surface/80 hover:bg-zinc-900/70 border-white/10 hover:border-white/20 shadow-lg shadow-black/40"
-      } ${className || ""}`}
+      className={`group relative metallic-card p-4 sm:p-5 cursor-pointer ${className || ""}`}
       role="button"
       tabIndex={0}
       onClick={onClick}
@@ -76,6 +72,7 @@ export function SimklCard({ items, title, totalCount, meta = [], onClick, onItem
         }
       }}
     >
+      <div className="metallic-card-glow" />
       {/* Header Info */}
       <div className="flex items-center justify-between gap-3 mb-4 z-10 relative">
         <div className="min-w-0 flex-1">
