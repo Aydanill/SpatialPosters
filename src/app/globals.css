@@ -1130,20 +1130,21 @@ html.light-mode .status-ring-loader::before {
   transform: translateY(-2px);
 }
 
-/* Mobile Floating Split Dock inspired by Uiverse narmesh_sah */
+/* Mobile Floating Split Liquid Glass Dock inspired by Uiverse narmesh_sah */
 .mobile-dock-nav {
   position: relative;
   flex: 1;
-  height: 58px;
+  height: 60px;
   padding: 4px 6px;
-  background: rgba(20, 20, 24, 0.88);
+  background: rgba(255, 255, 255, 0.12);
   box-shadow:
-    0 12px 35px -5px rgba(0, 0, 0, 0.8),
-    inset 0 1px 0 rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+    0 16px 40px 0 rgba(0, 0, 0, 0.65),
+    inset 0 1px 1px rgba(255, 255, 255, 0.25),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   display: flex;
   align-items: center;
   justify-content: space-evenly;
@@ -1157,7 +1158,7 @@ html.light-mode .status-ring-loader::before {
   flex: 1;
   height: 100%;
   border-radius: 9999px;
-  color: #a1a1aa;
+  color: #d4d4d8;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
@@ -1165,11 +1166,18 @@ html.light-mode .status-ring-loader::before {
 .mobile-dock-item:hover,
 .mobile-dock-item-active {
   color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
-.mobile-dock-item svg,
 .mobile-dock-item img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.mobile-dock-item svg {
   transition: transform 0.2s ease;
 }
 
@@ -1179,22 +1187,27 @@ html.light-mode .status-ring-loader::before {
 }
 
 .mobile-dock-action {
-  width: 58px;
-  height: 58px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  background: rgba(20, 20, 24, 0.88);
+  background: rgba(255, 255, 255, 0.12);
   box-shadow:
-    0 12px 35px -5px rgba(0, 0, 0, 0.8),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+    0 16px 40px 0 rgba(0, 0, 0, 0.65),
+    inset 0 1px 1px rgba(255, 255, 255, 0.25),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   display: flex;
   align-items: center;
   justify-content: center;
   shrink: 0;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
+}
+
+.mobile-dock-action:hover {
+  background: rgba(255, 255, 255, 0.18);
 }
 
 .mobile-dock-action:active {

@@ -503,7 +503,7 @@ export function AppShell() {
         {!(view === "edit" && selected) && <HomeStatusStrip />}
       </div>
 
-      {/* Mobile Floating Split Dual-Pill Dock (inspired by Uiverse narmesh_sah) */}
+      {/* Mobile Floating Split Liquid Glass Dock (inspired by Uiverse narmesh_sah) */}
       <nav
         aria-label={t("ui.mainNav")}
         className={`md:hidden fixed bottom-3 left-3 right-3 z-40 max-w-md mx-auto flex items-center gap-2.5 transition-all duration-300 pb-[env(safe-area-inset-bottom)] ${
@@ -519,7 +519,7 @@ export function AppShell() {
             className={`mobile-dock-item ${view === "edit" && !selected ? "mobile-dock-item-active text-white font-bold" : ""}`}
             title="Home"
           >
-            <Home className="w-4.5 h-4.5" />
+            <Home className="w-4.5 h-4.5 text-zinc-100" />
             <span className="text-[9px] font-medium tracking-tight truncate">Home</span>
           </button>
 
@@ -531,7 +531,8 @@ export function AppShell() {
             title="SpatialPosters"
           >
             <div className="relative">
-              <Sparkles className="w-4.5 h-4.5" />
+              {/* eslint-disable-next-line @next/next/no-img-element -- desktop custom icon */}
+              <img src="/icon/myposter.webp" alt="My Posters" className="w-4.5 h-4.5 object-contain brightness-0 invert" />
               {mappings.length > 0 && (
                 <span className="absolute -top-1 -right-2 px-1 min-w-3.5 h-3.5 bg-accent-orange text-[9px] font-bold text-white rounded-full flex items-center justify-center leading-none shadow-sm">
                   {mappings.length > 99 ? "99+" : mappings.length}
@@ -548,7 +549,8 @@ export function AppShell() {
             className={`mobile-dock-item ${view === "cataloghi" ? "mobile-dock-item-active text-white font-bold" : ""}`}
             title="Cataloghi"
           >
-            <Layers className="w-4.5 h-4.5" />
+            {/* eslint-disable-next-line @next/next/no-img-element -- desktop custom icon */}
+            <img src="/icon/collection.webp" alt="Catalogs" className="w-4.5 h-4.5 object-contain brightness-0 invert" />
             <span className="text-[9px] font-medium tracking-tight truncate">{t("ui.catalogs") || "Cataloghi"}</span>
           </button>
 
@@ -559,7 +561,7 @@ export function AppShell() {
             className={`mobile-dock-item ${settingsOpen ? "mobile-dock-item-active text-white font-bold" : ""}`}
             title="Settings"
           >
-            <Settings className="w-4.5 h-4.5" />
+            <Settings className="w-4.5 h-4.5 text-zinc-100" />
             <span className="text-[9px] font-medium tracking-tight truncate">{t("ui.settingsTitle") || "Opzioni"}</span>
           </button>
         </div>
@@ -571,9 +573,8 @@ export function AppShell() {
           title="Install Hub"
           className="mobile-dock-action group"
         >
-          <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-accent-orange to-amber-500 flex items-center justify-center text-white shadow-lg shadow-accent-orange/30 group-active:scale-90 transition-transform">
-            <QrCode className="w-4.5 h-4.5" />
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element -- desktop custom icon */}
+          <img src="/icon/install-hub.webp" alt="Install Hub" className="w-5 h-5 object-contain brightness-0 invert group-active:scale-90 transition-transform" />
         </button>
       </nav>
 
