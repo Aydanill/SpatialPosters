@@ -143,6 +143,13 @@ export function generateCloudinarySignature(params: Record<string, string | numb
   return crypto.createHash("sha1").update(toSign + apiSecret).digest("hex")
 }
 
+export function optimizeCloudinaryUrl(url: string): string {
+  if (url.includes("/image/upload/") && !url.includes("/f_auto")) {
+    return url.replace("/image/upload/", "/image/upload/f_auto,q_auto/")
+  }
+  return url
+}
+
 export async function uploadToCloudinary(
   buffer: Buffer,
   publicId?: string,
@@ -195,13 +202,14 @@ export async function uploadToCloudinary(
 
     const data = (await res.json()) as { secure_url?: string; public_id?: string; format?: string; bytes?: number }
     if (typeof data.secure_url === "string" && data.secure_url.length > 0) {
+      const optimizedUrl = optimizeCloudinaryUrl(data.secure_url)
       log.info("Poster successfully uploaded to Cloudinary", {
-        url: data.secure_url,
+        url: optimizedUrl,
         publicId: data.public_id,
         bytes: data.bytes,
       })
       return {
-        secure_url: data.secure_url,
+        secure_url: optimizedUrl,
         public_id: data.public_id || publicId || "",
         format: data.format,
         bytes: data.bytes,

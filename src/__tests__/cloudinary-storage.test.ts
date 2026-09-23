@@ -94,7 +94,7 @@ describe("Cloudinary Storage Adapter", () => {
     const result = await uploadToCloudinary(dummyBuffer, publicId)
 
     expect(result).not.toBeNull()
-    expect(result?.secure_url).toBe("https://res.cloudinary.com/testcloud/image/upload/v12345/spatialposters/tv/13916.jpg")
+    expect(result?.secure_url).toBe("https://res.cloudinary.com/testcloud/image/upload/f_auto,q_auto/v12345/spatialposters/tv/13916.jpg")
     expect(result?.public_id).toBe("spatialposters/tv/13916")
     expect(mockFetch).toHaveBeenCalledOnce()
 

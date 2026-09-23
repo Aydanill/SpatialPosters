@@ -233,130 +233,197 @@ export function AppShell() {
         />
       )}
 
-      {/* Primary Navigation Dock (Centered at Top) */}
-      <div className="hidden md:flex fixed top-4 left-1/2 -translate-x-1/2 z-50">
-        <div className="flex items-center gap-1 p-1.5 rounded-2xl bg-zinc-950/60 backdrop-blur-2xl border border-white/10 shadow-2xl shadow-black/50 relative">
-          {/* Home Button */}
+      {/* Desktop Unified Left Sidebar Dock */}
+      <aside className="hidden md:flex fixed left-5 top-1/2 -translate-y-1/2 z-50 flex-col items-center gap-2 p-2 rounded-3xl bg-zinc-950/75 backdrop-blur-2xl border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.7)] transition-all duration-300">
+        {/* Top Group: Main Navigation (Dock 1 items) */}
+        <div className="flex flex-col items-center gap-1.5">
+          {/* Home */}
           <button
             type="button"
             onClick={() => { goHome(); router.push("edit") }}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-300 ease-out cursor-pointer ${
+            title={t("ui.home") || "Home"}
+            className={`relative group p-2.5 rounded-2xl transition-all duration-200 cursor-pointer ${
               view === "edit" && !selected
-                ? "bg-white text-zinc-950 shadow-md shadow-white/10 scale-[1.02]"
-                : "text-zinc-300 hover:text-white hover:bg-white/[0.08]"
+                ? "bg-white text-zinc-950 shadow-lg shadow-white/20 scale-105"
+                : "text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95"
             }`}
           >
-            <Home className="w-3.5 h-3.5" />
-            <span>Home</span>
-          </button>
-
-          <div className="h-4 w-px bg-white/10 mx-0.5" />
-
-          {/* Install Hub Pill Button */}
-          <button
-            type="button"
-            onClick={handleInstallCatalog}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-zinc-300 hover:text-white hover:bg-white/[0.08] transition-all duration-300 ease-out cursor-pointer"
-          >
-            <QrCode className="w-3.5 h-3.5 text-zinc-300" />
-            <span>Install Hub</span>
-          </button>
-
-          <div className="h-4 w-px bg-white/10 mx-0.5" />
-
-          {/* SpatialPosters (My Posters) Button */}
-          <button
-            type="button"
-            onClick={() => router.push("myposters")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-300 ease-out cursor-pointer ${
-              view === "myposters"
-                ? "bg-white text-zinc-950 shadow-md shadow-white/10 scale-[1.02]"
-                : "text-zinc-300 hover:text-white hover:bg-white/[0.08]"
-            }`}
-          >
-            <Palette className={`w-3.5 h-3.5 ${view === "myposters" ? "text-zinc-950" : "text-amber-400"}`} />
-            <span>SpatialPosters</span>
-            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold ${
-              view === "myposters" ? "bg-zinc-900 text-white" : "bg-white/15 text-zinc-300"
-            }`}>
-              {mappings.length}
+            <Home className="w-4 h-4" />
+            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50">
+              Home
             </span>
           </button>
 
-          <div className="h-4 w-px bg-white/10 mx-0.5" />
+          {/* SpatialPosters / My Posters */}
+          <button
+            type="button"
+            onClick={() => router.push("myposters")}
+            title={t("ui.myPosters") || "SpatialPosters"}
+            className={`relative group p-2.5 rounded-2xl transition-all duration-200 cursor-pointer ${
+              view === "myposters"
+                ? "bg-white text-zinc-950 shadow-lg shadow-white/20 scale-105"
+                : "text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95"
+            }`}
+          >
+            <Palette className={`w-4 h-4 ${view === "myposters" ? "text-zinc-950" : "text-amber-400"}`} />
+            {mappings.length > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent-orange text-[9px] font-bold text-white shadow-md">
+                {mappings.length > 99 ? "99+" : mappings.length}
+              </span>
+            )}
+            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50">
+              SpatialPosters ({mappings.length})
+            </span>
+          </button>
 
-          {/* Catalogs Button */}
+          {/* Catalogs */}
           <button
             type="button"
             onClick={() => router.push("cataloghi")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-300 ease-out cursor-pointer ${
+            title={t("ui.catalogs") || "Catalogs"}
+            className={`relative group p-2.5 rounded-2xl transition-all duration-200 cursor-pointer ${
               view === "cataloghi"
-                ? "bg-white text-zinc-950 shadow-md shadow-white/10 scale-[1.02]"
-                : "text-zinc-300 hover:text-white hover:bg-white/[0.08]"
+                ? "bg-white text-zinc-950 shadow-lg shadow-white/20 scale-105"
+                : "text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95"
             }`}
           >
-            <Layers className={`w-3.5 h-3.5 ${view === "cataloghi" ? "text-zinc-950" : "text-cyan-400"}`} />
-            <span>Catalogs</span>
+            <Layers className={`w-4 h-4 ${view === "cataloghi" ? "text-zinc-950" : "text-cyan-400"}`} />
+            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50">
+              {t("ui.catalogs") || "Catalogs"}
+            </span>
           </button>
 
-          <div className="h-4 w-px bg-white/10 mx-0.5" />
-
-          {/* Status Page Access */}
-          <a
-            href="/status"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-zinc-300 hover:text-white hover:bg-white/[0.08] transition-all duration-300 ease-out cursor-pointer"
-          >
-            <HeartPulse className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Status</span>
-          </a>
-        </div>
-      </div>
-
-      {/* Utility & Settings Dock (Right Side) */}
-      <div className="hidden md:flex fixed top-4 right-4 z-50">
-        <div className="flex items-center gap-1 p-1.5 rounded-2xl bg-zinc-950/60 backdrop-blur-2xl border border-white/10 shadow-2xl shadow-black/50 relative">
-          {/* Addon Proxy Modal */}
+          {/* Install Hub */}
           <button
             type="button"
-            aria-label={t("ui.addonProxy")}
-            title={t("ui.addonProxy")}
+            onClick={handleInstallCatalog}
+            title="Install Hub"
+            className="relative group p-2.5 rounded-2xl text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-200 cursor-pointer"
+          >
+            <QrCode className="w-4 h-4 text-emerald-400" />
+            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50">
+              Install Hub
+            </span>
+          </button>
+        </div>
+
+        {/* Divider */}
+        <div className="w-7 h-px bg-white/10 my-0.5" />
+
+        {/* Bottom Group: Status, Settings & Tools (Dock 2 items at the bottom) */}
+        <div className="flex flex-col items-center gap-1.5">
+          {/* Addon Proxy */}
+          <button
+            type="button"
             onClick={() => setProxyOpen(true)}
-            className="p-2 rounded-xl text-zinc-300 hover:text-white hover:bg-white/[0.08] active:scale-90 transition-all duration-300 cursor-pointer"
+            title={t("ui.addonProxy")}
+            className="relative group p-2.5 rounded-2xl text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-200 cursor-pointer"
           >
             <Sparkles className="w-4 h-4 text-amber-400" />
+            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50">
+              {t("ui.addonProxy")}
+            </span>
           </button>
+
+          {/* Refresh Lists */}
+          <button
+            type="button"
+            onClick={async () => { setRefreshing(true); await refreshLists(); setRefreshing(false) }}
+            disabled={refreshing}
+            title={t("ui.refreshLists")}
+            className="relative group p-2.5 rounded-2xl text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-200 cursor-pointer disabled:opacity-50"
+          >
+            <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin text-accent-orange" : ""}`} />
+            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50">
+              {t("ui.refreshLists")}
+            </span>
+          </button>
+
+          {/* Language Picker */}
+          <div ref={langRef} className="relative group">
+            <button
+              type="button"
+              onClick={() => setLangOpen((o) => !o)}
+              title={LANG_NAMES[lang]}
+              className={`p-2.5 rounded-2xl transition-all duration-200 cursor-pointer ${
+                langOpen ? "bg-white/15 text-white" : "text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95"
+              }`}
+            >
+              <span className="text-sm leading-none">{LANG_FLAGS[lang] || <Globe className="w-4 h-4" />}</span>
+            </button>
+            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50">
+              {LANG_NAMES[lang]} ({lang.toUpperCase()})
+            </span>
+
+            {(langOpen || closingLang) && (
+              <div className={`absolute left-full top-0 ml-3 bg-black/90 backdrop-blur-2xl border border-white/15 rounded-2xl p-1.5 shadow-2xl shadow-black/90 z-50 min-w-44 ${closingLang ? "animate-fade-scale-out" : "animate-fade-scale-in"}`}>
+                {UI_LANGUAGES.map((l) => (
+                  <button
+                    type="button"
+                    key={l.code}
+                    onClick={() => { pickLang(l.code); closeLang() }}
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all duration-150 text-left hover:bg-white/10 cursor-pointer ${l.code === lang ? "bg-accent-orange/20 text-accent-orange font-bold" : "text-zinc-300"}`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span>{l.flag}</span>
+                      <span>{l.name}</span>
+                    </span>
+                    {l.code === lang && <Check className="w-3.5 h-3.5 text-accent-orange shrink-0" />}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* Light / Dark Mode Toggle */}
           <button
             type="button"
-            aria-label={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
-            title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
             onClick={() => setTheme((t) => (t === "light" ? "dark" : "light"))}
-            className="p-2 rounded-xl text-zinc-300 hover:text-white hover:bg-white/[0.08] active:scale-90 transition-all duration-300 cursor-pointer"
+            title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+            className="relative group p-2.5 rounded-2xl text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-200 cursor-pointer"
           >
             {theme === "light" ? (
-              <Moon className="w-4 h-4 text-indigo-400 transition-transform duration-300 hover:rotate-12" />
+              <Moon className="w-4 h-4 text-indigo-400" />
             ) : (
-              <Sun className="w-4 h-4 text-amber-400 transition-transform duration-300 hover:rotate-45" />
+              <Sun className="w-4 h-4 text-amber-400" />
             )}
+            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50">
+              {theme === "light" ? "Dark Mode" : "Light Mode"}
+            </span>
           </button>
 
-          {/* Settings Button */}
+          {/* Status Page (HeartPulse) */}
+          <a
+            href="/status"
+            title={t("ui.statusTitle")}
+            className="relative group p-2.5 rounded-2xl text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-200 cursor-pointer"
+          >
+            <HeartPulse className="w-4 h-4 text-emerald-400" />
+            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50">
+              Status
+            </span>
+          </a>
+
+          {/* Settings (At the very bottom) */}
           <button
             type="button"
-            aria-label={t("ui.settings")}
-            title={t("ui.settings")}
             onClick={(e) => { e.stopPropagation(); setSettingsOpen((o) => !o) }}
-            className={`p-2 rounded-xl transition-all duration-300 cursor-pointer ${
-              settingsOpen ? "bg-white text-zinc-950 font-bold shadow-md shadow-white/10" : "text-zinc-300 hover:text-white hover:bg-white/[0.08]"
+            title={t("ui.settings")}
+            className={`relative group p-2.5 rounded-2xl transition-all duration-200 cursor-pointer ${
+              settingsOpen
+                ? "bg-white text-zinc-950 shadow-lg shadow-white/20 scale-105 font-bold"
+                : "text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95"
             }`}
           >
             <Settings className="w-4 h-4" />
+            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50">
+              {t("ui.settings")}
+            </span>
           </button>
         </div>
-      </div>
+      </aside>
 
-      <div className="relative z-10 max-w-[1680px] mx-auto px-3 sm:px-4 pt-3 sm:pt-5 md:pt-[68px] pb-24 md:pb-6">
+      <div className="relative z-10 max-w-[1680px] mx-auto px-3 sm:px-4 pt-3 sm:pt-5 md:pt-6 pb-24 md:pb-6">
         {/* Header globale (logo + tagline + toolbar mobile) */}
         {!(view === "edit" && selected) && (
         <div className="flex flex-col items-center pb-3 sm:pb-4 animate-fade-scale-in relative">
@@ -389,43 +456,6 @@ export function AppShell() {
         </div>
         {/* Strip di stato: presente nelle viste principali, nascosto in editor poster */}
         {!(view === "edit" && selected) && <HomeStatusStrip />}
-      </div>
-
-      {/* Desktop Bottom-Right Utility Cluster */}
-      <div className="hidden md:block fixed bottom-5 right-5 z-50">
-        <div className="flex items-center gap-2 floating-group">
-          <button type="button"
-            aria-label={t("ui.refreshLists")}
-            onClick={async () => { setRefreshing(true); await refreshLists(); setRefreshing(false) }}
-            disabled={refreshing}
-            title={t("ui.refreshLists")}
-            className="h-9 w-9 flex items-center justify-center rounded-lg active:scale-90 transition-all duration-150 text-sm hover:bg-white/[0.08] press-scale"
-          >
-            <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
-          </button>
-          <a href="/status" aria-label={t("ui.statusTitle")} className="h-9 w-9 flex items-center justify-center rounded-lg active:scale-90 transition-all duration-150 text-sm hover:bg-white/[0.08] press-scale"><HeartPulse className="w-4 h-4" /></a>
-          <div ref={langRef} className="relative">
-            <button type="button" aria-label={t("ui.chooseLanguage")} onClick={() => setLangOpen((o) => !o)} className={`h-9 w-9 flex items-center justify-center rounded-lg active:scale-90 transition-all duration-150 text-sm press-scale ${langOpen ? "dropdown-open" : "hover:bg-white/[0.08]"}`} title={LANG_NAMES[lang]}>{LANG_FLAGS[lang] || <Globe className="w-4 h-4" />}</button>
-            {(langOpen || closingLang) && (
-              <div className={`absolute right-0 bottom-full mb-3 bg-black/60 backdrop-blur-xl border border-border/50 rounded-xl p-2 shadow-2xl shadow-black/50 z-50 min-w-40 ${closingLang ? "animate-fade-scale-out" : "animate-fade-scale-in"} dropdown-open`}>
-                {UI_LANGUAGES.map((l) => (
-                  <button
-                    type="button"
-                    key={l.code}
-                    onClick={() => { pickLang(l.code); closeLang() }}
-                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs transition-all duration-150 text-left hover:bg-zinc-700/50 active:scale-[0.98] ${l.code === lang ? "bg-accent/10 text-accent font-medium" : "text-zinc-300"}`}
-                  >
-                    <span className="flex items-center gap-2">
-                      <span>{l.flag}</span>
-                      <span>{l.name}</span>
-                    </span>
-                    {l.code === lang && <Check className="w-3.5 h-3.5 text-accent shrink-0" />}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
       </div>
 
       {/* Mobile Bottom Navigation Bar (iOS / Android Style) */}
