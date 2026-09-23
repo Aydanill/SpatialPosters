@@ -57,6 +57,7 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
   const [customUrlInput, setCustomUrlInput] = useState("")
   const [showUrlInput, setShowUrlInput] = useState(false)
   const [gridCols, setGridCols] = useState<2 | 3>(2)
+  const [isResolvingUrl, setIsResolvingUrl] = useState(false)
 
   // Load saved custom posters from localStorage
   useEffect(() => {
@@ -82,19 +83,59 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
     }
   }
 
-  const handleAddCustomUrl = (e: React.FormEvent) => {
+  const handleAddCustomUrl = async (e: React.FormEvent) => {
     e.preventDefault()
     const trimmed = customUrlInput.trim()
     if (!trimmed || (!trimmed.startsWith("http://") && !trimmed.startsWith("https://"))) {
       toast.error(t("ui.invalidUrl") || "Please enter a valid HTTP/HTTPS URL")
       return
     }
-    if (customPosters.some((p) => p.file_path === trimmed)) {
+
+    // Resolve the URL to a direct image URL (handles Pinterest, Reddit, Imgur, etc.)
+    let imageUrl = trimmed
+    const looksLikePage =
+      trimmed.includes("pin.it") ||
+      trimmed.includes("pinterest.com") ||
+      trimmed.includes("reddit.com") ||
+      trimmed.includes("redd.it") ||
+      trimmed.includes("imgur.com/a/") ||
+      trimmed.includes("imgur.com/gallery/") ||
+      (!trimmed.match(/\.(jpg|jpeg|png|webp|gif|avif)(\?|$)/i) &&
+        !trimmed.includes("i.pinimg.com") &&
+        !trimmed.includes("i.redd.it") &&
+        !trimmed.includes("i.imgur.com") &&
+        !trimmed.includes("share.redd.it"))
+
+    if (looksLikePage) {
+      setIsResolvingUrl(true)
+      try {
+        const res = await fetch(`/api/resolve-image?url=${encodeURIComponent(trimmed)}`)
+        const data = await res.json()
+        if (!res.ok || !data.imageUrl) {
+          toast.error(
+            data.error
+              ? `${t("ui.urlResolveFailed") || "Could not resolve URL"}: ${data.error}`
+              : (t("ui.urlResolveFailed") || "Could not find an image at that URL")
+          )
+          setIsResolvingUrl(false)
+          return
+        }
+        imageUrl = data.imageUrl
+      } catch {
+        toast.error(t("ui.urlResolveFailed") || "Could not resolve URL — check your connection")
+        setIsResolvingUrl(false)
+        return
+      } finally {
+        setIsResolvingUrl(false)
+      }
+    }
+
+    if (customPosters.some((p) => p.file_path === imageUrl)) {
       toast.error(t("ui.urlExists") || "Poster URL already added")
       return
     }
     const newPoster: TMDBImage = {
-      file_path: trimmed,
+      file_path: imageUrl,
       width: 1000,
       height: 1500,
       iso_639_1: null,
@@ -427,21 +468,32 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
       {showUrlInput && (
         <form onSubmit={handleAddCustomUrl} className="flex gap-2 mb-3 p-1.5 rounded-xl bg-white/[0.04] border border-white/10 backdrop-blur-md shadow-lg transition-all">
           <div className="relative flex-1">
-            <Link className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+            {isResolvingUrl ? (
+              <RefreshCw className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-accent-orange animate-spin" />
+            ) : (
+              <Link className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+            )}
             <input
-              type="url"
+              type="text"
               value={customUrlInput}
               onChange={(e) => setCustomUrlInput(e.target.value)}
-              placeholder="https://..."
-              className="w-full bg-black/50 border border-white/10 rounded-lg pl-8 pr-2.5 py-1.5 text-xs text-white placeholder:text-zinc-500 focus:outline-none focus:border-accent-orange/60 transition-colors"
+              placeholder={t("ui.customImportPh") || "Paste image URL, Pinterest or Reddit link…"}
+              disabled={isResolvingUrl}
+              className="w-full bg-black/50 border border-white/10 rounded-lg pl-8 pr-2.5 py-1.5 text-xs text-white placeholder:text-zinc-500 focus:outline-none focus:border-accent-orange/60 transition-colors disabled:opacity-60"
               autoFocus
             />
           </div>
           <button
             type="submit"
-            className="px-3 rounded-lg bg-accent-orange text-white hover:bg-orange-500 font-semibold text-xs transition-all flex items-center gap-1 shadow-md hover:scale-[1.02] active:scale-[0.98]"
+            disabled={isResolvingUrl}
+            className="px-3 rounded-lg bg-accent-orange text-white hover:bg-orange-500 font-semibold text-xs transition-all flex items-center gap-1 shadow-md hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-wait disabled:scale-100"
           >
-            <Plus className="w-3.5 h-3.5" /> {t("ui.add") || "Add"}
+            {isResolvingUrl ? (
+              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Plus className="w-3.5 h-3.5" />
+            )}
+            {isResolvingUrl ? (t("ui.resolving") || "Resolving…") : (t("ui.add") || "Add")}
           </button>
         </form>
       )}
