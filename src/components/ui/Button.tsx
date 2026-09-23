@@ -2,6 +2,8 @@
 
 import { cn } from "@/lib/utils"
 
+import { BladeSpinner } from "./BladeSpinner"
+
 export interface ButtonProps {
   variant?: "default" | "primary" | "secondary" | "ghost" | "danger"
   size?: "xs" | "sm" | "md" | "lg"
@@ -71,7 +73,7 @@ export function Button({
     >
       {loading && (
         <span className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-xl">
-          <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          <BladeSpinner size="14px" />
         </span>
       )}
       <span className={cn("flex items-center justify-center", loading && "invisible")}>

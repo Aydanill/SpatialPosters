@@ -7,6 +7,7 @@ import { useT } from "@/lib/contexts/TranslationContext"
 import { usePosterEditor } from "@/lib/contexts/PosterEditorContext"
 import { http } from "@/lib/http"
 import { EpisodePreview } from "@/components/EpisodePreview"
+import { BladeSpinner } from "@/components/ui/BladeSpinner"
 
 export function EpisodeGroupControls() {
   const { t } = useT()
@@ -251,7 +252,7 @@ export function EpisodeGroupControls() {
                 <span>🗄️ TheTVDB</span>
                 <span className="text-[10px] text-zinc-400">{t("ui.tvdbLoading")}</span>
               </div>
-              <span className="w-3.5 h-3.5 border-2 border-zinc-500 border-t-transparent rounded-full animate-spin shrink-0" />
+              <BladeSpinner size="14px" className="shrink-0" />
             </button>
           ) : tvdbSeasonTypes.length === 0 ? (
             <div className="w-full text-left px-2.5 py-2 rounded-lg text-[11px] border bg-surface2/20 text-zinc-400 border-white/5">

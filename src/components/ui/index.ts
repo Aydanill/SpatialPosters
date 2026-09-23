@@ -4,3 +4,5 @@ export { SecretInput } from "./SecretInput"
 export { MenuItem } from "./MenuItem"
 export { Button, type ButtonProps } from "./Button"
 export { EmojiPicker } from "./EmojiPicker"
+export { BladeSpinner } from "./BladeSpinner"
+

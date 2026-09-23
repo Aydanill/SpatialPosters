@@ -1,5 +1,6 @@
 import { useState } from "react"
-import { Eye, EyeOff, Check, X, Loader2, ShieldCheck } from "lucide-react"
+import { Eye, EyeOff, Check, X, ShieldCheck } from "lucide-react"
+import { BladeSpinner } from "./BladeSpinner"
 
 export function SecretInput({
   label,
@@ -91,7 +92,7 @@ export function SecretInput({
             aria-label="Verifica validità chiave"
           >
             {validating ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin text-accent-orange" />
+              <BladeSpinner size="14px" />
             ) : validStatus === "valid" ? (
               <Check className="w-3.5 h-3.5 text-emerald-400" />
             ) : validStatus === "invalid" ? (

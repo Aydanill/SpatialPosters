@@ -2,7 +2,8 @@
 
 import React, { useState, useRef, useEffect } from "react"
 import { useT } from "@/lib/contexts/TranslationContext"
-import { Search, ArrowRight, AlertCircle, Film, Tv, Star, Clock, X, Loader2 } from "lucide-react"
+import { Search, ArrowRight, AlertCircle, Film, Tv, Star, Clock, X } from "lucide-react"
+import { BladeSpinner } from "@/components/ui/BladeSpinner"
 import { http } from "@/lib/http"
 import type { SearchResult } from "@/lib/types"
 
@@ -130,7 +131,7 @@ export function SearchBar({
           aria-hidden="true"
         >
           {liveLoading ? (
-            <Loader2 className="w-4 h-4 text-zinc-400 animate-spin" />
+            <BladeSpinner size="16px" />
           ) : (
             <Search className="w-4 h-4 transition-transform duration-300 group-focus-within:scale-110" />
           )}

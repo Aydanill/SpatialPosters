@@ -12,6 +12,7 @@ import { useT } from "@/lib/contexts/TranslationContext"
 import { usePosterEditor } from "@/lib/contexts/PosterEditorContext"
 import { usePosterFit } from "@/lib/usePosterFit"
 import { RotateCcw, Check, Clock, Sparkles, ArrowUpDown, EyeOff, Eye, ChevronDown, Link, Plus, Trash2, Grid2X2, Grid3X3, RefreshCw } from "lucide-react"
+import { BladeSpinner } from "@/components/ui/BladeSpinner"
 
 interface Props {
   posters: TMDBImage[]
@@ -443,7 +444,11 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
                 className="h-8 px-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white text-xs font-medium transition-all flex items-center gap-1.5 shadow-sm disabled:opacity-50 active:scale-95"
                 title="Refresh posters from TMDB"
               >
-                <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin text-accent-orange" : ""}`} />
+                {isRefreshing ? (
+                  <BladeSpinner size="14px" />
+                ) : (
+                  <RefreshCw className="w-3.5 h-3.5" />
+                )}
                 <span>{t("ui.refresh") || "Refresh"}</span>
               </button>
 
@@ -469,7 +474,7 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
         <form onSubmit={handleAddCustomUrl} className="flex gap-2 mb-3 p-1.5 rounded-xl bg-white/[0.04] border border-white/10 backdrop-blur-md shadow-lg transition-all">
           <div className="relative flex-1">
             {isResolvingUrl ? (
-              <RefreshCw className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-accent-orange animate-spin" />
+              <BladeSpinner size="14px" className="absolute left-2.5 top-1/2 -translate-y-1/2" />
             ) : (
               <Link className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" />
             )}
@@ -489,7 +494,7 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
             className="px-3 rounded-lg bg-accent-orange text-white hover:bg-orange-500 font-semibold text-xs transition-all flex items-center gap-1 shadow-md hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-wait disabled:scale-100"
           >
             {isResolvingUrl ? (
-              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+              <BladeSpinner size="14px" />
             ) : (
               <Plus className="w-3.5 h-3.5" />
             )}
@@ -554,7 +559,7 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
           )}
           {fitLoading && (
             <div className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-zinc-400">
-              <Clock className="w-3.5 h-3.5 animate-spin" />{t("ui.analyzing")}
+              <BladeSpinner size="14px" />{t("ui.analyzing")}
             </div>
           )}
           {fitError && !fitLoading && (

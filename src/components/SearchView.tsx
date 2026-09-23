@@ -7,7 +7,8 @@ import { useSearchCtx } from "@/lib/contexts/SearchContext"
 import { posterUrl, titleOf, yearOf } from "@/lib/utils"
 import { SearchBar } from "@/components/SearchBar"
 import { PosterCardSkeleton } from "@/components/Skeleton"
-import { Clock, X, Check, ChevronDown, Clapperboard, Tv, Star, Trash2, Loader2 } from "lucide-react"
+import { Clock, X, Check, ChevronDown, Clapperboard, Tv, Star, Trash2 } from "lucide-react"
+import { BladeSpinner } from "@/components/ui/BladeSpinner"
 import { PosterDepthEdge } from "@/components/PosterDepthGlow"
 
 export function SearchView() {
@@ -244,7 +245,7 @@ export function SearchView() {
 
                 {loadingMore ? (
                   <>
-                    <Loader2 className="w-4 h-4 text-accent-orange animate-spin" />
+                    <BladeSpinner size="16px" />
                     <span>{t("ui.loading")}</span>
                   </>
                 ) : (

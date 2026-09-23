@@ -13,6 +13,7 @@ import { CustomCatalogModal } from "@/components/CustomCatalogModal"
 import { CatalogManagerModal } from "@/components/CatalogManagerModal"
 import { posterUrl } from "@/lib/utils"
 import { X, Check, ListPlus, Trash2, Film, Tv, Shuffle, Power, SlidersHorizontal, Home } from "lucide-react"
+import { BladeSpinner } from "@/components/ui/BladeSpinner"
 
 interface GridViewItem {
   tmdbId: number | null
@@ -206,7 +207,7 @@ function CustomCatalogEntry({
 
       {loading ? (
         <div className="h-28 flex items-center justify-center rounded-xl bg-black/20 border border-white/5 text-xs text-muted">
-          <div className="w-4 h-4 border-2 border-accent-orange/30 border-t-accent-orange rounded-full animate-spin mr-2" />
+          <BladeSpinner size="16px" className="mr-2" />
           {t("ui.customLoadingTitles")}
         </div>
       ) : items.length === 0 ? (

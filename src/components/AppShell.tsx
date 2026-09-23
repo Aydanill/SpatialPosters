@@ -12,6 +12,7 @@ import { AmbientBackground } from "@/components/AmbientBackground"
 import { HomeStatusStrip } from "@/components/HomeStatusStrip"
 import { AnimatedSpatialWord } from "@/components/AnimatedSpatialWord"
 import { RefreshCw, Settings, Globe, HeartPulse, Sparkles, Check, QrCode, Palette, Layers, Sun, Moon, Home } from "lucide-react"
+import { BladeSpinner } from "@/components/ui/BladeSpinner"
 
 function InstagramIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
   return (
@@ -180,7 +181,7 @@ export function AppShell() {
         disabled={refreshing}
         className="p-1.5 rounded-xl bg-white/[0.05] border border-white/10 text-zinc-300 active:scale-90 transition-all"
       >
-        <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
+        {refreshing ? <BladeSpinner size="14px" /> : <RefreshCw className="w-3.5 h-3.5" />}
       </button>
 
       <a
@@ -350,7 +351,11 @@ export function AppShell() {
             title={t("ui.refreshLists")}
             className="group sidebar-dock-btn disabled:opacity-50"
           >
-            <RefreshCw className={`w-4.5 h-4.5 transition-all duration-200 ${refreshing ? "animate-spin" : ""} ${theme === "light" ? "text-zinc-700 group-hover:text-zinc-950" : "text-zinc-300 group-hover:text-white"}`} />
+            {refreshing ? (
+              <BladeSpinner size="18px" />
+            ) : (
+              <RefreshCw className={`w-4.5 h-4.5 transition-all duration-200 ${theme === "light" ? "text-zinc-700 group-hover:text-zinc-950" : "text-zinc-300 group-hover:text-white"}`} />
+            )}
             <span className={`pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 text-xs font-semibold rounded-xl border opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50 ${
               theme === "light" ? "bg-white text-zinc-900 border-black/10 shadow-black/10" : "bg-zinc-900 text-zinc-100 border-white/10 shadow-black/80"
             }`}>
