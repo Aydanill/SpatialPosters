@@ -174,8 +174,16 @@ export function MyPostersView() {
         const col = collections.find((c) => c.id === activeCollection)
         return col?.posterIds.includes(key) ?? false
       })
-      .sort((a, b) => sortBy === "updated" ? b.updatedAt.localeCompare(a.updatedAt) : a.title.localeCompare(b.title))
-  }, [mappings, filter, sortBy, typeFilter, activeCollection, collections])
+  const [visibleCount, setVisibleCount] = useState(12)
+
+  // Reset batch count on filter / collection change
+  useEffect(() => {
+    setVisibleCount(12)
+  }, [filter, typeFilter, activeCollection, sortBy])
+
+  const visibleItems = useMemo(() => filtered.slice(0, visibleCount), [filtered, visibleCount])
+  const blurredPreviewItems = useMemo(() => filtered.slice(visibleCount, visibleCount + 6), [filtered, visibleCount])
+  const hasMore = visibleCount < filtered.length
 
   useEffect(() => {
     if (!sortOpen) return
@@ -525,28 +533,66 @@ export function MyPostersView() {
           )}
         </div>
       )}
-      {/* Mood Board layout */}
-      <div className="mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 max-w-7xl">
-        {filtered.map((m, idx) => (
-          <MoodBoardTile
-            key={`${m.mediaType}:${m.tmdbId}`}
-            mapping={m}
-            idx={idx}
-            selectMode={selectMode}
-            selected={selected}
-            onSelect={() => toggleSelect(`${m.mediaType}:${m.tmdbId}`)}
-            onOpen={() => navigateToPoster(toSearchResult({ id: m.tmdbId, media_type: m.mediaType, title: m.title, name: m.title, poster_path: m.posterPath }), "myposters")}
-            onQuickView={(e) => {
-              const target = e.currentTarget as HTMLElement
-              const tileEl = target.closest(".surface-card") || target.closest(".group") || target
-              const rect = tileEl ? tileEl.getBoundingClientRect() : new DOMRect(window.innerWidth / 2, window.innerHeight / 2, 0, 0)
-              setLightbox({ mapping: m, rect })
-            }}
-            onRemove={(e) => { e.stopPropagation(); setConfirmRemove(m) }}
-            collectionCount={collections.filter((c) => c.posterIds.includes(`${m.mediaType}:${m.tmdbId}`)).length}
-            t={t}
-          />
-        ))}
+      {/* Mood Board Grid Layout */}
+      <div className="mx-auto max-w-7xl relative">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
+          {visibleItems.map((m, idx) => (
+            <MoodBoardTile
+              key={`${m.mediaType}:${m.tmdbId}`}
+              mapping={m}
+              idx={idx}
+              selectMode={selectMode}
+              selected={selected}
+              onSelect={() => toggleSelect(`${m.mediaType}:${m.tmdbId}`)}
+              onOpen={() => navigateToPoster(toSearchResult({ id: m.tmdbId, media_type: m.mediaType, title: m.title, name: m.title, poster_path: m.posterPath }), "myposters")}
+              onQuickView={(e) => {
+                const target = e.currentTarget as HTMLElement
+                const tileEl = target.closest(".surface-card") || target.closest(".group") || target
+                const rect = tileEl ? tileEl.getBoundingClientRect() : new DOMRect(window.innerWidth / 2, window.innerHeight / 2, 0, 0)
+                setLightbox({ mapping: m, rect })
+              }}
+              onRemove={(e) => { e.stopPropagation(); setConfirmRemove(m) }}
+              collectionCount={collections.filter((c) => c.posterIds.includes(`${m.mediaType}:${m.tmdbId}`)).length}
+              t={t}
+            />
+          ))}
+        </div>
+
+        {/* Blurred Preview Row & View More Button */}
+        {hasMore && (
+          <div className="relative mt-3 md:mt-4 overflow-hidden rounded-2xl">
+            {/* Blurred Items Background Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 filter blur-md opacity-25 select-none pointer-events-none h-[220px] sm:h-[260px] overflow-hidden">
+              {blurredPreviewItems.map((m, idx) => (
+                <MoodBoardTile
+                  key={`blur-${m.mediaType}:${m.tmdbId}`}
+                  mapping={m}
+                  idx={visibleCount + idx}
+                  selectMode={false}
+                  selected={new Set()}
+                  onSelect={() => {}}
+                  onOpen={() => {}}
+                  onQuickView={() => {}}
+                  onRemove={() => {}}
+                  collectionCount={0}
+                  t={t}
+                />
+              ))}
+            </div>
+
+            {/* Floating Glass View More Overlay */}
+            <div className="absolute inset-0 z-30 flex flex-col items-center justify-center p-4 bg-gradient-to-t from-background via-background/85 to-transparent">
+              <button
+                type="button"
+                onClick={() => setVisibleCount((prev) => prev + 12)}
+                className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-zinc-100 hover:bg-white text-zinc-950 font-bold text-xs shadow-2xl shadow-black/90 hover:scale-105 active:scale-95 transition-all duration-300 border border-white/40 cursor-pointer group"
+              >
+                <span>View More Posters ({filtered.length - visibleCount} remaining)</span>
+                <ChevronDown className="w-4 h-4 transition-transform group-hover:translate-y-0.5" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
       <PosterLightbox
         lightbox={lightbox}
