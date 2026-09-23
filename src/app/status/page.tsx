@@ -101,8 +101,8 @@ function StatusBadge({ ok }: { ok: boolean | null }) {
     return <span className="inline-block w-2.5 h-2.5 rounded-full bg-zinc-500 shadow-[0_0_6px_rgba(113,113,122,0.5)] mr-2 shrink-0" />
   }
   return ok
-    ? <span className="inline-block w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.6)] mr-2 shrink-0" />
-    : <span className="inline-block w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.6)] mr-2 shrink-0" />
+    ? <span className="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] mr-2 shrink-0 animate-pulse" />
+    : <span className="inline-block w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)] mr-2 shrink-0 animate-pulse" />
 }
 
 function StatusRow({ label, ok, extra }: { label: string; ok: boolean | null; extra?: React.ReactNode }) {
@@ -156,13 +156,51 @@ export default function StatusPage() {
     void loadCacheStatus()
   }, [])
 
+  const isHealthy = data && data.tmdb?.apiKey && data.status === "healthy"
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-2xl mx-auto px-4 py-8">
-        <Link href="/" className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-accent transition-colors mb-6">{t("ui.statusBack")}</Link>
-        <h1 className="text-2xl font-bold mb-1">{t("ui.statusTitle")}</h1>
-        {loading && <p className="text-zinc-400 mt-4">{t("ui.statusLoading")}</p>}
-        {error && <p className="text-red-400 mt-4">{t("ui.statusError", { msg: error })}</p>}
+        <Link href="/" className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-accent transition-colors mb-4">{t("ui.statusBack")}</Link>
+        <h1 className="text-2xl font-bold mb-1 text-center sm:text-left">{t("ui.statusTitle")}</h1>
+
+        {/* Hero Neumorphic Status Ring Loader */}
+        <div className="my-8 flex flex-col items-center justify-center gap-3">
+          {loading ? (
+            <div className="status-ring-loader status-loading">
+              <span className="status-glow-span" />
+              <div className="z-20 text-xs font-bold text-amber-300 uppercase tracking-widest animate-pulse">Checking</div>
+            </div>
+          ) : isHealthy ? (
+            <div className="status-ring-loader status-connected">
+              <span className="status-glow-span" />
+              <div className="z-20 flex flex-col items-center justify-center text-center">
+                <span className="text-lg font-black text-emerald-400 tracking-wider">ONLINE</span>
+                <span className="text-[10px] text-zinc-400 uppercase font-semibold tracking-widest mt-0.5">Connected</span>
+              </div>
+            </div>
+          ) : (
+            <div className="status-ring-loader status-disconnected">
+              <span className="status-glow-span" />
+              <div className="z-20 flex flex-col items-center justify-center text-center">
+                <span className="text-lg font-black text-rose-400 tracking-wider">OFFLINE</span>
+                <span className="text-[10px] text-zinc-400 uppercase font-semibold tracking-widest mt-0.5">Degraded</span>
+              </div>
+            </div>
+          )}
+
+          <p className="text-xs font-semibold tracking-wide">
+            {loading ? (
+              <span className="text-zinc-400">{t("ui.statusLoading")}</span>
+            ) : isHealthy ? (
+              <span className="text-emerald-400">All Systems Connected & Operational</span>
+            ) : (
+              <span className="text-rose-400">Service Degraded / Attention Required</span>
+            )}
+          </p>
+        </div>
+
+        {error && <p className="text-red-400 mt-4 text-center">{t("ui.statusError", { msg: error })}</p>}
         {data && (
           <div className="mt-6 space-y-6">
             <div className="bg-white/[0.03] border border-zinc-800 rounded-xl p-4">

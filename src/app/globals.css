@@ -971,6 +971,107 @@ html.light-mode .tactile-input:focus {
     inset -2px -2px 5px rgba(255, 255, 255, 0.95);
 }
 
+/* Status Page Neumorphic Ring Loader inspired by Uiverse JaydipPrajapati1910 */
+.status-ring-loader {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  border: 4px solid #282828;
+  overflow: hidden;
+  border-radius: 50%;
+  box-shadow:
+    -5px -5px 5px rgba(255, 255, 255, 0.1),
+    10px 10px 10px rgba(0, 0, 0, 0.4),
+    inset -5px -5px 5px rgba(255, 255, 255, 0.2),
+    inset 10px 10px 10px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+html.light-mode .status-ring-loader {
+  border-color: #d1d5db;
+  box-shadow:
+    -5px -5px 8px rgba(255, 255, 255, 0.9),
+    8px 8px 12px rgba(165, 175, 195, 0.6),
+    inset -3px -3px 5px rgba(255, 255, 255, 0.9),
+    inset 4px 4px 6px rgba(165, 175, 195, 0.5);
+}
+
+.status-ring-loader::before {
+  content: "";
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  z-index: 10;
+  background: #18181b;
+  border-radius: 50%;
+  border: 2px solid #27272a;
+  box-shadow:
+    inset -2px -2px 5px rgba(255, 255, 255, 0.15),
+    inset 3px 3px 5px rgba(0, 0, 0, 0.6);
+}
+
+html.light-mode .status-ring-loader::before {
+  background: #f3f4f6;
+  border-color: #e5e7eb;
+  box-shadow:
+    inset -2px -2px 5px rgba(255, 255, 255, 0.9),
+    inset 3px 3px 5px rgba(165, 175, 195, 0.5);
+}
+
+.status-ring-loader .status-glow-span {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  filter: blur(18px);
+  z-index: 1;
+  animation: status-spin 0.6s linear infinite;
+}
+
+/* Green Glow when Status Connected / Healthy */
+.status-ring-loader.status-connected .status-glow-span {
+  background-image: linear-gradient(
+    -225deg,
+    #00ff87 0%,
+    #00e676 50%,
+    #10b981 100%
+  );
+}
+
+/* Red & Dark Red Cycle Glow when Status Disconnected / Error */
+.status-ring-loader.status-disconnected .status-glow-span {
+  background-image: linear-gradient(
+    -225deg,
+    #ff0055 0%,
+    #dc2626 50%,
+    #7f1d1d 100%
+  );
+}
+
+/* Amber Glow when Loading / Checking */
+.status-ring-loader.status-loading .status-glow-span {
+  background-image: linear-gradient(
+    -225deg,
+    #ff7402 0%,
+    #ffe700 50%,
+    #d97706 100%
+  );
+}
+
+@keyframes status-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .surface-card {
   --glass-tint: rgba(19,19,23,0.90);
   --glass-border: rgba(255,255,255,0.06);
