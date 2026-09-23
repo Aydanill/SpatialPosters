@@ -122,7 +122,7 @@ export function SearchBar({
       <div
         role="search"
         className={`search-shell flex items-center ${h} ${
-          focused ? "search-shell-active ring-1 ring-white/30" : ""
+          focused ? "search-shell-active" : ""
         } rounded-2xl transition-all duration-300 group ${error ? "ring-1 ring-red-500/50" : ""}`}
       >
         <span
@@ -132,7 +132,7 @@ export function SearchBar({
           {liveLoading ? (
             <Loader2 className="w-4 h-4 text-zinc-400 animate-spin" />
           ) : (
-            <Search className="w-4 h-4" />
+            <Search className="w-4 h-4 transition-transform duration-300 group-focus-within:scale-110" />
           )}
         </span>
         <input
@@ -168,7 +168,7 @@ export function SearchBar({
         />
 
         {!focused && text.length === 0 && (
-          <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 mr-3 text-[10px] font-mono font-medium text-zinc-500 bg-white/[0.06] border border-white/10 rounded-md pointer-events-none select-none">
+          <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 mr-3 text-[10px] font-mono font-medium text-zinc-500 bg-white/[0.06] border border-white/10 rounded-md pointer-events-none select-none shadow-[inset_1px_1px_2px_rgba(0,0,0,0.4)]">
             ⌘K
           </kbd>
         )}
@@ -184,7 +184,7 @@ export function SearchBar({
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => handleFullSearch(text)}
             disabled={!tmdbKey}
-            className="shrink-0 w-8 sm:w-10 h-8 sm:h-10 mr-1.5 flex items-center justify-center text-zinc-950 font-bold rounded-full active:scale-90 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 transition-all duration-200 bg-zinc-100 hover:bg-white hover:shadow-lg hover:shadow-white/20 cursor-pointer"
+            className="shrink-0 w-8 sm:w-9 h-8 sm:h-9 mr-1.5 flex items-center justify-center rounded-full tactile-btn disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
           >
             <ArrowRight className="w-4 h-4" />
           </button>
