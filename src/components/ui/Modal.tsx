@@ -83,7 +83,7 @@ export function Modal({
       <div
         ref={panelRef}
         tabIndex={-1}
-        className={`relative outline-none w-full max-w-lg rounded-2xl border border-white/10 bg-surface/95 p-6 shadow-2xl space-y-5 select-text animate-modal-panel-in ${className}`}
+        className={`relative outline-none w-full max-w-lg tactile-popup p-6 space-y-5 select-text animate-modal-panel-in ${className}`}
       >
         {children}
       </div>

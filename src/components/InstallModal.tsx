@@ -134,7 +134,7 @@ export function InstallModal({ isOpen, onClose, manifestUrl: propManifestUrl, po
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fade-in">
       <div
         ref={popoverRef}
-        className="w-full max-w-sm max-h-[90vh] overflow-y-auto bg-[#141418] border border-white/10 rounded-2xl shadow-2xl flex flex-col animate-fade-scale-in"
+        className="w-full max-w-sm max-h-[90vh] overflow-y-auto tactile-popup flex flex-col animate-fade-scale-in"
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/5">

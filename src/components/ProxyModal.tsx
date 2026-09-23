@@ -78,7 +78,7 @@ export function ProxyModal({ isOpen, onClose }: Props) {
               value={targetUrl}
               onChange={(e) => setTargetUrl(e.target.value)}
               placeholder="https://cyberflix.koyeb.app/manifest.json"
-              className="w-full h-10 px-3 pr-8 rounded-xl bg-black/40 border border-white/10 text-xs text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-accent-orange/60"
+              className="w-full h-10 px-3 pr-8 rounded-xl tactile-input text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-accent-orange/60"
             />
             <Link2 className="w-4 h-4 text-zinc-500 absolute right-3 top-3 pointer-events-none" />
           </div>

@@ -1144,7 +1144,7 @@ export function SettingsPanel({ setSettingsOpen, exportData, importData, mobile 
       <div
         ref={settingsRef}
         tabIndex={-1}
-        className="relative outline-none w-full max-w-xl max-h-[85vh] flex flex-col rounded-2xl border border-white/10 bg-[#121216] shadow-2xl shadow-black/90 select-text animate-modal-panel-in overflow-hidden my-auto"
+        className="relative outline-none w-full max-w-xl max-h-[85vh] flex flex-col tactile-popup select-text animate-modal-panel-in overflow-hidden my-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Modal */}

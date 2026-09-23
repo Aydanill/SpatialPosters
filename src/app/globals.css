@@ -917,6 +917,60 @@ html.light-mode .sidebar-dock-btn-active {
     inset -2px -2px 4px rgba(255, 255, 255, 0.95);
 }
 
+/* Tactile Neumorphic Popups (Settings, Install Hub, Proxy Modal) inspired by Uiverse */
+.tactile-popup {
+  background-color: #16171B;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.5rem;
+  box-shadow:
+    8px 8px 24px #07080a,
+    -8px -8px 24px rgba(95, 94, 94, 0.22),
+    inset 0px 0px 0px transparent,
+    inset 0px 0px 0px transparent;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(20px);
+}
+
+html.light-mode .tactile-popup {
+  background-color: #f4f6fa;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow:
+    8px 8px 24px rgba(165, 175, 195, 0.65),
+    -8px -8px 24px rgba(255, 255, 255, 0.95);
+}
+
+/* Tactile Input Fields */
+.tactile-input {
+  background-color: #121316;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    1.5px 1.5px 4px #0a0b0d,
+    -1.5px -1.5px 4px rgba(95, 94, 94, 0.2);
+  transition: all 0.25s ease;
+}
+
+.tactile-input:focus,
+.tactile-input:focus-within {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow:
+    inset 2px 2px 5px #07080a,
+    inset -2px -2px 5px rgba(95, 94, 94, 0.35);
+}
+
+html.light-mode .tactile-input {
+  background-color: #e9ecf2;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow:
+    2px 2px 5px rgba(165, 175, 195, 0.5),
+    -2px -2px 5px rgba(255, 255, 255, 0.9);
+}
+
+html.light-mode .tactile-input:focus {
+  box-shadow:
+    inset 2px 2px 5px rgba(165, 175, 195, 0.7),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.95);
+}
+
 .surface-card {
   --glass-tint: rgba(19,19,23,0.90);
   --glass-border: rgba(255,255,255,0.06);
