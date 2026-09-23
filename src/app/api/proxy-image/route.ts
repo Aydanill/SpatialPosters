@@ -42,7 +42,29 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const buffer = await fetchImg(parsed.toString())
+    let targetUrl = parsed.toString()
+    const isWebpage =
+      targetUrl.includes("pin.it") ||
+      (targetUrl.includes("pinterest.com") && !targetUrl.includes("i.pinimg.com")) ||
+      (targetUrl.includes("reddit.com") && !targetUrl.includes("i.redd.it") && !targetUrl.includes("preview.redd.it")) ||
+      (!targetUrl.match(/\.(jpg|jpeg|png|webp|gif|avif)(\?|$)/i) &&
+        !targetUrl.includes("i.pinimg.com") &&
+        !targetUrl.includes("i.redd.it") &&
+        !targetUrl.includes("i.imgur.com"))
+
+    if (isWebpage) {
+      try {
+        const { resolveToImageUrl } = await import("@/app/api/resolve-image/route")
+        const resolved = await resolveToImageUrl(targetUrl)
+        if (resolved?.imageUrl) {
+          targetUrl = resolved.imageUrl
+        }
+      } catch {
+        // Fallback to original URL
+      }
+    }
+
+    const buffer = await fetchImg(targetUrl)
     
     // Guess content-type based on buffer header magic bytes or default to image/jpeg
     let contentType = "image/jpeg"

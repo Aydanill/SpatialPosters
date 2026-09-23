@@ -24,6 +24,23 @@ export function hashKey(key: string): string {
 }
 
 export async function fetchImg(url: string, signal?: AbortSignal): Promise<Buffer> {
+  let targetUrl = url
+  if (
+    targetUrl.includes("pin.it") ||
+    (targetUrl.includes("pinterest.com") && !targetUrl.includes("i.pinimg.com")) ||
+    (targetUrl.includes("reddit.com") && !targetUrl.includes("i.redd.it") && !targetUrl.includes("preview.redd.it"))
+  ) {
+    try {
+      const { resolveToImageUrl } = await import("@/app/api/resolve-image/route")
+      const resolved = await resolveToImageUrl(targetUrl)
+      if (resolved?.imageUrl) {
+        targetUrl = resolved.imageUrl
+      }
+    } catch {
+      // Fallback to original URL
+    }
+  }
+
   // Se il chiamante passa un signal esterno, unirlo al timeout interno invece
   // di sostituirlo: un signal mai abortito (es. renderAbort a render riuscito)
   // lascerebbe il fetch senza tetto in background. Il limite resta 15s.
@@ -47,7 +64,13 @@ export async function fetchImg(url: string, signal?: AbortSignal): Promise<Buffe
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
   }
-  const res = await fetch(url, { headers, signal: combined })
+  let res = await fetch(targetUrl, { headers, signal: combined })
+  if (!res.ok && targetUrl.includes("i.pinimg.com/originals/")) {
+    // Fallback to 736x if originals returns non-200
+    const fallbackUrl = targetUrl.replace("/originals/", "/736x/")
+    res = await fetch(fallbackUrl, { headers, signal: combined })
+  }
+
   if (!res.ok) throw new Error(`fetch failed: ${res.status}`)
   const cl = res.headers.get("content-length")
   if (cl && Number(cl) > MAX_IMG_SIZE) throw new Error("image too large")

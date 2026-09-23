@@ -102,6 +102,14 @@ function extractOgImage(html: string): string | null {
   if (!m) m = html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*name=["']twitter:image["']/i)
   // <link rel="image_src">
   if (!m) m = html.match(/<link[^>]*rel=["']image_src["'][^>]*href=["']([^"']+)["']/i)
+  if (!m) {
+    // Regex fallback for Pinterest images in script tags / HTML
+    const pinMatch = html.match(/https:\/\/i\.pinimg\.com\/(?:originals|\d+x[\w]*)\/[a-f0-9\/]+\.(?:jpg|jpeg|png|webp)/i)
+    if (pinMatch) return pinMatch[0]
+    // Regex fallback for Reddit images
+    const redditMatch = html.match(/https:\/\/(?:i|preview)\.redd\.it\/[a-zA-Z0-9_-]+\.(?:jpg|jpeg|png|webp)/i)
+    if (redditMatch) return redditMatch[0]
+  }
   return m ? m[1] : null
 }
 
@@ -110,10 +118,10 @@ function extractOgImage(html: string): string | null {
  * Steps:
  * 1. If it looks like a direct image, return immediately.
  * 2. If it's a Pinterest short link (pin.it), follow redirect → extract og:image → upgrade to /originals/.
- * 3. If it's a Reddit link, use bot UA to extract og:image.
+ * 3. If it's a Reddit link, use bot UA / browser UA to extract og:image.
  * 4. For any other webpage, try fetching og:image with bot UA, then browser UA.
  */
-async function resolveToImageUrl(rawUrl: string): Promise<{ imageUrl: string; source: string }> {
+export async function resolveToImageUrl(rawUrl: string): Promise<{ imageUrl: string; source: string }> {
   // 1. Direct reddit wrapper
   const directReddit = tryResolveRedditDirectUrl(rawUrl)
   if (directReddit) {
@@ -161,8 +169,8 @@ async function resolveToImageUrl(rawUrl: string): Promise<{ imageUrl: string; so
 
   // Try og:image
   let ogImage = extractOgImage(html)
-  if (!ogImage && !isPinterest) {
-    // Re-try with browser UA for non-Pinterest, non-Reddit
+  if (!ogImage) {
+    // Re-try with browser UA for Pinterest / Reddit / any page if bot UA failed
     const res2 = await fetch(rawUrl, {
       headers: { "User-Agent": BROWSER_UA },
       redirect: "follow",

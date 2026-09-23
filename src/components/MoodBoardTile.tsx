@@ -81,8 +81,14 @@ export function MoodBoardTile({
             decoding="async"
             className="w-full h-full object-cover transition-transform duration-[400ms] ease-out group-hover:scale-[1.06]"
             onError={(e) => {
-              ;(e.target as HTMLImageElement).style.display = "none"
-              ;(e.target as HTMLImageElement).parentElement?.classList.add("show-fallback")
+              const img = e.target as HTMLImageElement
+              const fallback = m.posterPath ? posterUrl(m.posterPath, "w342") : null
+              if (m.imgbbUrl && fallback && img.src !== fallback) {
+                img.src = fallback
+              } else {
+                img.style.display = "none"
+                img.parentElement?.classList.add("show-fallback")
+              }
             }}
           />
         ) : (
