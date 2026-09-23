@@ -503,75 +503,78 @@ export function AppShell() {
         {!(view === "edit" && selected) && <HomeStatusStrip />}
       </div>
 
-      {/* Mobile Bottom Navigation Bar (iOS / Android Style) */}
+      {/* Mobile Floating Split Dual-Pill Dock (inspired by Uiverse narmesh_sah) */}
       <nav
         aria-label={t("ui.mainNav")}
-        className={`md:hidden fixed bottom-0 left-0 right-0 z-40 bg-zinc-950/90 backdrop-blur-2xl border-t border-white/[0.08] shadow-[0_-10px_30px_rgba(0,0,0,0.5)] px-2 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] transition-all duration-200 ${
-          view === "edit" && selected ? "translate-y-full pointer-events-none opacity-0" : "translate-y-0 opacity-100"
+        className={`md:hidden fixed bottom-3 left-3 right-3 z-40 max-w-md mx-auto flex items-center gap-2.5 transition-all duration-300 pb-[env(safe-area-inset-bottom)] ${
+          view === "edit" && selected ? "translate-y-28 pointer-events-none opacity-0" : "translate-y-0 opacity-100"
         }`}
       >
-        <div className="grid grid-cols-4 items-center justify-around max-w-md mx-auto">
-          {/* Cataloghi */}
+        {/* Left Floating Navigation Pill */}
+        <div className="mobile-dock-nav">
+          {/* Home */}
           <button
             type="button"
-            onClick={() => router.replace("cataloghi")}
-            className={`flex flex-col items-center justify-center gap-1 py-1 px-1 rounded-xl transition-all duration-150 active:scale-90 cursor-pointer ${
-              view === "cataloghi"
-                ? "text-accent-orange font-semibold"
-                : "text-zinc-400 hover:text-zinc-200"
-            }`}
+            onClick={() => { goHome(); router.push("edit") }}
+            className={`mobile-dock-item ${view === "edit" && !selected ? "mobile-dock-item-active text-white font-bold" : ""}`}
+            title="Home"
           >
-            <Layers className="w-5 h-5" />
-            <span className="text-[10px] tracking-tight truncate">{t("ui.catalogs") || "Cataloghi"}</span>
+            <Home className="w-4.5 h-4.5" />
+            <span className="text-[9px] font-medium tracking-tight truncate">Home</span>
           </button>
 
-          {/* Installa Hub (Featured Central Pill) */}
+          {/* SpatialPosters / My Posters */}
           <button
             type="button"
-            onClick={handleInstallCatalog}
-            className="flex flex-col items-center justify-center gap-1 py-1 px-1 rounded-xl transition-all duration-150 active:scale-90 cursor-pointer text-zinc-300 hover:text-white"
-          >
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-accent-orange to-amber-500 flex items-center justify-center text-white shadow-md shadow-accent-orange/30 -mt-2">
-              <QrCode className="w-4 h-4" />
-            </div>
-            <span className="text-[10px] font-semibold text-white tracking-tight truncate">{t("ui.install")}</span>
-          </button>
-
-          {/* I Miei Poster */}
-          <button
-            type="button"
-            onClick={() => router.replace("myposters")}
-            className={`flex flex-col items-center justify-center gap-1 py-1 px-1 rounded-xl transition-all duration-150 active:scale-90 cursor-pointer relative ${
-              view === "myposters"
-                ? "text-accent-orange font-semibold"
-                : "text-zinc-400 hover:text-zinc-200"
-            }`}
+            onClick={() => router.push("myposters")}
+            className={`mobile-dock-item relative ${view === "myposters" ? "mobile-dock-item-active text-white font-bold" : ""}`}
+            title="SpatialPosters"
           >
             <div className="relative">
-              <Palette className="w-5 h-5" />
+              <Sparkles className="w-4.5 h-4.5" />
               {mappings.length > 0 && (
-                <span className="absolute -top-1 -right-2 px-1 min-w-3.5 h-3.5 bg-accent-orange text-[9px] font-bold text-white rounded-full flex items-center justify-center leading-none">
-                  {mappings.length}
+                <span className="absolute -top-1 -right-2 px-1 min-w-3.5 h-3.5 bg-accent-orange text-[9px] font-bold text-white rounded-full flex items-center justify-center leading-none shadow-sm">
+                  {mappings.length > 99 ? "99+" : mappings.length}
                 </span>
               )}
             </div>
-            <span className="text-[10px] tracking-tight truncate">{t("ui.myPostersBtn") || "I Miei"}</span>
+            <span className="text-[9px] font-medium tracking-tight truncate">{t("ui.myPostersBtn") || "I Miei"}</span>
           </button>
 
-          {/* Impostazioni */}
+          {/* Catalogs */}
+          <button
+            type="button"
+            onClick={() => router.push("cataloghi")}
+            className={`mobile-dock-item ${view === "cataloghi" ? "mobile-dock-item-active text-white font-bold" : ""}`}
+            title="Cataloghi"
+          >
+            <Layers className="w-4.5 h-4.5" />
+            <span className="text-[9px] font-medium tracking-tight truncate">{t("ui.catalogs") || "Cataloghi"}</span>
+          </button>
+
+          {/* Settings */}
           <button
             type="button"
             onClick={() => setSettingsOpen(true)}
-            className={`flex flex-col items-center justify-center gap-1 py-1 px-1 rounded-xl transition-all duration-150 active:scale-90 cursor-pointer ${
-              settingsOpen
-                ? "text-accent-orange font-semibold"
-                : "text-zinc-400 hover:text-zinc-200"
-            }`}
+            className={`mobile-dock-item ${settingsOpen ? "mobile-dock-item-active text-white font-bold" : ""}`}
+            title="Settings"
           >
-            <Settings className="w-5 h-5" />
-            <span className="text-[10px] tracking-tight truncate">{t("ui.settingsTitle") || "Opzioni"}</span>
+            <Settings className="w-4.5 h-4.5" />
+            <span className="text-[9px] font-medium tracking-tight truncate">{t("ui.settingsTitle") || "Opzioni"}</span>
           </button>
         </div>
+
+        {/* Right Floating Circular Action Button (Install Hub) */}
+        <button
+          type="button"
+          onClick={handleInstallCatalog}
+          title="Install Hub"
+          className="mobile-dock-action group"
+        >
+          <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-accent-orange to-amber-500 flex items-center justify-center text-white shadow-lg shadow-accent-orange/30 group-active:scale-90 transition-transform">
+            <QrCode className="w-4.5 h-4.5" />
+          </div>
+        </button>
       </nav>
 
       {/* Desktop Settings Modal */}

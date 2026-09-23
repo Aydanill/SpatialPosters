@@ -1130,6 +1130,77 @@ html.light-mode .status-ring-loader::before {
   transform: translateY(-2px);
 }
 
+/* Mobile Floating Split Dock inspired by Uiverse narmesh_sah */
+.mobile-dock-nav {
+  position: relative;
+  flex: 1;
+  height: 58px;
+  padding: 4px 6px;
+  background: rgba(20, 20, 24, 0.88);
+  box-shadow:
+    0 12px 35px -5px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.mobile-dock-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  border-radius: 9999px;
+  color: #a1a1aa;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.mobile-dock-item:hover,
+.mobile-dock-item-active {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.mobile-dock-item svg,
+.mobile-dock-item img {
+  transition: transform 0.2s ease;
+}
+
+.mobile-dock-item:active svg,
+.mobile-dock-item:active img {
+  transform: scale(0.88);
+}
+
+.mobile-dock-action {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: rgba(20, 20, 24, 0.88);
+  box-shadow:
+    0 12px 35px -5px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  shrink: 0;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.mobile-dock-action:active {
+  transform: scale(0.9);
+}
+
 .surface-card {
   --glass-tint: rgba(19,19,23,0.90);
   --glass-border: rgba(255,255,255,0.06);
