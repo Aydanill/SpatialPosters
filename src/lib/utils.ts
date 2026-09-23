@@ -29,7 +29,10 @@ export function getDomain() {
 }
 
 export function posterUrl(path: string, size = "w342") {
-  if (path.startsWith("http")) return path
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    if (path.includes("image.tmdb.org")) return path
+    return `/api/proxy-image?url=${encodeURIComponent(path)}`
+  }
   return `${IMG_BASE}/${size}${path}`
 }
 
