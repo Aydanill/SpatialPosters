@@ -4,6 +4,7 @@ import { createLogger } from "@/lib/logger"
 import { envWithFallback } from "@/lib/env-compat"
 import { isR2Configured, getR2Poster, putR2Poster, deleteR2Poster } from "@/lib/r2-storage"
 import { isImgBBConfigured, uploadToImgBB, getImgBBCachedUrl, getImgBBCachedUrlAsync, setImgBBCachedUrlAsync } from "@/lib/imgbb-storage"
+import { isCloudinaryConfigured, uploadToCloudinary, buildCloudinaryPublicId, getCloudinaryCachedUrl, getCloudinaryCachedUrlAsync, setCloudinaryCachedUrlAsync } from "@/lib/cloudinary-storage"
 import { hashKey } from "@/lib/poster-render-helpers"
 
 const log = createLogger("poster-cache")
@@ -176,11 +177,20 @@ export async function readCachedPosterAsync(
   // 1. Check L1 in-memory cache
   const local = readCachedPoster(cacheKey)
   if (local.payload) {
-    const memoryImgbbUrl = getImgBBCachedUrl(cacheKey)
+    const memoryImgbbUrl = getCloudinaryCachedUrl(cacheKey) || getImgBBCachedUrl(cacheKey)
     return { ...local, imgbbUrl: memoryImgbbUrl }
   }
 
-  // 2. Check ImgBB free image storage cache (persistent URL from KV / RAM)
+  // 2. Check Cloudinary storage cache (persistent URL)
+  if (isCloudinaryConfigured()) {
+    const cUrl = await getCloudinaryCachedUrlAsync(cacheKey)
+    if (cUrl) {
+      log.debug("Cloudinary poster cache hit (URL ready)", { cacheKey, cloudinaryUrl: cUrl })
+      return { payload: null, imgbbUrl: cUrl, stale: false }
+    }
+  }
+
+  // 3. Check ImgBB free image storage cache (persistent URL from KV / RAM)
   if (isImgBBConfigured()) {
     const imgbbUrl = await getImgBBCachedUrlAsync(cacheKey)
     if (imgbbUrl) {
@@ -231,7 +241,61 @@ export function writeCachedPoster(
   cacheSet(cacheKey, payload.buffer, tags, ttl)
   cacheSet(`${cacheKey}:headers`, { etag: payload.etag }, tags, ttl)
 
-  if (!skipExternal && isImgBBConfigured()) {
+  if (!skipExternal && isCloudinaryConfigured()) {
+    let publicId: string | undefined
+    let mediaType: "movie" | "tv" | undefined
+    let tmdbId: number | undefined
+
+    if (mappingTag?.startsWith("poster:")) {
+      const parts = mappingTag.split(":")
+      if (parts.length === 3) {
+        mediaType = parts[1] as "movie" | "tv"
+        tmdbId = parseInt(parts[2], 10)
+        if (Number.isFinite(tmdbId)) {
+          publicId = buildCloudinaryPublicId(mediaType, tmdbId)
+        }
+      }
+    }
+    if (!publicId) {
+      publicId = `spatialposters/dynamic/${hashKey(cacheKey)}`
+    }
+
+    const task = uploadToCloudinary(payload.buffer, publicId, { overwrite: true, invalidate: true }).then(async (res) => {
+      if (res?.secure_url) {
+        await setCloudinaryCachedUrlAsync(cacheKey, res.secure_url, ttl)
+        await setImgBBCachedUrlAsync(cacheKey, res.secure_url, ttl)
+        if (mediaType && tmdbId) {
+          try {
+            const { getById, upsert } = await import("@/lib/store")
+            const existing = await getById(mediaType, tmdbId)
+            if (existing) {
+              const needsUpdate = existing.imgbbUrl !== res.secure_url || (topLight !== undefined && existing.topLight !== topLight)
+              if (needsUpdate) {
+                const updated = { ...existing, imgbbUrl: res.secure_url }
+                if (topLight !== undefined) updated.topLight = topLight
+                await upsert(updated)
+                log.info("Attached Cloudinary URL to mapping in store", { mediaType, tmdbId, cloudinaryUrl: res.secure_url, topLight })
+              }
+            }
+          } catch (err) {
+            log.warn("Failed to update mapping imgbbUrl with Cloudinary URL in store", { err })
+          }
+        }
+      }
+    }).catch((err) => {
+      log.warn("Async Cloudinary poster upload failed", { cacheKey, err })
+    })
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { after } = require("next/server")
+      if (typeof after === "function") {
+        after(() => task)
+      }
+    } catch {
+      // Background execution
+    }
+  } else if (!skipExternal && isImgBBConfigured()) {
     const task = uploadToImgBB(payload.buffer, hashKey(cacheKey)).then(async (res) => {
       if (res?.displayUrl) {
         await setImgBBCachedUrlAsync(cacheKey, res.displayUrl, ttl)
