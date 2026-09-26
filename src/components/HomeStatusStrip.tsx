@@ -1,26 +1,18 @@
 "use client"
 
 import { usePSelector } from "@/lib/context"
-import { PosterDepthEdge } from "@/components/PosterDepthGlow"
 
 export function HomeStatusStrip() {
   const router = usePSelector((v) => v.router)
 
   return (
-    <footer className="w-full mt-16 md:mt-24 pb-12 px-4 sm:px-6 relative z-10" data-testid="home-status">
-      {/* Top smooth gradient divider line */}
-      <div className="w-full max-w-4xl mx-auto h-px bg-gradient-to-r from-transparent via-white/15 to-transparent mb-10 pointer-events-none" />
-
-      {/* Floating Glass Container with smooth rounded-3xl corners & ambient glow */}
-      <div className="max-w-4xl mx-auto p-6 sm:p-10 md:p-12 rounded-3xl bg-zinc-900/30 border border-white/10 backdrop-blur-2xl shadow-[0_32px_64px_rgba(0,0,0,0.45)] relative overflow-hidden flex flex-col items-center text-center gap-6 md:gap-8 group">
-        {/* NuvioDesktop style depth edge + subtle background radial aura */}
-        <PosterDepthEdge edgeStrength={35} edgeCoverage={15} />
-        <div
-          className="absolute inset-0 pointer-events-none opacity-40 group-hover:opacity-75 transition-opacity duration-700"
-          style={{
-            background: "radial-gradient(circle at 50% 0%, rgba(232, 93, 42, 0.12), transparent 70%)",
-          }}
-        />
+    <footer className="w-full mt-12 md:mt-16 pb-12 px-4 sm:px-6 relative z-10" data-testid="home-status">
+      {/* Floating Glass Container with clean rounded-3xl corners matching site style */}
+      <div className="max-w-5xl mx-auto p-6 sm:p-10 md:p-12 rounded-3xl bg-zinc-900/60 border border-white/10 backdrop-blur-xl shadow-2xl hover:border-white/20 transition-all duration-300 relative overflow-hidden flex flex-col items-center text-center gap-6 md:gap-8 group">
+        
+        {/* Soft Ambient Background Glows */}
+        <div className="absolute -top-24 -left-24 w-60 h-60 bg-amber-500/10 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute -bottom-24 -right-24 w-60 h-60 bg-purple-500/10 blur-[100px] rounded-full pointer-events-none" />
 
         {/* Brand Logo */}
         <div className="flex items-center justify-center relative z-10">
