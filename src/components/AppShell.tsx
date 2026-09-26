@@ -15,6 +15,7 @@ import { AnimatedSpatialWord } from "@/components/AnimatedSpatialWord"
 import { RefreshCw, Settings, Globe, HeartPulse, Sparkles, Check, QrCode, Palette, Layers, Sun, Moon, Home } from "lucide-react"
 import { BladeSpinner } from "@/components/ui/BladeSpinner"
 import { DesktopSidebar } from "@/components/DesktopSidebar"
+import { MobileDock } from "@/components/MobileDock"
 
 function InstagramIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
   return (
@@ -264,77 +265,8 @@ export function AppShell() {
         {!(view === "edit" && selected) && <HomeStatusStrip />}
       </div>
 
-      {/* Mobile Floating Split Liquid Glass Dock (inspired by Uiverse narmesh_sah) */}
-      <nav
-        aria-label={t("ui.mainNav")}
-        className={`md:hidden fixed bottom-3 left-3 right-3 z-40 max-w-md mx-auto flex items-center gap-2.5 transition-all duration-300 pb-[env(safe-area-inset-bottom)] ${
-          view === "edit" && selected ? "translate-y-28 pointer-events-none opacity-0" : "translate-y-0 opacity-100"
-        }`}
-      >
-        {/* Left Floating Navigation Pill */}
-        <div className="mobile-dock-nav">
-          {/* Home */}
-          <button
-            type="button"
-            onClick={() => { goHome(); router.push("edit") }}
-            className={`mobile-dock-item ${view === "edit" && !selected ? "mobile-dock-item-active text-white font-bold" : ""}`}
-            title="Home"
-          >
-            <Home className="w-4.5 h-4.5 text-zinc-100" />
-            <span className="text-[9px] font-medium tracking-tight truncate">Home</span>
-          </button>
-
-          {/* SpatialPosters / My Posters */}
-          <Link
-            href="/myposters"
-            className={`mobile-dock-item relative ${view === "myposters" ? "mobile-dock-item-active text-white font-bold" : ""}`}
-            title="SpatialPosters"
-          >
-            <div className="relative">
-              {/* eslint-disable-next-line @next/next/no-img-element -- desktop custom icon */}
-              <img src="/icon/myposter.webp" alt="My Posters" className="w-4.5 h-4.5 object-contain brightness-0 invert" />
-              {mappings.length > 0 && (
-                <span className="absolute -top-1 -right-2 px-1 min-w-3.5 h-3.5 bg-accent-orange text-[9px] font-bold text-white rounded-full flex items-center justify-center leading-none shadow-sm">
-                  {mappings.length > 99 ? "99+" : mappings.length}
-                </span>
-              )}
-            </div>
-            <span className="text-[9px] font-medium tracking-tight truncate">{t("ui.myPostersBtn") || "I Miei"}</span>
-          </Link>
-
-          {/* Catalogs */}
-          <button
-            type="button"
-            onClick={() => router.push("cataloghi")}
-            className={`mobile-dock-item ${view === "cataloghi" ? "mobile-dock-item-active text-white font-bold" : ""}`}
-            title="Cataloghi"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element -- desktop custom icon */}
-            <img src="/icon/collection.webp" alt="Catalogs" className="w-4.5 h-4.5 object-contain brightness-0 invert" />
-            <span className="text-[9px] font-medium tracking-tight truncate">{t("ui.catalogs") || "Cataloghi"}</span>
-          </button>
-
-          {/* Settings */}
-          <Link
-            href="/settings"
-            className="mobile-dock-item"
-            title="Settings"
-          >
-            <Settings className="w-4.5 h-4.5 text-zinc-100" />
-            <span className="text-[9px] font-medium tracking-tight truncate">{t("ui.settingsTitle") || "Opzioni"}</span>
-          </Link>
-        </div>
-
-        {/* Right Floating Circular Action Button (Install Hub) */}
-        <Link
-          href="/install"
-          title="Install Hub"
-          className="mobile-dock-action group flex items-center justify-center"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element -- desktop custom icon */}
-          <img src="/icon/install-hub.webp" alt="Install Hub" className="w-5 h-5 object-contain brightness-0 invert group-active:scale-90 transition-transform" />
-        </Link>
-      </nav>
+      {/* Mobile Floating Split Liquid Glass Dock */}
+      <MobileDock />
     </div>
     </ToastProvider>
     {!showLangPicker && <OnboardingTour />}

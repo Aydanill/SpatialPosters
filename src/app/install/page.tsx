@@ -10,6 +10,7 @@ import { AmbientBackground } from "@/components/AmbientBackground"
 import { useT } from "@/lib/contexts/TranslationContext"
 import { setLang, getLang } from "@/lib/i18n"
 import { DesktopSidebar } from "@/components/DesktopSidebar"
+import { MobileDock } from "@/components/MobileDock"
 
 function InstallContent() {
   const { t } = useT()
@@ -31,7 +32,7 @@ function InstallContent() {
       <AmbientBackground />
       <DesktopSidebar />
       <ToastProvider>
-        <div className="relative z-10 max-w-2xl mx-auto px-4 py-6 sm:py-10 md:pl-20">
+        <div className="relative z-10 max-w-2xl mx-auto px-4 py-6 sm:py-10 md:pl-20 pb-24 md:pb-6">
           {/* Header section with back navigation */}
           <div className="flex items-center justify-between mb-6">
             <Link
@@ -78,6 +79,7 @@ function InstallContent() {
           </div>
         </div>
       </ToastProvider>
+      <MobileDock />
     </div>
   )
 }

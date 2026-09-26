@@ -12,6 +12,7 @@ import { useT } from "@/lib/contexts/TranslationContext"
 import { setLang, getLang } from "@/lib/i18n"
 import { BladeSpinner } from "@/components/ui/BladeSpinner"
 import { DesktopSidebar } from "@/components/DesktopSidebar"
+import { MobileDock } from "@/components/MobileDock"
 
 function MyPostersContent() {
   const { t } = useT()
@@ -46,7 +47,7 @@ function MyPostersContent() {
         <AmbientBackground />
         <DesktopSidebar />
         <ToastProvider>
-          <div className="relative z-10 max-w-[1680px] mx-auto px-3 sm:px-4 py-3 sm:py-5 md:pl-20">
+          <div className="relative z-10 max-w-[1680px] mx-auto px-3 sm:px-4 py-3 sm:py-5 md:pl-20 pb-24 md:pb-6">
             {/* Top navigation header */}
             <div className="hidden lg:flex items-center justify-between mb-4">
               <button
@@ -72,6 +73,7 @@ function MyPostersContent() {
             <EditView />
           </div>
         </ToastProvider>
+        <MobileDock />
       </div>
     )
   }
@@ -81,7 +83,7 @@ function MyPostersContent() {
       <AmbientBackground />
       <DesktopSidebar />
       <ToastProvider>
-        <div className="relative z-10 max-w-[1680px] mx-auto px-3 sm:px-4 py-4 sm:py-6 md:pl-20">
+        <div className="relative z-10 max-w-[1680px] mx-auto px-3 sm:px-4 py-4 sm:py-6 md:pl-20 pb-24 md:pb-6">
           {/* Top navigation bar */}
           <div className="flex items-center justify-between mb-4">
             <Link
@@ -103,6 +105,7 @@ function MyPostersContent() {
           <MyPostersView />
         </div>
       </ToastProvider>
+      <MobileDock />
     </div>
   )
 }
