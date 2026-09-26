@@ -112,11 +112,3 @@ export default function MyPostersPage() {
   )
 }
 
-export default function MyPostersPage() {
-  return (
-    <PictoriumRoot>
-      <MyPostersContent />
-    </PictoriumRoot>
-  )
-}
-
