@@ -15,6 +15,7 @@ import { BladeSpinner } from "@/components/ui/BladeSpinner"
 function MyPostersContent() {
   const { t } = useT()
   const view = usePSelector((v) => v.view)
+  const setView = usePSelector((v) => v.setView)
   const selected = usePSelector((v) => v.selected)
   const titleOf = usePSelector((v) => v.titleOf)
   const yearOf = usePSelector((v) => v.yearOf)
@@ -31,7 +32,14 @@ function MyPostersContent() {
     } catch {}
   }, [])
 
-  if (view === "edit") {
+  // Garantisce che all'apertura diretta di /myposters la view sia "myposters" se non c'è una selezione attiva
+  useEffect(() => {
+    if (!selected && view === "edit") {
+      setView("myposters")
+    }
+  }, [selected, view, setView])
+
+  if (view === "edit" && selected) {
     return (
       <div className="min-h-screen bg-background text-foreground relative overflow-x-hidden">
         <AmbientBackground />
@@ -48,32 +56,18 @@ function MyPostersContent() {
                 <span>{t("ui.back") || "Torna indietro"}</span>
               </button>
 
-              {selected ? (
-                <div className="flex items-center gap-2">
-                  <span className="text-xs sm:text-sm font-bold text-zinc-100 max-w-xs sm:max-w-md truncate">
-                    {titleOf(selected)}
-                  </span>
-                  <span className="text-[10px] font-mono text-zinc-400 bg-white/[0.04] px-2.5 py-0.5 rounded-lg border border-white/[0.08]">
-                    {yearOf(selected)} · {selected.media_type === "movie" ? t("ui.movie") : t("ui.tvSeries")}
-                  </span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-1.5 text-xs text-zinc-400 font-mono bg-white/[0.04] px-3 py-1 rounded-lg border border-white/[0.08]">
-                  <Sparkles className="w-3.5 h-3.5 text-accent-orange" />
-                  <span>{t("ui.myPosters") || "SpatialPosters"}</span>
-                </div>
-              )}
+              <div className="flex items-center gap-2">
+                <span className="text-xs sm:text-sm font-bold text-zinc-100 max-w-xs sm:max-w-md truncate">
+                  {titleOf(selected)}
+                </span>
+                <span className="text-[10px] font-mono text-zinc-400 bg-white/[0.04] px-2.5 py-0.5 rounded-lg border border-white/[0.08]">
+                  {yearOf(selected)} · {selected.media_type === "movie" ? t("ui.movie") : t("ui.tvSeries")}
+                </span>
+              </div>
             </div>
 
             {/* Main Editor View */}
-            {!selected ? (
-              <div className="h-96 flex flex-col items-center justify-center gap-3 text-zinc-400">
-                <BladeSpinner size="24px" />
-                <span className="text-xs font-medium animate-pulse">{t("ui.loadingPoster") || "Caricamento editor poster..."}</span>
-              </div>
-            ) : (
-              <EditView />
-            )}
+            <EditView />
           </div>
         </ToastProvider>
       </div>
@@ -107,6 +101,14 @@ function MyPostersContent() {
         </div>
       </ToastProvider>
     </div>
+  )
+}
+
+export default function MyPostersPage() {
+  return (
+    <PictoriumRoot>
+      <MyPostersContent />
+    </PictoriumRoot>
   )
 }
 
