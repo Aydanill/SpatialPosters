@@ -13,10 +13,22 @@ import { isSameOrigin, originMismatchResponse, checkAdminToken } from "@/lib/aut
 import { rateLimit, rateLimitKey, rateLimitResponse } from "@/lib/rate-limit"
 import { readJsonBody, BodyTooLargeError, DEFAULT_MAX_BODY_BYTES } from "@/lib/read-body"
 
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
 export async function GET(req: NextRequest) {
   const hasPin = await hasPinConfigured()
   const authenticated = hasPin ? await verifySessionFromRequest(req) : true
-  return Response.json({ hasPin, authenticated })
+  return Response.json(
+    { hasPin, authenticated },
+    {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    }
+  )
 }
 
 export async function POST(req: NextRequest) {
