@@ -71,7 +71,8 @@ export default function EditView() {
   const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   // Fix L30: timer del "copied" ripulito su unmount (setState post-unmount).
   const urlCopiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const [mobileSection, setMobileSection] = useState<"poster" | "preview" | "customize">("preview")
+  const [mobileTab, setMobileTab] = useState<"poster" | "logo" | "badge" | "transform" | "stagioni">("poster")
+  const [mobilePreviewExpanded, setMobilePreviewExpanded] = useState(false)
   const [activeRightTab, setActiveRightTab] = useState<"logo" | "badge" | "transform" | "stagioni">("logo")
   const [activePosterTab, setActivePosterTab] = useState("clean")
   const [testUrl, setTestUrl] = useState<string | null>(null)
@@ -87,6 +88,50 @@ export default function EditView() {
   const handleSave = useCallback(async () => {
     await saveConfig()
   }, [saveConfig])
+
+  const handleTestUrl = useCallback(() => {
+    if (!selected || !previewPoster) return
+    const url = buildPreviewUrl({
+      selected: selected,
+      previewPoster: previewPoster,
+      selectedLogo: selectedLogo,
+      selectedBackdrop: ed.selectedBackdrop,
+      logoScale: ed.logoScale,
+      logoOffsetX: ed.logoOffsetX,
+      logoOffsetY: ed.logoOffsetY,
+      backdropScale: ed.backdropScale,
+      backdropOffsetX: ed.backdropOffsetX,
+      backdropOffsetY: ed.backdropOffsetY,
+      metaInfo: metaInfo,
+      trendRank: trendRank,
+      mdblistAnimeList: mdblistAnimeList,
+      topEdgeColor: topEdgeColor,
+      accentColor: accentColor,
+      lang: lang,
+      tmdbKey: tmdbKey,
+    }, {
+      globalBadges: ed.globalBadges,
+      rankingBadges: ed.rankingBadges,
+      badgeGenre: ed.badgeGenre,
+      badgeYear: ed.badgeYear,
+      badgeRating: ed.badgeRating,
+      manualQuality: ed.manualQuality,
+      ratingSources: ed.ratingSources,
+      badgeStyle: ed.badgeStyle,
+      rankingBadgeStyle: ed.rankingBadgeStyle,
+      customBadge: ed.customBadge,
+      gradientHeight: ed.gradientHeight,
+      blurIntensity: ed.blurIntensity,
+      blurFade: ed.blurFade,
+      blurDarkness: ed.blurDarkness,
+      blurEnabled: ed.blurEnabled,
+      networkLogo: ed.networkLogo,
+      ribbonSide: ed.ribbonSide,
+    })
+    if (!url) return
+    setUrlCopied(false)
+    setTestUrl(`${url}${url.includes("?") ? "&" : "?"}v=${Date.now()}`)
+  }, [selected, previewPoster, selectedLogo, ed, metaInfo, trendRank, mdblistAnimeList, topEdgeColor, accentColor, lang, tmdbKey])
 
   const searchBar = (
     <div className={selected ? "w-full max-w-lg relative z-[100] isolate" : "max-w-lg mx-auto relative z-[100] isolate mb-8"}>
@@ -202,7 +247,7 @@ export default function EditView() {
             <button
               type="button"
               onClick={() => { setSelected(null); setPreviewPoster(null); setSelectedLogo(null); setPreviewId(null) }}
-              className="flex items-center gap-1 px-3 py-2 rounded-xl bg-surface border border-white/10 text-xs font-semibold text-zinc-300 hover:text-white active:scale-95 transition-all shrink-0 cursor-pointer"
+              className="flex items-center gap-1 px-3 py-2 rounded-xl bg-surface/90 border border-white/10 text-xs font-semibold text-zinc-300 hover:text-white active:scale-95 transition-all shrink-0 cursor-pointer shadow-md"
             >
               <ChevronLeft className="w-4 h-4" />
               <span>{t("ui.back")}</span>
@@ -224,48 +269,180 @@ export default function EditView() {
             )}
           </div>
 
-          {/* Mobile Segmented Switcher (Scegli Poster / Anteprima / Modifica) */}
-          <div className="flex lg:hidden items-center justify-center p-1 bg-surface/90 backdrop-blur-md rounded-2xl border border-white/[0.08] mb-4 w-full max-w-md mx-auto shadow-lg shadow-black/20">
-            <button
-              type="button"
-              onClick={() => setMobileSection("poster")}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl text-xs font-semibold transition-all duration-150 cursor-pointer ${
-                mobileSection === "poster"
-                  ? "bg-accent-orange text-white shadow-md shadow-accent-orange/20"
-                  : "text-zinc-400 hover:text-zinc-200"
-              }`}
+          {/* MOBILE ONLY: Always-Visible Live Preview Hero Container */}
+          <div className="flex lg:hidden flex-col items-center w-full mb-3 px-1">
+            <div
+              className="relative w-full max-w-[210px] aspect-[2/3] max-h-[300px] rounded-2xl overflow-hidden border border-white/15 bg-black/60 shadow-2xl shadow-accent-orange/10 group cursor-pointer"
+              onClick={() => setMobilePreviewExpanded(true)}
+              title={t("ui.previewLive")}
             >
-              <span>{t("ui.poster")}</span>
-              <span className="text-[10px] opacity-75 font-mono">({posters.length})</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setMobileSection("preview")}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl text-xs font-semibold transition-all duration-150 cursor-pointer ${
-                mobileSection === "preview"
-                  ? "bg-accent-orange text-white shadow-md shadow-accent-orange/20"
-                  : "text-zinc-400 hover:text-zinc-200"
-              }`}
-            >
-              <span>{t("ui.preview")}</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setMobileSection("customize")}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl text-xs font-semibold transition-all duration-150 cursor-pointer ${
-                mobileSection === "customize"
-                  ? "bg-accent-orange text-white shadow-md shadow-accent-orange/20"
-                  : "text-zinc-400 hover:text-zinc-200"
-              }`}
-            >
-              <span>{t("ui.customize")}</span>
-            </button>
+              {/* Ambient Glow */}
+              <div
+                className="absolute -inset-4 rounded-3xl opacity-50 blur-2xl pointer-events-none transition-all duration-700 ease-out z-0"
+                style={{
+                  background: accentColor
+                    ? `radial-gradient(circle at 50% 50%, ${accentColor}, transparent 70%)`
+                    : "radial-gradient(circle at 50% 50%, rgba(232, 93, 42, 0.45), transparent 70%)",
+                }}
+              />
+              <div className="absolute inset-0 z-[1] flex items-center justify-center p-1">
+                <PosterPreview
+                  previewLoading={previewLoading}
+                  loadProgress={loadProgress}
+                  imageError={imageError}
+                  setImageError={setImageError}
+                  imgSrc={imgSrc}
+                  onRetry={retry}
+                />
+              </div>
+              <PosterDepthEdge edgeStrength={35} edgeCoverage={10} />
+              <PosterDepthSheen sheenStrength={15} />
+
+              {/* Expand badge overlay */}
+              <div className="absolute bottom-2 right-2 z-20 px-2 py-1 rounded-lg bg-black/70 backdrop-blur-md border border-white/20 text-[10px] font-semibold text-zinc-200 flex items-center gap-1 shadow-lg group-hover:bg-accent-orange group-hover:text-white transition-all">
+                <ExternalLink className="w-3 h-3" />
+                <span>{t("ui.preview")}</span>
+              </div>
+            </div>
+
+            {/* Quick Actions under Live Preview */}
+            <div className="flex items-center justify-center gap-2 mt-2.5">
+              <button
+                type="button"
+                onClick={handleTestUrl}
+                className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-[11px] font-semibold text-zinc-300 hover:text-white hover:bg-white/10 flex items-center gap-1.5 shadow-sm active:scale-95 transition-all"
+              >
+                <ExternalLink className="w-3.5 h-3.5 text-accent-orange" />
+                <span>{t("ui.testUrl")}</span>
+              </button>
+              {(() => {
+                if (!selected) return null
+                const key = `${selected.media_type}:${selected.id}`
+                const hasMapping = mappingsMap.get(key)
+                if (!hasMapping) return null
+                return (
+                  <button
+                    type="button"
+                    onClick={() => { removeMapping(hasMapping).catch((e) => console.error(e)); setSelected(null); setPreviewPoster(null); setSelectedLogo(null); setPreviewId(null) }}
+                    className="px-3 py-1.5 rounded-xl bg-red-500/10 border border-red-500/20 text-[11px] font-semibold text-red-400 hover:bg-red-500/20 flex items-center gap-1.5 active:scale-95 transition-all"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>{t("ui.remove")}</span>
+                  </button>
+                )
+              })()}
+            </div>
           </div>
 
+          {/* MOBILE ONLY: Control Tabs Switcher */}
+          <div className="flex lg:hidden items-center gap-1 overflow-x-auto scrollbar-none p-1 bg-surface/90 backdrop-blur-xl rounded-2xl border border-white/10 mb-3 w-full max-w-md mx-auto shadow-lg shadow-black/20 shrink-0">
+            <button
+              type="button"
+              onClick={() => setMobileTab("poster")}
+              className={`flex-1 min-w-[75px] py-2 px-2.5 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer flex items-center justify-center gap-1 ${
+                mobileTab === "poster"
+                  ? "bg-gradient-to-r from-accent-orange to-amber-500 text-white shadow-md shadow-accent-orange/25"
+                  : "text-zinc-400 hover:text-zinc-200"
+              }`}
+            >
+              <span>{t("ui.posterSection")}</span>
+              <span className="text-[10px] opacity-75 font-mono">({posters.length})</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setMobileTab("logo")}
+              className={`flex-1 min-w-[65px] py-2 px-2.5 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer flex items-center justify-center gap-1 ${
+                mobileTab === "logo"
+                  ? "bg-gradient-to-r from-accent-orange to-amber-500 text-white shadow-md shadow-accent-orange/25"
+                  : "text-zinc-400 hover:text-zinc-200"
+              }`}
+            >
+              <span>{t("ui.logoSection")}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setMobileTab("badge")}
+              className={`flex-1 min-w-[65px] py-2 px-2.5 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer flex items-center justify-center gap-1 ${
+                mobileTab === "badge"
+                  ? "bg-gradient-to-r from-accent-orange to-amber-500 text-white shadow-md shadow-accent-orange/25"
+                  : "text-zinc-400 hover:text-zinc-200"
+              }`}
+            >
+              <span>{t("ui.badgeSection")}</span>
+            </button>
+
+            {selectedLogo && (
+              <button
+                type="button"
+                onClick={() => setMobileTab("transform")}
+                className={`flex-1 min-w-[75px] py-2 px-2.5 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer flex items-center justify-center gap-1 ${
+                  mobileTab === "transform"
+                    ? "bg-gradient-to-r from-accent-orange to-amber-500 text-white shadow-md shadow-accent-orange/25"
+                    : "text-zinc-400 hover:text-zinc-200"
+                }`}
+              >
+                <span>{t("ui.transform")}</span>
+              </button>
+            )}
+
+            {selected?.media_type === "tv" && (
+              <button
+                type="button"
+                onClick={() => setMobileTab("stagioni")}
+                className={`flex-1 min-w-[70px] py-2 px-2.5 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer flex items-center justify-center gap-1 ${
+                  mobileTab === "stagioni"
+                    ? "bg-gradient-to-r from-accent-orange to-amber-500 text-white shadow-md shadow-accent-orange/25"
+                    : "text-zinc-400 hover:text-zinc-200"
+                }`}
+              >
+                <span>{t("ui.seasons") || "Seasons"}</span>
+              </button>
+            )}
+          </div>
+
+          {/* MOBILE ONLY: Active Control Tab Content Card */}
+          <div className="block lg:hidden w-full bg-surface/80 backdrop-blur-xl border border-white/10 rounded-2xl p-3 shadow-xl mb-4">
+            {mobileTab === "poster" && (
+              <div>
+                <h3 className="text-xs font-bold text-zinc-200 mb-2 flex items-center justify-between">
+                  <span>{t("ui.posterAvailable")}</span>
+                  <span className="text-[10px] font-mono text-muted px-2 py-0.5 rounded-md bg-white/5 border border-white/10">{posters.length}</span>
+                </h3>
+                {loadingImages ? (
+                  <div className="space-y-2">{Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-8 rounded-lg skeleton-shimmer" />)}</div>
+                ) : (
+                  <PosterOptions posters={posters} posterActivePath={posterActivePath} lang={lang} selectPoster={selectPoster} activeGroup={activePosterTab} onActiveGroupChange={setActivePosterTab} showTabs />
+                )}
+              </div>
+            )}
+
+            {mobileTab === "logo" && (
+              <div>
+                <LogoOptions logos={logos} selectedLogo={selectedLogo} lang={lang} selectLogo={selectLogo} removeLogo={removeLogo} disabled={!cleanPoster} />
+                {!cleanPoster && <p className="text-xs text-zinc-500 text-center mt-2 px-1">{t("ui.logoHint")}</p>}
+              </div>
+            )}
+
+            {mobileTab === "badge" && (
+              <BadgeControls />
+            )}
+
+            {mobileTab === "transform" && (
+              <TransformControls />
+            )}
+
+            {mobileTab === "stagioni" && (
+              <EpisodeGroupControls />
+            )}
+          </div>
+
+          {/* DESKTOP ONLY: 3-Column Workspace */}
           <div className="editor-workspace w-full px-2 sm:px-4 md:px-6 lg:h-[clamp(660px,calc(100dvh-260px),830px)] lg:min-h-0">
 
             {/* LEFT: Poster */}
-            <div className={mobileSection === "poster" ? "block w-full" : "hidden lg:block h-full min-w-0"}>
+            <div className="hidden lg:block h-full min-w-0">
               <EditorPanel className="animate-fade-scale-in-panel-left h-full" aria-label={`${selected?.title || ""} — Poster selection`} title={t("ui.posterAvailable")} headerRight={<span className="text-[10px] font-mono text-muted px-1.5 py-0.5 rounded-md bg-white/[0.05] border border-white/10 tabular-nums">{posters.length}</span>}>
                 {loadingImages ? (
                   <div className="space-y-2">{Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-8 rounded-lg skeleton-shimmer" />)}</div>
@@ -276,7 +453,7 @@ export default function EditView() {
             </div>
 
             {/* CENTER: Preview */}
-            <div className={mobileSection === "preview" ? "block w-full" : "hidden lg:block h-full min-w-0"}>
+            <div className="hidden lg:block h-full min-w-0">
               <EditorPanel className="animate-fade-scale-in h-full" title={<><span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 align-middle shadow-[0_0_6px_rgba(52,211,153,0.7)]" aria-hidden="true" />{t("ui.previewLive")}</>} footer={
                 previewPoster && selected ? (
                   <div className="flex flex-wrap items-center justify-center gap-2">
@@ -292,49 +469,7 @@ export default function EditView() {
                         </button>
                       )
                     })()}
-                    <button type="button" aria-label={t("ui.testUrl")} onClick={() => {
-                      if (!selected || !previewPoster) return
-                      const url = buildPreviewUrl({
-                        selected: selected,
-                        previewPoster: previewPoster,
-                        selectedLogo: selectedLogo,
-                        selectedBackdrop: ed.selectedBackdrop,
-                        logoScale: ed.logoScale,
-                        logoOffsetX: ed.logoOffsetX,
-                        logoOffsetY: ed.logoOffsetY,
-                        backdropScale: ed.backdropScale,
-                        backdropOffsetX: ed.backdropOffsetX,
-                        backdropOffsetY: ed.backdropOffsetY,
-                        metaInfo: metaInfo,
-                        trendRank: trendRank,
-                        mdblistAnimeList: mdblistAnimeList,
-                        topEdgeColor: topEdgeColor,
-                        accentColor: accentColor,
-                        lang: lang,
-                        tmdbKey: tmdbKey,
-                      }, {
-                        globalBadges: ed.globalBadges,
-                        rankingBadges: ed.rankingBadges,
-                        badgeGenre: ed.badgeGenre,
-                        badgeYear: ed.badgeYear,
-                        badgeRating: ed.badgeRating,
-                        manualQuality: ed.manualQuality,
-                        ratingSources: ed.ratingSources,
-                        badgeStyle: ed.badgeStyle,
-                        rankingBadgeStyle: ed.rankingBadgeStyle,
-                        customBadge: ed.customBadge,
-                        gradientHeight: ed.gradientHeight,
-                        blurIntensity: ed.blurIntensity,
-                        blurFade: ed.blurFade,
-                        blurDarkness: ed.blurDarkness,
-                        blurEnabled: ed.blurEnabled,
-                        networkLogo: ed.networkLogo,
-                        ribbonSide: ed.ribbonSide,
-                      })
-                      if (!url) return
-                      setUrlCopied(false)
-                      setTestUrl(`${url}${url.includes("?") ? "&" : "?"}v=${Date.now()}`)
-                    }} className="btn-secondary min-h-[44px] px-4 rounded-xl text-xs">
+                    <button type="button" aria-label={t("ui.testUrl")} onClick={handleTestUrl} className="btn-secondary min-h-[44px] px-4 rounded-xl text-xs">
                       <ExternalLink className="w-4 h-4" />
                       {t("ui.testUrl")}
                     </button>
@@ -350,7 +485,7 @@ export default function EditView() {
                     <div className={`editor-stage editor-stage-fill isolate ${previewPoster?.file_path ? "editor-stage-glow" : ""}`}>
                       {/* NuvioDesktop-style depth edge */}
                       <PosterDepthEdge edgeStrength={40} edgeCoverage={10} />
-                      {/* Accent Glow (firma Pictorium: si ritinta col colore dominante) */}
+                      {/* Accent Glow */}
                       <div
                         className="absolute -inset-8 rounded-3xl opacity-45 blur-3xl pointer-events-none transition-all duration-700 ease-out z-0"
                         style={{
@@ -380,7 +515,7 @@ export default function EditView() {
             </div>
 
             {/* RIGHT: Edit */}
-            <div className={mobileSection === "customize" ? "block w-full" : "hidden lg:block h-full min-w-0"}>
+            <div className="hidden lg:block h-full min-w-0">
               <EditorPanel className="animate-fade-scale-in-panel-right h-full" title={t("ui.customize")} tabs={rightTabs} activeTab={activeRightTab} onTabChange={(k) => setActiveRightTab(k as typeof activeRightTab)}>
                 {selected && (
                   <div className="mb-3 pb-3 border-b border-white/[0.08]">
@@ -512,6 +647,26 @@ export default function EditView() {
               }} className="btn-secondary min-h-[44px] rounded-xl text-xs">{urlCopied ? t("ui.copied") : t("ui.copyPosterUrl")}</button>
               <button type="button" onClick={() => window.open(testUrl, "_blank")} className="btn-primary min-h-[44px] rounded-xl text-xs">{t("ui.openInNewTab")}</button>
             </div>
+          </div>
+        </div>,
+        document.body
+      )}
+      {mobilePreviewExpanded && createPortal(
+        <div className="fixed inset-0 z-[200] bg-black/90 backdrop-blur-md flex flex-col items-center justify-center p-4 animate-fade-scale-in" onClick={() => setMobilePreviewExpanded(false)}>
+          <button type="button" onClick={() => setMobilePreviewExpanded(false)} aria-label={t("ui.close")} className="absolute top-4 right-4 z-50 p-2.5 rounded-2xl bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all">
+            <X className="w-6 h-6" />
+          </button>
+          <div className="relative max-w-sm w-full aspect-[2/3] max-h-[82vh] rounded-3xl overflow-hidden border border-white/20 shadow-2xl bg-black" onClick={(e) => e.stopPropagation()}>
+            <PosterPreview
+              previewLoading={previewLoading}
+              loadProgress={loadProgress}
+              imageError={imageError}
+              setImageError={setImageError}
+              imgSrc={imgSrc}
+              onRetry={retry}
+            />
+            <PosterDepthEdge edgeStrength={40} edgeCoverage={10} />
+            <PosterDepthSheen sheenStrength={20} />
           </div>
         </div>,
         document.body

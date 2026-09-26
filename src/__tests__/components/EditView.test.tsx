@@ -33,7 +33,7 @@ describe("EditView", () => {
 
   it("shows preview section when item selected", () => {
     renderWithCtx(<EditView />, { selected: mockSelected })
-    expect(screen.getByText("ui.previewLive")).toBeInTheDocument()
+    expect(screen.getAllByText("ui.previewLive")[0]).toBeInTheDocument()
   })
 
   it("shows title when item selected", () => {
@@ -46,7 +46,7 @@ describe("EditView", () => {
       selected: mockSelected,
       previewPoster: { file_path: "/clean.jpg", iso_639_1: null, vote_average: 0, width: 1000, height: 1500 },
     })
-    expect(screen.getByText("ui.savePoster")).toBeInTheDocument()
+    expect(screen.getAllByText("ui.savePoster")[0]).toBeInTheDocument()
   })
 
   it("switches right tab on click", async () => {
@@ -57,8 +57,9 @@ describe("EditView", () => {
       previewPoster: { file_path: "/clean.jpg", iso_639_1: null, vote_average: 0, width: 1000, height: 1500 },
       selectedLogo: { file_path: "/logo.png", iso_639_1: "en", vote_average: 0, width: 200, height: 100 },
     })
-    const transformTab = screen.getByText("ui.transform")
-    await u.click(transformTab)
-    expect(transformTab.closest("button")).toHaveClass("tab-chip-active")
+    const transformTabs = screen.getAllByText("ui.transform")
+    const desktopTransformTab = transformTabs.find((el) => el.closest(".tab-chip")) || transformTabs[0]
+    await u.click(desktopTransformTab)
+    expect(desktopTransformTab.closest("button")).toHaveClass("tab-chip-active")
   })
 })
