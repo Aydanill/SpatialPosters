@@ -477,7 +477,7 @@ function StatusContent() {
           {/* Footer Note */}
           <div className="mt-8 text-center text-xs text-zinc-500 flex items-center justify-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>SpatialPosters v2.5.0 · Live Telemetry</span>
+            <span>SpatialPosters · Live Telemetry</span>
           </div>
         </div>
       </ToastProvider>
