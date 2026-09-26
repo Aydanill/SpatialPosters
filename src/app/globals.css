@@ -715,17 +715,17 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .tab-chip-active {
-  color: var(--color-accent-orange);
-  background: rgb(var(--accent-rgb) / 0.14);
-  border-color: rgb(var(--accent-rgb) / 0.40);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.2);
   position: relative;
 }
 .ui-accent .tab-chip-active {
-  color: var(--color-accent, var(--color-accent-orange));
-  background: color-mix(in srgb, var(--color-accent, var(--color-accent-orange)) 14%, transparent);
-  border-color: color-mix(in srgb, var(--color-accent, var(--color-accent-orange)) 40%, transparent);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.40);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
 .tab-chip-active::after {
@@ -736,11 +736,13 @@ input[type="range"]::-moz-range-thumb {
   transform: translateX(-50%);
   width: 20px;
   height: 2px;
-  background: var(--color-accent-orange);
+  background: #ffffff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
   border-radius: 1px;
 }
 .ui-accent .tab-chip-active::after {
-  background: var(--color-accent, var(--color-accent-orange));
+  background: #ffffff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
 }
 
 .search-shell {

@@ -47,8 +47,8 @@ function PosterEditorContent({ id, mediaType }: PosterEditorContainerProps) {
       <AmbientBackground />
       <ToastProvider>
         <div className="relative z-10 max-w-[1680px] mx-auto px-3 sm:px-4 py-3 sm:py-5">
-          {/* Top navigation header */}
-          <div className="flex items-center justify-between mb-4">
+          {/* Top navigation header (desktop only, EditView handles mobile header) */}
+          <div className="hidden lg:flex items-center justify-between mb-4">
             <Link
               href="/"
               className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-zinc-300 hover:text-white transition-colors bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 px-3.5 py-2 rounded-xl cursor-pointer shadow-sm active:scale-95"

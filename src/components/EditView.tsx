@@ -272,20 +272,20 @@ export default function EditView() {
           {/* MOBILE ONLY: Always-Visible Live Preview Hero Container */}
           <div className="flex lg:hidden flex-col items-center w-full mb-3 px-1">
             <div
-              className="relative w-full max-w-[210px] aspect-[2/3] max-h-[300px] rounded-2xl overflow-hidden border border-white/15 bg-black/60 shadow-2xl shadow-accent-orange/10 group cursor-pointer"
+              className="relative w-full max-w-[210px] aspect-[2/3] max-h-[300px] rounded-2xl overflow-hidden border border-white/20 bg-zinc-950 shadow-2xl shadow-black/80 group cursor-pointer transition-all duration-300 hover:border-white/40"
               onClick={() => setMobilePreviewExpanded(true)}
               title={t("ui.previewLive")}
             >
               {/* Ambient Glow */}
               <div
-                className="absolute -inset-4 rounded-3xl opacity-50 blur-2xl pointer-events-none transition-all duration-700 ease-out z-0"
+                className="absolute -inset-4 rounded-3xl opacity-40 blur-2xl pointer-events-none transition-all duration-700 ease-out z-0"
                 style={{
                   background: accentColor
                     ? `radial-gradient(circle at 50% 50%, ${accentColor}, transparent 70%)`
-                    : "radial-gradient(circle at 50% 50%, rgba(232, 93, 42, 0.45), transparent 70%)",
+                    : "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.15), transparent 70%)",
                 }}
               />
-              <div className="absolute inset-0 z-[1] flex items-center justify-center p-1">
+              <div className="absolute inset-0 z-[1]">
                 <PosterPreview
                   previewLoading={previewLoading}
                   loadProgress={loadProgress}
@@ -299,7 +299,7 @@ export default function EditView() {
               <PosterDepthSheen sheenStrength={15} />
 
               {/* Expand badge overlay */}
-              <div className="absolute bottom-2 right-2 z-20 px-2 py-1 rounded-lg bg-black/70 backdrop-blur-md border border-white/20 text-[10px] font-semibold text-zinc-200 flex items-center gap-1 shadow-lg group-hover:bg-accent-orange group-hover:text-white transition-all">
+              <div className="absolute bottom-2 right-2 z-20 px-2 py-1 rounded-lg bg-black/75 backdrop-blur-md border border-white/20 text-[10px] font-semibold text-zinc-200 flex items-center gap-1 shadow-lg group-hover:bg-zinc-100 group-hover:text-zinc-950 transition-all">
                 <ExternalLink className="w-3 h-3" />
                 <span>{t("ui.preview")}</span>
               </div>
@@ -312,7 +312,7 @@ export default function EditView() {
                 onClick={handleTestUrl}
                 className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-[11px] font-semibold text-zinc-300 hover:text-white hover:bg-white/10 flex items-center gap-1.5 shadow-sm active:scale-95 transition-all"
               >
-                <ExternalLink className="w-3.5 h-3.5 text-accent-orange" />
+                <ExternalLink className="w-3.5 h-3.5 text-zinc-300" />
                 <span>{t("ui.testUrl")}</span>
               </button>
               {(() => {
@@ -341,8 +341,8 @@ export default function EditView() {
               onClick={() => setMobileTab("poster")}
               className={`flex-1 min-w-[75px] py-2 px-2.5 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer flex items-center justify-center gap-1 ${
                 mobileTab === "poster"
-                  ? "bg-gradient-to-r from-accent-orange to-amber-500 text-white shadow-md shadow-accent-orange/25"
-                  : "text-zinc-400 hover:text-zinc-200"
+                  ? "bg-zinc-100 text-zinc-950 shadow-md shadow-white/10 border border-white/80"
+                  : "text-zinc-400 hover:text-zinc-100"
               }`}
             >
               <span>{t("ui.posterSection")}</span>
@@ -354,8 +354,8 @@ export default function EditView() {
               onClick={() => setMobileTab("logo")}
               className={`flex-1 min-w-[65px] py-2 px-2.5 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer flex items-center justify-center gap-1 ${
                 mobileTab === "logo"
-                  ? "bg-gradient-to-r from-accent-orange to-amber-500 text-white shadow-md shadow-accent-orange/25"
-                  : "text-zinc-400 hover:text-zinc-200"
+                  ? "bg-zinc-100 text-zinc-950 shadow-md shadow-white/10 border border-white/80"
+                  : "text-zinc-400 hover:text-zinc-100"
               }`}
             >
               <span>{t("ui.logoSection")}</span>
@@ -366,8 +366,8 @@ export default function EditView() {
               onClick={() => setMobileTab("badge")}
               className={`flex-1 min-w-[65px] py-2 px-2.5 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer flex items-center justify-center gap-1 ${
                 mobileTab === "badge"
-                  ? "bg-gradient-to-r from-accent-orange to-amber-500 text-white shadow-md shadow-accent-orange/25"
-                  : "text-zinc-400 hover:text-zinc-200"
+                  ? "bg-zinc-100 text-zinc-950 shadow-md shadow-white/10 border border-white/80"
+                  : "text-zinc-400 hover:text-zinc-100"
               }`}
             >
               <span>{t("ui.badgeSection")}</span>
@@ -379,8 +379,8 @@ export default function EditView() {
                 onClick={() => setMobileTab("transform")}
                 className={`flex-1 min-w-[75px] py-2 px-2.5 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer flex items-center justify-center gap-1 ${
                   mobileTab === "transform"
-                    ? "bg-gradient-to-r from-accent-orange to-amber-500 text-white shadow-md shadow-accent-orange/25"
-                    : "text-zinc-400 hover:text-zinc-200"
+                    ? "bg-zinc-100 text-zinc-950 shadow-md shadow-white/10 border border-white/80"
+                    : "text-zinc-400 hover:text-zinc-100"
                 }`}
               >
                 <span>{t("ui.transform")}</span>
@@ -393,8 +393,8 @@ export default function EditView() {
                 onClick={() => setMobileTab("stagioni")}
                 className={`flex-1 min-w-[70px] py-2 px-2.5 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer flex items-center justify-center gap-1 ${
                   mobileTab === "stagioni"
-                    ? "bg-gradient-to-r from-accent-orange to-amber-500 text-white shadow-md shadow-accent-orange/25"
-                    : "text-zinc-400 hover:text-zinc-200"
+                    ? "bg-zinc-100 text-zinc-950 shadow-md shadow-white/10 border border-white/80"
+                    : "text-zinc-400 hover:text-zinc-100"
                 }`}
               >
                 <span>{t("ui.seasons") || "Seasons"}</span>
