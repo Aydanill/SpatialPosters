@@ -42,19 +42,24 @@ import {
 } from "lucide-react"
 
 interface Props {
-  setSettingsOpen: (v: boolean) => void
-  exportData: () => void
-  importData: () => void
+  setSettingsOpen?: (v: boolean) => void
+  exportData?: () => void
+  importData?: () => void
   mobile?: boolean
+  embedded?: boolean
 }
 
-export function SettingsPanel({ setSettingsOpen, exportData, importData, mobile }: Props) {
+export function SettingsPanel({ setSettingsOpen, exportData, importData, mobile, embedded }: Props) {
   const accentColor = usePSelector((v) => v.accentColor)
   const uiAccent = usePSelector((v) => v.uiAccent)
   const setUiAccent = usePSelector((v) => v.setUiAccent)
   const selected = usePSelector((v) => v.selected)
   const mappingsMap = usePSelector((v) => v.mappingsMap)
   const setShowLangPicker = usePSelector((v) => v.setShowLangPicker)
+  const ctxExportData = usePSelector((v) => v.exportData)
+  const ctxImportData = usePSelector((v) => v.importData)
+  const handleExport = exportData || ctxExportData
+  const handleImport = importData || ctxImportData
   const { t } = useT()
   const ed = usePosterEditor()
 
@@ -136,7 +141,7 @@ export function SettingsPanel({ setSettingsOpen, exportData, importData, mobile 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault()
-        setSettingsOpen(false)
+        setSettingsOpen?.(false)
       }
     }
     window.addEventListener("keydown", handleKeyDown)
@@ -815,23 +820,23 @@ export function SettingsPanel({ setSettingsOpen, exportData, importData, mobile 
             icon={<Download className="w-3.5 h-3.5 text-accent-orange" />}
             label={t("ui.exportJson")}
             onClick={() => {
-              exportData()
-              setSettingsOpen(false)
+              handleExport()
+              setSettingsOpen?.(false)
             }}
           />
           <MenuItem
             icon={<Upload className="w-3.5 h-3.5 text-blue-400" />}
             label={t("ui.importJson")}
             onClick={() => {
-              importData()
-              setSettingsOpen(false)
+              handleImport()
+              setSettingsOpen?.(false)
             }}
           />
         </div>
         <button
           type="button"
           onClick={() => {
-            setSettingsOpen(false)
+            setSettingsOpen?.(false)
             setShowLangPicker(true)
           }}
           className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-[11px] font-medium bg-white/[0.04] text-zinc-300 hover:text-white hover:bg-white/[0.08] active:scale-[0.98] transition-all border border-white/[0.06] cursor-pointer"
@@ -1087,14 +1092,16 @@ export function SettingsPanel({ setSettingsOpen, exportData, importData, mobile 
 
   // Sticky Actions Footer
   const footer = (
-    <div className="border-t border-white/10 bg-[#0d0d10]/95 backdrop-blur-md px-4 sm:px-6 py-3 flex items-center justify-between gap-3 shrink-0">
-      <button
-        type="button"
-        onClick={() => setSettingsOpen(false)}
-        className="px-4 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-xs font-semibold text-zinc-300 hover:text-white transition-all active:scale-95 cursor-pointer"
-      >
-        {t("ui.close")}
-      </button>
+    <div className={`border-t border-white/10 bg-[#0d0d10]/95 backdrop-blur-md px-4 sm:px-6 py-3 flex items-center gap-3 shrink-0 ${setSettingsOpen ? "justify-between" : "justify-end"}`}>
+      {setSettingsOpen && (
+        <button
+          type="button"
+          onClick={() => setSettingsOpen(false)}
+          className="px-4 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-xs font-semibold text-zinc-300 hover:text-white transition-all active:scale-95 cursor-pointer"
+        >
+          {t("ui.close")}
+        </button>
+      )}
       <button
         type="button"
         onClick={handleSaveDefaults}
@@ -1115,8 +1122,8 @@ export function SettingsPanel({ setSettingsOpen, exportData, importData, mobile 
     </div>
   )
 
-  // Layout Mobile (innestato nella schermata di AppShell)
-  if (mobile) {
+  // Layout Mobile o Embedded (innestato nella pagina)
+  if (mobile || embedded || !setSettingsOpen) {
     return (
       <div ref={settingsRef} className="space-y-4">
         {tabsNav}

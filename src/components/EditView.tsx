@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback, useMemo } from "react"
 import { createPortal } from "react-dom"
+import Link from "next/link"
 import { usePSelector } from "@/lib/context"
 import { useT } from "@/lib/contexts/TranslationContext"
 import { usePosterEditor } from "@/lib/contexts/PosterEditorContext"
@@ -439,9 +440,9 @@ export default function EditView() {
             </div>
             <h2 className="text-lg font-bold text-zinc-100 mb-2">{t("ui.welcomePanelTitle")}</h2>
             <p className="text-sm text-muted mb-6 leading-relaxed">{t("ui.noKey")}</p>
-            <button type="button" onClick={() => setSettingsOpen(true)} className="btn-primary px-5 py-2.5 text-sm">
+            <Link href="/settings" className="btn-primary px-5 py-2.5 text-sm">
               {t("ui.openSettings")}
-            </button>
+            </Link>
             <div className="grid grid-cols-3 gap-3 mt-8 w-full">
               <div className="feature-card">
                 <div className="feature-icon">

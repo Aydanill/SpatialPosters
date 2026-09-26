@@ -1,9 +1,18 @@
-import { describe, it, expect, vi } from "vitest"
+import { describe, it, expect, vi, beforeEach } from "vitest"
 import { screen } from "@testing-library/react"
 import { SettingsPanel } from "@/components/SettingsPanel"
 import { renderWithCtx } from "@/__tests__/test-utils"
 
 describe("SettingsPanel", () => {
+  beforeEach(() => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ totalEntries: 0, hasPin: false }),
+      })
+    )
+  })
   it("renders genre/rating badge toggle", () => {
     renderWithCtx(
       <SettingsPanel
@@ -26,7 +35,8 @@ describe("SettingsPanel", () => {
     expect(screen.getByText("ui.trendBadge")).toBeInTheDocument()
   })
 
-  it("renders clear cache button", () => {
+  it("renders clear cache button", async () => {
+    const { fireEvent } = await import("@testing-library/react")
     renderWithCtx(
       <SettingsPanel
         setSettingsOpen={() => {}}
@@ -34,6 +44,8 @@ describe("SettingsPanel", () => {
         importData={() => {}}
       />
     )
+    const dataTab = screen.getByRole("tab", { name: "ui.settingsTabData" })
+    fireEvent.click(dataTab)
     const buttons = screen.getAllByRole("button")
     const clearBtn = buttons.find((b) => b.textContent === "ui.clearCache")
     expect(clearBtn).toBeTruthy()

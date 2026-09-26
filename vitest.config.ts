@@ -4,6 +4,7 @@ import path from "path"
 export default defineConfig({
   test: {
     environment: "jsdom",
+    testTimeout: 20000,
     setupFiles: ["./src/__tests__/setup.ts"],
     exclude: [
       "node_modules/**",

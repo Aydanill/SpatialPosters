@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback, type CSSProperties } from "react"
 import dynamic from "next/dynamic"
+import Link from "next/link"
 import { usePSelector } from "@/lib/context"
 import { useT } from "@/lib/contexts/TranslationContext"
 import { usePosterEditor } from "@/lib/contexts/PosterEditorContext"
@@ -455,11 +456,10 @@ export function AppShell() {
           </a>
 
           {/* Settings (At the very bottom) */}
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); setSettingsOpen((o) => !o) }}
+          <Link
+            href="/settings"
             title={t("ui.settings")}
-            className={`group sidebar-dock-btn ${settingsOpen ? "sidebar-dock-btn-active" : ""}`}
+            className="group sidebar-dock-btn"
           >
             <Settings className={`w-4.5 h-4.5 transition-all duration-200 ${
               theme === "light" ? "text-zinc-700 group-hover:text-zinc-950" : "text-zinc-300 group-hover:text-white"
@@ -469,7 +469,7 @@ export function AppShell() {
             }`}>
               {t("ui.settings")}
             </span>
-          </button>
+          </Link>
         </div>
       </aside>
 
@@ -560,15 +560,14 @@ export function AppShell() {
           </button>
 
           {/* Settings */}
-          <button
-            type="button"
-            onClick={() => setSettingsOpen(true)}
-            className={`mobile-dock-item ${settingsOpen ? "mobile-dock-item-active text-white font-bold" : ""}`}
+          <Link
+            href="/settings"
+            className="mobile-dock-item"
             title="Settings"
           >
             <Settings className="w-4.5 h-4.5 text-zinc-100" />
             <span className="text-[9px] font-medium tracking-tight truncate">{t("ui.settingsTitle") || "Opzioni"}</span>
-          </button>
+          </Link>
         </div>
 
         {/* Right Floating Circular Action Button (Install Hub) */}
@@ -582,41 +581,6 @@ export function AppShell() {
           <img src="/icon/install-hub.webp" alt="Install Hub" className="w-5 h-5 object-contain brightness-0 invert group-active:scale-90 transition-transform" />
         </button>
       </nav>
-
-      {/* Desktop Settings Modal */}
-      <div className="hidden md:block">
-        {settingsOpen && (
-          <SettingsPanel
-            setSettingsOpen={setSettingsOpen}
-            exportData={exportData}
-            importData={importData}
-          />
-        )}
-      </div>
-
-      {(settingsOpen || closingSettings) && (
-        <div role="dialog" aria-modal="true" aria-label={t("ui.settingsTitle")} className={`fixed inset-0 z-[70] bg-background md:hidden overflow-y-auto ${closingSettings ? "animate-fade-out" : "animate-fade-scale-in"}`}>
-          <div className="fixed inset-0 z-[-1]" onClick={() => closeSettings()} />
-          <div className="sticky top-0 z-20 bg-surface/95 backdrop-blur-2xl flex items-center justify-between px-4 py-3.5 border-b border-white/10 shadow-lg shadow-black/20">
-            <h2 className="text-sm font-bold text-zinc-100 flex items-center gap-2">
-              <Settings className="w-4 h-4 text-accent-orange" />
-              <span>{t("ui.settingsTitle")}</span>
-            </h2>
-            <button
-              type="button"
-              autoFocus
-              aria-label={t("ui.back")}
-              onClick={() => closeSettings()}
-              className="px-3.5 py-1.5 rounded-xl bg-white/[0.08] border border-white/10 text-xs font-semibold text-zinc-200 hover:text-white active:scale-90 transition-all duration-150 press-scale"
-            >
-              {t("ui.back")}
-            </button>
-          </div>
-          <div className="p-4 pb-[max(6rem,env(safe-area-inset-bottom)+4rem)] max-w-lg mx-auto">
-            <SettingsPanel mobile setSettingsOpen={setSettingsOpen} exportData={exportData} importData={importData} />
-          </div>
-        </div>
-      )}
     </div>
     </ToastProvider>
     {!showLangPicker && <OnboardingTour />}
