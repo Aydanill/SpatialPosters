@@ -409,16 +409,16 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
             <PosterTabs tabs={posterTabs} activeGroup={activeGroup} onSelect={setActiveGroup} />
           </div>
 
-          {/* Row 2: Grid Switcher + Custom URL button */}
-          <div className="flex items-center justify-between gap-2 px-0.5">
+          {/* Row 2: Grid Switcher + Refresh button */}
+          <div className="flex items-center justify-between gap-2 px-0.5 mb-2">
             <div className="flex items-center gap-1.5">
-              <span className="text-[10px] uppercase tracking-wider font-semibold text-zinc-500">{t("ui.view") || "View"}</span>
+              <span className="text-[10px] uppercase tracking-wider font-semibold text-zinc-400">{t("ui.view") || "View"}</span>
               <div className="flex items-center bg-white/5 border border-white/10 rounded-xl p-0.5 shadow-sm">
                 <button
                   type="button"
                   aria-label="2 columns large view"
                   onClick={() => setGridCols(2)}
-                  className={`p-1.5 rounded-lg text-xs transition-all ${gridCols === 2 ? "bg-accent-orange text-white shadow-sm font-bold" : "text-zinc-400 hover:text-white"}`}
+                  className={`p-1.5 rounded-lg text-xs transition-all ${gridCols === 2 ? "bg-zinc-100 text-zinc-950 font-bold shadow-sm" : "text-zinc-400 hover:text-white"}`}
                   title="Large view (2 cols)"
                 >
                   <Grid2X2 className="w-3.5 h-3.5" />
@@ -427,7 +427,7 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
                   type="button"
                   aria-label="3 columns compact view"
                   onClick={() => setGridCols(3)}
-                  className={`p-1.5 rounded-lg text-xs transition-all ${gridCols === 3 ? "bg-accent-orange text-white shadow-sm font-bold" : "text-zinc-400 hover:text-white"}`}
+                  className={`p-1.5 rounded-lg text-xs transition-all ${gridCols === 3 ? "bg-zinc-100 text-zinc-950 font-bold shadow-sm" : "text-zinc-400 hover:text-white"}`}
                   title="Compact view (3 cols)"
                 >
                   <Grid3X3 className="w-3.5 h-3.5" />
@@ -435,37 +435,38 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
               </div>
             </div>
 
-            <div className="flex items-center gap-1.5 shrink-0">
-              <button
-                type="button"
-                aria-label="Refresh posters from TMDB"
-                onClick={handleRefresh}
-                disabled={isRefreshing}
-                className="h-8 px-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white text-xs font-medium transition-all flex items-center gap-1.5 shadow-sm disabled:opacity-50 active:scale-95"
-                title="Refresh posters from TMDB"
-              >
-                {isRefreshing ? (
-                  <BladeSpinner size="14px" />
-                ) : (
-                  <RefreshCw className="w-3.5 h-3.5" />
-                )}
-                <span>{t("ui.refresh") || "Refresh"}</span>
-              </button>
+            <button
+              type="button"
+              aria-label="Refresh posters from TMDB"
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="h-8 px-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white text-xs font-medium transition-all flex items-center gap-1.5 shadow-sm disabled:opacity-50 active:scale-95"
+              title="Refresh posters from TMDB"
+            >
+              {isRefreshing ? (
+                <BladeSpinner size="14px" />
+              ) : (
+                <RefreshCw className="w-3.5 h-3.5" />
+              )}
+              <span>{t("ui.refresh") || "Refresh"}</span>
+            </button>
+          </div>
 
-              <button
-                type="button"
-                aria-label="Add custom poster URL"
-                onClick={() => setShowUrlInput(!showUrlInput)}
-                className={`h-8 px-2.5 rounded-xl border transition-all flex items-center gap-1.5 text-xs font-medium shadow-sm ${
-                  showUrlInput
-                    ? "bg-accent-orange/20 border-accent-orange/40 text-accent-orange"
-                    : "bg-white/5 border-white/10 text-zinc-300 hover:text-white hover:bg-white/10"
-                }`}
-              >
-                <Link className="w-3.5 h-3.5" />
-                <span>{t("ui.customUrl")}</span>
-              </button>
-            </div>
+          {/* Row 3 (Relocated): Custom URL button */}
+          <div className="px-0.5 mb-2">
+            <button
+              type="button"
+              aria-label="Add custom poster URL"
+              onClick={() => setShowUrlInput(!showUrlInput)}
+              className={`w-full h-8 px-3 rounded-xl border transition-all flex items-center justify-center gap-1.5 text-xs font-medium shadow-sm ${
+                showUrlInput
+                  ? "bg-zinc-100 text-zinc-950 border-white/80 font-bold"
+                  : "bg-white/5 border-white/10 text-zinc-300 hover:text-white hover:bg-white/10"
+              }`}
+            >
+              <Link className="w-3.5 h-3.5" />
+              <span>{t("ui.customUrl")}</span>
+            </button>
           </div>
         </div>
       )}

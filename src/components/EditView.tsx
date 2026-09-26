@@ -442,7 +442,7 @@ export default function EditView() {
           </div>
 
           {/* DESKTOP ONLY: 3-Column Workspace */}
-          <div className="editor-workspace w-full px-2 sm:px-4 md:px-6 lg:h-[clamp(660px,calc(100dvh-260px),830px)] lg:min-h-0">
+          <div className="editor-workspace w-full px-2 sm:px-4 md:px-6 lg:pl-16 xl:pl-16 2xl:pl-6 lg:h-[clamp(660px,calc(100dvh-260px),830px)] lg:min-h-0">
 
             {/* LEFT: Poster */}
             <div className="hidden lg:block h-full min-w-0">
@@ -519,7 +519,7 @@ export default function EditView() {
 
             {/* RIGHT: Edit */}
             <div className="hidden lg:block h-full min-w-0">
-              <EditorPanel className="animate-fade-scale-in-panel-right h-full" title={t("ui.customize")} tabs={rightTabs} activeTab={activeRightTab} onTabChange={(k) => setActiveRightTab(k as typeof activeRightTab)}>
+              <EditorPanel className="animate-fade-scale-in-panel-right h-full" title={t("ui.customize")}>
                 {selected && (
                   <div className="mb-3 pb-3 border-b border-white/[0.08]">
                     <h3 className="text-[10px] font-semibold text-muted uppercase tracking-wider mb-1.5">{t("ui.details")}</h3>
@@ -544,6 +544,25 @@ export default function EditView() {
                     </div>
                   </div>
                 )}
+
+                {/* Relocated Customize Tabs (Desktop) */}
+                <div className="flex items-center gap-1 overflow-x-auto scrollbar-none p-1 bg-white/[0.04] border border-white/10 rounded-xl mb-3 shadow-inner shrink-0">
+                  {rightTabs.map((tab) => (
+                    <button
+                      type="button"
+                      key={tab.key}
+                      onClick={() => setActiveRightTab(tab.key as typeof activeRightTab)}
+                      className={`tab-chip flex-1 min-w-[65px] py-1.5 px-2 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer flex items-center justify-center gap-1 ${
+                        activeRightTab === tab.key
+                          ? "tab-chip-active bg-zinc-100 text-zinc-950 shadow-md shadow-white/10 border border-white/80"
+                          : "text-zinc-400 hover:text-zinc-100"
+                      }`}
+                    >
+                      <span>{tab.label}</span>
+                    </button>
+                  ))}
+                </div>
+
                 <div className="animate-tab-fade-in space-y-3">
                 {activeRightTab === "logo" && <>
                   <LogoOptions logos={logos} selectedLogo={selectedLogo} lang={lang} selectLogo={selectLogo} removeLogo={removeLogo} disabled={!cleanPoster} />
