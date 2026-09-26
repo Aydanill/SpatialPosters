@@ -98,6 +98,15 @@ export function readSecurityConfigSync(): SecurityConfig {
   return cachedConfig ?? {}
 }
 
+export function isPinDisabled(): boolean {
+  return (
+    envWithFallback("DISABLE_PIN") === "1" ||
+    process.env.DISABLE_PIN === "1" ||
+    process.env.SPATIALPOSTERS_DISABLE_PIN === "1" ||
+    process.env.PICTORIUM_DISABLE_PIN === "1"
+  )
+}
+
 function isValidPinHash(pinHash?: string): boolean {
   if (!pinHash || typeof pinHash !== "string" || !pinHash.includes(":")) return false
   const parts = pinHash.split(":")
@@ -105,6 +114,7 @@ function isValidPinHash(pinHash?: string): boolean {
 }
 
 export function hasPinConfiguredSync(): boolean {
+  if (isPinDisabled()) return false
   const cfg = readSecurityConfigSync()
   return isValidPinHash(cfg.pinHash)
 }
@@ -173,6 +183,7 @@ export function hashPin(pin: string, salt?: string): { hash: string; salt: strin
 }
 
 export async function hasPinConfigured(): Promise<boolean> {
+  if (isPinDisabled()) return false
   const cfg = await readSecurityConfig()
   return isValidPinHash(cfg.pinHash)
 }

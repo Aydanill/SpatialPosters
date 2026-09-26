@@ -73,6 +73,15 @@ describe("PIN Authentication & Security", () => {
     expect(await hasPinConfigured()).toBe(false)
   })
 
+  it("disabilita il PIN quando DISABLE_PIN=1 è impostato", async () => {
+    await setPin("1234")
+    expect(await hasPinConfigured()).toBe(true)
+
+    process.env.DISABLE_PIN = "1"
+    expect(await hasPinConfigured()).toBe(false)
+    delete process.env.DISABLE_PIN
+  })
+
   it("gestisce correttamente pinHash malformati o vuoti", async () => {
     await fs.writeFile(file, JSON.stringify({ pinHash: ":" }))
     _resetPinCache()
