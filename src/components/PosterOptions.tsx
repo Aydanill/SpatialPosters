@@ -349,7 +349,7 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
 
   const toggleAutoRotateClean = () => {
     const next = !ed.autoRotateClean
-    if (next && topFitRotationPosters.length > 0) {
+    if (next && ed.rotationPosters.length === 0 && topFitRotationPosters.length > 0) {
       ed.setRotationPosters(topFitRotationPosters)
     }
     ed.setAutoRotateClean(next)

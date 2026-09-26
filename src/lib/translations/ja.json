@@ -41,6 +41,8 @@
   "ui.savedShort": "保存済み",
   "ui.alreadyCustomized": "マイポスターでカスタマイズ済み",
   "ui.viewAll": "すべて表示",
+  "ui.view": "表示",
+  "ui.refresh": "更新",
   "ui.itemOne": "件",
   "ui.itemMany": "件",
   "ui.close": "閉じる",

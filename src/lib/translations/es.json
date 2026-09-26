@@ -41,6 +41,8 @@
   "ui.savedShort": "Guardado",
   "ui.alreadyCustomized": "Ya personalizado en tus pósters",
   "ui.viewAll": "Ver todos",
+  "ui.view": "Ver",
+  "ui.refresh": "Actualizar",
   "ui.itemOne": "título",
   "ui.itemMany": "títulos",
   "ui.close": "Cerrar",

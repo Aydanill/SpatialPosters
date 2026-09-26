@@ -535,7 +535,7 @@ export function MyPostersView() {
             selectMode={selectMode}
             selected={selected}
             onSelect={() => toggleSelect(`${m.mediaType}:${m.tmdbId}`)}
-            onOpen={() => navigateToPoster(toSearchResult({ id: m.tmdbId, media_type: m.mediaType, title: m.title, name: m.title, poster_path: m.posterPath }), "myposters")}
+            onOpen={() => navigateToPoster(toSearchResult({ id: m.tmdbId, media_type: m.mediaType, title: m.title, name: m.title, poster_path: m.posterPath, release_date: m.releaseDate || undefined, first_air_date: m.firstAirDate || undefined, vote_average: m.voteAverage || undefined }), "myposters")}
             onQuickView={(e) => {
               const target = e.currentTarget as HTMLElement
               const tileEl = target.closest(".surface-card") || target.closest(".group") || target

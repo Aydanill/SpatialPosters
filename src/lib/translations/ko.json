@@ -41,6 +41,8 @@
   "ui.savedShort": "저장됨",
   "ui.alreadyCustomized": "내 포스터에서 이미 꾸밈",
   "ui.viewAll": "모두 보기",
+  "ui.view": "보기",
+  "ui.refresh": "새로고침",
   "ui.itemOne": "개",
   "ui.itemMany": "개",
   "ui.close": "닫기",

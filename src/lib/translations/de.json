@@ -41,6 +41,8 @@
   "ui.savedShort": "Gespeichert",
   "ui.alreadyCustomized": "Bereits in deinen Postern angepasst",
   "ui.viewAll": "Alle anzeigen",
+  "ui.view": "Ansehen",
+  "ui.refresh": "Aktualisieren",
   "ui.itemOne": "Titel",
   "ui.itemMany": "Titel",
   "ui.close": "Schließen",

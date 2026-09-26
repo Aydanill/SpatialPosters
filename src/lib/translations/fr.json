@@ -41,6 +41,8 @@
   "ui.savedShort": "Enregistré",
   "ui.alreadyCustomized": "Déjà personnalisé dans vos affiches",
   "ui.viewAll": "Voir tout",
+  "ui.view": "Voir",
+  "ui.refresh": "Actualiser",
   "ui.itemOne": "titre",
   "ui.itemMany": "titres",
   "ui.close": "Fermer",

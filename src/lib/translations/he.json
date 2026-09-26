@@ -41,6 +41,8 @@
   "ui.savedShort": "Saved",
   "ui.alreadyCustomized": "Already customized in your posters",
   "ui.viewAll": "View all",
+  "ui.view": "View",
+  "ui.refresh": "Refresh",
   "ui.itemOne": "title",
   "ui.itemMany": "titles",
   "ui.close": "Close",
