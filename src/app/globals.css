@@ -842,16 +842,17 @@ html.light-mode .tactile-btn:active {
 /* Sidebar Dock Liquid Glass Edge Refraction Effect (Desktop Right Edge Only) */
 .sidebar-dock-shell {
   position: relative;
-  background-color: rgba(25, 26, 30, 0.85);
+  width: 54px;
+  box-sizing: border-box;
+  background-color: rgba(22, 23, 27, 0.82);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-right: 1px solid rgba(255, 255, 255, 0.28);
+  border-right: 1.5px solid rgba(255, 255, 255, 0.45);
   border-radius: 1.75rem;
   box-shadow:
-    inset -2px 0 10px rgba(255, 255, 255, 0.12),
-    inset -1px 0 1px rgba(255, 255, 255, 0.35),
-    4px 4px 18px #08090b,
-    -4px -4px 14px rgba(95, 94, 94, 0.18),
-    12px 0 28px rgba(0, 0, 0, 0.45);
+    inset -2px 0 6px rgba(255, 255, 255, 0.14),
+    inset -1px 0 1px rgba(255, 255, 255, 0.40),
+    4px 4px 18px rgba(0, 0, 0, 0.5),
+    -2px -2px 10px rgba(255, 255, 255, 0.04);
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   backdrop-filter: blur(20px);
 }
@@ -860,85 +861,86 @@ html.light-mode .tactile-btn:active {
 .sidebar-dock-shell::before {
   content: "";
   position: absolute;
-  top: 1rem;
-  bottom: 1rem;
+  top: 0.875rem;
+  bottom: 0.875rem;
   right: -1px;
-  width: 2px;
+  width: 1.5px;
   border-radius: 9999px;
   background: linear-gradient(
     180deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.25) 15%,
-    rgba(255, 255, 255, 0.75) 50%,
-    rgba(255, 255, 255, 0.25) 85%,
+    rgba(255, 255, 255, 0.35) 20%,
+    rgba(255, 255, 255, 0.95) 50%,
+    rgba(255, 255, 255, 0.35) 80%,
     transparent 100%
   );
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.45), 0 0 4px rgba(255, 255, 255, 0.8);
+  box-shadow: 1px 0 6px rgba(255, 255, 255, 0.5), 0 0 2px rgba(255, 255, 255, 0.8);
   pointer-events: none;
   z-index: 10;
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
-/* Liquid Glass Ambient Refraction Glow behind the Right Edge */
+/* Delicate Liquid Glass Ambient Refraction Glow right at the Edge */
 .sidebar-dock-shell::after {
   content: "";
   position: absolute;
-  top: 10%;
-  bottom: 10%;
-  right: -5px;
-  width: 12px;
+  top: 15%;
+  bottom: 15%;
+  right: 0px;
+  width: 3px;
   border-radius: 9999px;
   background: linear-gradient(
     180deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.15) 30%,
-    rgba(255, 255, 255, 0.35) 50%,
-    rgba(255, 255, 255, 0.15) 70%,
+    rgba(255, 255, 255, 0.25) 30%,
+    rgba(255, 255, 255, 0.55) 50%,
+    rgba(255, 255, 255, 0.25) 70%,
     transparent 100%
   );
-  filter: blur(6px);
+  filter: blur(2px);
   pointer-events: none;
   z-index: 5;
-  opacity: 0.7;
-  animation: liquidEdgePulse 6s ease-in-out infinite alternate;
+  opacity: 0.75;
+  animation: liquidEdgePulse 5s ease-in-out infinite alternate;
 }
 
 @keyframes liquidEdgePulse {
   0% {
     opacity: 0.5;
-    transform: translateY(-4px) scaleY(0.96);
+    transform: translateY(-2px);
   }
   50% {
-    opacity: 0.85;
-    transform: translateY(4px) scaleY(1.02);
+    opacity: 0.9;
+    transform: translateY(2px);
   }
   100% {
     opacity: 0.5;
-    transform: translateY(-4px) scaleY(0.96);
+    transform: translateY(-2px);
   }
 }
 
 html.light-mode .sidebar-dock-shell {
+  width: 54px;
   background-color: rgba(242, 244, 248, 0.88);
   border: 1px solid rgba(0, 0, 0, 0.08);
-  border-right: 1px solid rgba(255, 255, 255, 0.8);
+  border-right: 1.5px solid rgba(255, 255, 255, 0.95);
   box-shadow:
-    inset -2px 0 8px rgba(255, 255, 255, 0.6),
-    inset -1px 0 1px rgba(255, 255, 255, 0.9),
-    5px 5px 14px rgba(165, 175, 195, 0.5),
-    -5px -5px 14px rgba(255, 255, 255, 0.9);
+    inset -2px 0 6px rgba(255, 255, 255, 0.7),
+    inset -1px 0 1px rgba(255, 255, 255, 0.95),
+    4px 4px 14px rgba(165, 175, 195, 0.4),
+    -2px -2px 10px rgba(255, 255, 255, 0.8);
 }
 
 html.light-mode .sidebar-dock-shell::before {
   background: linear-gradient(
     180deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.5) 15%,
-    rgba(255, 255, 255, 0.95) 50%,
-    rgba(255, 255, 255, 0.5) 85%,
+    rgba(255, 255, 255, 0.6) 20%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(255, 255, 255, 0.6) 80%,
     transparent 100%
   );
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  box-shadow: 1px 0 6px rgba(255, 255, 255, 0.8);
 }
 
 .sidebar-dock-btn {
