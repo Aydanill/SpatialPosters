@@ -242,7 +242,7 @@ export default function EditView() {
             </p>
           </header>
 
-          {/* Mobile Top Bar: Back / Title / Quick Save */}
+          {/* Mobile Top Bar: Back / Apple TV Style Title / Silver Quick Save */}
           <div className="flex lg:hidden items-center justify-between w-full px-2 mb-3 gap-2">
             <button
               type="button"
@@ -252,16 +252,19 @@ export default function EditView() {
               <ChevronLeft className="w-4 h-4" />
               <span>{t("ui.back")}</span>
             </button>
-            <div className="flex-1 min-w-0 text-center px-1">
-              <p className="text-xs font-bold text-zinc-100 truncate">{titleOf(selected)}</p>
-              <p className="text-[10px] text-zinc-400 font-mono">{yearOf(selected)} · {selected.media_type === "movie" ? t("ui.movie") : t("ui.tvSeries")}</p>
+            <div className="flex-1 min-w-0 text-center px-2 flex flex-col items-center justify-center">
+              <h1 className="text-xs sm:text-sm font-extrabold tracking-tight text-white truncate max-w-full leading-tight">{titleOf(selected)}</h1>
+              <p className="text-[10px] font-semibold tracking-wider text-zinc-400 uppercase mt-0.5 flex items-center justify-center gap-1.5">
+                {yearOf(selected) && <span>{yearOf(selected)}</span>}
+                <span>{selected.media_type === "movie" ? t("ui.movie") : t("ui.tvSeries")}</span>
+              </p>
             </div>
             {previewPoster && (
               <button
                 type="button"
                 aria-label={t("ui.savePoster")}
                 onClick={handleSave}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-accent-orange to-amber-500 text-white font-semibold text-xs shadow-md shadow-accent-orange/20 active:scale-95 transition-all shrink-0 cursor-pointer"
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl btn-primary text-xs font-bold active:scale-95 transition-all shrink-0 cursor-pointer shadow-md"
               >
                 <Save className="w-3.5 h-3.5" />
                 <span>{t("ui.save")}</span>
