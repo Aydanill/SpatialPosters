@@ -295,9 +295,8 @@ export function AppShell() {
           </button>
 
           {/* Install Hub */}
-          <button
-            type="button"
-            onClick={handleInstallCatalog}
+          <Link
+            href="/install"
             title="Install Hub"
             className="group sidebar-dock-btn"
           >
@@ -314,7 +313,7 @@ export function AppShell() {
             }`}>
               Install Hub
             </span>
-          </button>
+          </Link>
         </div>
 
         {/* Divider */}
@@ -571,15 +570,14 @@ export function AppShell() {
         </div>
 
         {/* Right Floating Circular Action Button (Install Hub) */}
-        <button
-          type="button"
-          onClick={handleInstallCatalog}
+        <Link
+          href="/install"
           title="Install Hub"
-          className="mobile-dock-action group"
+          className="mobile-dock-action group flex items-center justify-center"
         >
           {/* eslint-disable-next-line @next/next/no-img-element -- desktop custom icon */}
           <img src="/icon/install-hub.webp" alt="Install Hub" className="w-5 h-5 object-contain brightness-0 invert group-active:scale-90 transition-transform" />
-        </button>
+        </Link>
       </nav>
     </div>
     </ToastProvider>
