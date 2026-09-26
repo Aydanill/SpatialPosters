@@ -47,7 +47,7 @@ function MyPostersContent() {
         <AmbientBackground />
         <DesktopSidebar />
         <ToastProvider>
-          <div className="relative z-10 max-w-[1680px] mx-auto px-3 sm:px-4 py-3 sm:py-5 md:pl-20 pb-24 md:pb-6">
+          <div className="relative z-10 max-w-[1680px] mx-auto px-4 sm:px-6 pt-6 sm:pt-10 md:pt-14 lg:pt-16 pb-24 md:pb-8 md:pl-20">
             {/* Top navigation header */}
             <div className="hidden lg:flex items-center justify-between mb-4">
               <button
@@ -83,7 +83,7 @@ function MyPostersContent() {
       <AmbientBackground />
       <DesktopSidebar />
       <ToastProvider>
-        <div className="relative z-10 max-w-[1680px] mx-auto px-3 sm:px-4 py-4 sm:py-6 md:pl-20 pb-24 md:pb-6">
+        <div className="relative z-10 max-w-[1680px] mx-auto px-4 sm:px-6 pt-6 sm:pt-10 md:pt-14 lg:pt-16 pb-24 md:pb-8 md:pl-20">
           {/* Top navigation bar */}
           <div className="flex items-center justify-between mb-4">
             <Link

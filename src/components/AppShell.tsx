@@ -230,10 +230,10 @@ export function AppShell() {
       {/* Desktop Unified Left Sidebar Dock */}
       <DesktopSidebar />
 
-      <div className="relative z-10 max-w-[1680px] mx-auto px-3 sm:px-4 pt-3 sm:pt-5 md:pt-6 pb-24 md:pb-6 md:pl-20">
+      <div className="relative z-10 max-w-[1680px] mx-auto px-4 sm:px-6 pt-6 sm:pt-10 md:pt-14 lg:pt-16 pb-24 md:pb-8 md:pl-20">
         {/* Header globale (logo + tagline + toolbar mobile) */}
         {!(view === "edit" && selected) && (
-        <div className="flex flex-col items-center pb-3 sm:pb-4 animate-fade-scale-in relative">
+        <div className="flex flex-col items-center pb-5 sm:pb-8 md:pb-10 animate-fade-scale-in relative">
           <>
           {/* eslint-disable-next-line @next/next/no-img-element -- local SVG asset */}
           <img
@@ -245,7 +245,7 @@ export function AppShell() {
             src="/SpatialPosters.png"
             alt="SpatialPosters"
             decoding="async"
-            className="header-logo h-10 sm:h-14 md:h-24 w-auto cursor-pointer hover:brightness-110 active:scale-95 transition-all duration-150 mb-1.5 md:mb-2"
+            className="header-logo h-10 sm:h-14 md:h-24 w-auto cursor-pointer hover:brightness-110 active:scale-95 transition-all duration-150 mb-3 sm:mb-4 md:mb-5"
           />
           <p className="header-tagline text-center text-xs sm:text-sm md:text-base mb-3.5 sm:mb-5 md:mb-6 max-w-xl text-zinc-300 flex items-center justify-center gap-2 flex-wrap font-medium">
             <span>Enhance your Poster Experience with</span>

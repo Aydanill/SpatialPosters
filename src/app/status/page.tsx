@@ -180,7 +180,7 @@ function StatusContent() {
       <AmbientBackground />
       <DesktopSidebar />
       <ToastProvider>
-        <div className="relative z-10 max-w-5xl mx-auto px-3 sm:px-6 py-4 sm:py-8 md:pl-20 pb-24 md:pb-8">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10 md:pt-14 lg:pt-16 pb-24 md:pb-8 md:pl-20">
           {/* Top Bar */}
           <div className="flex items-center justify-between mb-6">
             <Link
