@@ -240,9 +240,8 @@ export function AppShell() {
           </button>
 
           {/* SpatialPosters / My Posters */}
-          <button
-            type="button"
-            onClick={() => router.push("myposters")}
+          <Link
+            href="/myposters"
             title={t("ui.myPosters") || "SpatialPosters"}
             className={`group sidebar-dock-btn ${view === "myposters" ? "sidebar-dock-btn-active" : ""}`}
           >
@@ -268,7 +267,7 @@ export function AppShell() {
             }`}>
               SpatialPosters ({mappings.length})
             </span>
-          </button>
+          </Link>
 
           {/* Catalogs */}
           <button
@@ -528,9 +527,8 @@ export function AppShell() {
           </button>
 
           {/* SpatialPosters / My Posters */}
-          <button
-            type="button"
-            onClick={() => router.push("myposters")}
+          <Link
+            href="/myposters"
             className={`mobile-dock-item relative ${view === "myposters" ? "mobile-dock-item-active text-white font-bold" : ""}`}
             title="SpatialPosters"
           >
@@ -544,7 +542,7 @@ export function AppShell() {
               )}
             </div>
             <span className="text-[9px] font-medium tracking-tight truncate">{t("ui.myPostersBtn") || "I Miei"}</span>
-          </button>
+          </Link>
 
           {/* Catalogs */}
           <button

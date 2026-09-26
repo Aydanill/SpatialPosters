@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import Link from "next/link"
 import { usePSelector } from "@/lib/context"
 import { useT } from "@/lib/contexts/TranslationContext"
 import { posterUrl } from "@/lib/utils"
@@ -56,14 +57,13 @@ export function SavedPostersBundle({ onOpenLightbox }: SavedPostersBundleProps) 
           </h2>
         </div>
 
-        <button
-          type="button"
-          onClick={() => router.push("myposters")}
+        <Link
+          href="/myposters"
           className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 text-xs font-semibold text-zinc-200 hover:text-white transition-all duration-200 active:scale-95 cursor-pointer backdrop-blur-md shadow-lg group"
         >
           <span>View Collection</span>
           <ArrowRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
-        </button>
+        </Link>
       </div>
 
       {/* 3D Stacked Bundle Container */}
