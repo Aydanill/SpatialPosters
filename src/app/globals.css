@@ -853,7 +853,6 @@ html.light-mode .tactile-btn:active {
   transition: all 0.3s ease;
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  position: relative;
 }
 
 /* Liquid Glass Edge Reflection Pseudo-element */
