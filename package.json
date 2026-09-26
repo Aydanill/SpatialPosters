@@ -18,7 +18,8 @@
     "e2e:ui": "playwright test --ui",
     "e2e:visual": "playwright test e2e/pictorium-visual.spec.ts",
     "e2e:visual:clean": "node -e \"require('node:fs').rmSync('.next-e2e',{recursive:true,force:true})\" && playwright test e2e/pictorium-visual.spec.ts",
-    "verify": "npx tsc --noEmit && npx eslint . && npm run test && npm run build"
+    "verify": "npx tsc --noEmit && npx eslint . && npm run test && npm run build",
+    "reset-pin": "node scripts/reset-pin.mjs"
   },
   "engines": {
     "node": ">=22"
