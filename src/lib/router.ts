@@ -8,11 +8,25 @@ export type View = "edit" | "search" | "myposters" | "cataloghi"
  * restano coerenti e i componenti non chiamano più direttamente window.history.
  */
 export function pushView(view: View, extra?: Record<string, unknown>): void {
-  window.history.pushState({ view, ...extra }, "", window.location.href)
+  let targetUrl = window.location.href
+  if (view === "edit" && extra?.item) {
+    const item = extra.item as { id: number; media_type: string }
+    if (item.id && item.media_type) {
+      targetUrl = `/${item.media_type}/${item.id}`
+    }
+  }
+  window.history.pushState({ view, ...extra }, "", targetUrl)
 }
 
 export function replaceView(view: View, extra?: Record<string, unknown>): void {
-  window.history.replaceState({ view, ...extra }, "", window.location.href)
+  let targetUrl = window.location.href
+  if (view === "edit" && extra?.item) {
+    const item = extra.item as { id: number; media_type: string }
+    if (item.id && item.media_type) {
+      targetUrl = `/${item.media_type}/${item.id}`
+    }
+  }
+  window.history.replaceState({ view, ...extra }, "", targetUrl)
 }
 
 export function goBack(): void {

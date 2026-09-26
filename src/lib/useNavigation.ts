@@ -47,7 +47,7 @@ export function useNavigation() {
     const src = (_source as View) || view || "edit"
     setSourceView(src)
     replaceView(src)
-    pushView("edit", { source: src })
+    pushView("edit", { source: src, item })
   }, [view])
 
   const goHome = useCallback(() => {
