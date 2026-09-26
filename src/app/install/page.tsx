@@ -9,6 +9,7 @@ import { ToastProvider } from "@/components/Toast"
 import { AmbientBackground } from "@/components/AmbientBackground"
 import { useT } from "@/lib/contexts/TranslationContext"
 import { setLang, getLang } from "@/lib/i18n"
+import { DesktopSidebar } from "@/components/DesktopSidebar"
 
 function InstallContent() {
   const { t } = useT()
@@ -28,8 +29,9 @@ function InstallContent() {
   return (
     <div className="min-h-screen bg-background text-foreground relative overflow-x-hidden">
       <AmbientBackground />
+      <DesktopSidebar />
       <ToastProvider>
-        <div className="relative z-10 max-w-2xl mx-auto px-4 py-6 sm:py-10">
+        <div className="relative z-10 max-w-2xl mx-auto px-4 py-6 sm:py-10 md:pl-20">
           {/* Header section with back navigation */}
           <div className="flex items-center justify-between mb-6">
             <Link

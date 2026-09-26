@@ -19,6 +19,7 @@ import { ToastProvider } from "@/components/Toast"
 import { AmbientBackground } from "@/components/AmbientBackground"
 import { useT } from "@/lib/contexts/TranslationContext"
 import { setLang, getLang } from "@/lib/i18n"
+import { DesktopSidebar } from "@/components/DesktopSidebar"
 
 interface CheckResult {
   ok: boolean
@@ -176,8 +177,9 @@ function StatusContent() {
   return (
     <div className="min-h-screen bg-background text-foreground relative overflow-x-hidden">
       <AmbientBackground />
+      <DesktopSidebar />
       <ToastProvider>
-        <div className="relative z-10 max-w-5xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
+        <div className="relative z-10 max-w-5xl mx-auto px-3 sm:px-6 py-4 sm:py-8 md:pl-20">
           {/* Top Bar */}
           <div className="flex items-center justify-between mb-6">
             <Link
