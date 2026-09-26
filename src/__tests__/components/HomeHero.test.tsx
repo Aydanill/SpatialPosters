@@ -118,11 +118,10 @@ describe("HomeHero", () => {
 })
 
 describe("HomeStatusStrip", () => {
-  it("renders operational state and service links", () => {
+  it("renders social links and brand footer", () => {
     renderWithCtx(<HomeStatusStrip />)
-    expect(screen.getByText("ui.allSystemsOperational")).toBeInTheDocument()
-    expect(screen.getByText("ui.statusMeta")).toBeInTheDocument()
-    expect(screen.getByText("ui.statusTitle")).toBeInTheDocument()
-    expect(screen.getByRole("link", { name: "ui.statusTitle" })).toHaveAttribute("href", "/status")
+    expect(screen.getByRole("link", { name: /Star on GitHub/i })).toHaveAttribute("href", "https://github.com/TheAceOfficials/SpatialPosters")
+    expect(screen.getByRole("link", { name: /Instagram/i })).toHaveAttribute("href", "https://instagram.com/TheAceOfficials")
   })
 })
+
