@@ -73,6 +73,20 @@ describe("PIN Authentication & Security", () => {
     expect(await hasPinConfigured()).toBe(false)
   })
 
+  it("gestisce correttamente pinHash malformati o vuoti", async () => {
+    await fs.writeFile(file, JSON.stringify({ pinHash: ":" }))
+    _resetPinCache()
+    expect(await hasPinConfigured()).toBe(false)
+
+    await fs.writeFile(file, JSON.stringify({ pinHash: "invalid" }))
+    _resetPinCache()
+    expect(await hasPinConfigured()).toBe(false)
+
+    await fs.writeFile(file, JSON.stringify({ pinHash: "salt:" }))
+    _resetPinCache()
+    expect(await hasPinConfigured()).toBe(false)
+  })
+
   it("imposta un nuovo PIN e lo verifica", async () => {
     const success = await setPin("1234")
     expect(success).toBe(true)

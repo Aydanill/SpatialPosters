@@ -86,6 +86,9 @@ export function AppShell() {
       .then((data) => {
         if (data && typeof data.hasPin === "boolean") {
           setHasPinConfigured(data.hasPin)
+          if (typeof data.authenticated === "boolean") {
+            setIsUnlocked(data.authenticated)
+          }
         }
       })
       .catch(() => null)

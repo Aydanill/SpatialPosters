@@ -98,9 +98,15 @@ export function readSecurityConfigSync(): SecurityConfig {
   return cachedConfig ?? {}
 }
 
+function isValidPinHash(pinHash?: string): boolean {
+  if (!pinHash || typeof pinHash !== "string" || !pinHash.includes(":")) return false
+  const parts = pinHash.split(":")
+  return parts.length === 2 && parts[0].trim().length > 0 && parts[1].trim().length > 0
+}
+
 export function hasPinConfiguredSync(): boolean {
   const cfg = readSecurityConfigSync()
-  return !!cfg.pinHash && cfg.pinHash.includes(":")
+  return isValidPinHash(cfg.pinHash)
 }
 
 export function verifySessionFromRequestSync(request: Request): boolean {
@@ -168,7 +174,7 @@ export function hashPin(pin: string, salt?: string): { hash: string; salt: strin
 
 export async function hasPinConfigured(): Promise<boolean> {
   const cfg = await readSecurityConfig()
-  return !!cfg.pinHash && cfg.pinHash.includes(":")
+  return isValidPinHash(cfg.pinHash)
 }
 
 export async function verifyPin(pin: string): Promise<boolean> {
