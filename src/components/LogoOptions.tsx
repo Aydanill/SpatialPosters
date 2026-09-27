@@ -59,16 +59,16 @@ export const LogoOptions = React.memo(function LogoOptions({ logos, selectedLogo
 
   return (
     <div>
-      <div className="flex gap-1 mb-3 overflow-x-auto scrollbar-none py-0.5 scroll-fade-mask px-0.5">
+      <div className="flex items-center gap-1 p-1 bg-white/[0.04] border border-white/10 rounded-xl mb-3 shadow-inner overflow-x-auto scrollbar-none scroll-fade-mask w-full min-w-0">
         {logoTabs.map((tab) => (
           <button type="button"
             aria-label={tab.label}
             key={tab.key}
             onClick={() => setActiveLogoGroup(tab.key)}
-            className={`tab-chip h-7 px-2.5 rounded-lg text-[11px] font-semibold border transition-all shrink-0 whitespace-nowrap ${activeLogoGroup === tab.key ? "tab-chip-active bg-accent-orange/15 text-accent-orange border-accent-orange/35" : "bg-white/5 text-muted border-white/10 hover:text-zinc-200 hover:bg-white/10"}`}
+            className={`tab-chip h-auto min-h-[30px] px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer flex items-center justify-center gap-1 shrink-0 whitespace-nowrap ${activeLogoGroup === tab.key ? "tab-chip-active bg-zinc-100 text-zinc-950 shadow-md shadow-white/10 border border-white/80" : "text-zinc-400 hover:text-zinc-100 border-transparent bg-transparent"}`}
           >
-            {tab.label}
-            <span className="ml-1 text-[10px] opacity-60">{tab.count}</span>
+            <span>{tab.label}</span>
+            <span className={`text-[10px] font-semibold opacity-75 ${activeLogoGroup === tab.key ? "text-zinc-800" : "text-zinc-500"}`}>{tab.count}</span>
           </button>
         ))}
       </div>
