@@ -59,7 +59,7 @@ export const LogoOptions = React.memo(function LogoOptions({ logos, selectedLogo
 
   return (
     <div>
-      <div className="flex gap-1 mb-3 overflow-x-auto scrollbar-none py-0.5">
+      <div className="flex gap-1 mb-3 overflow-x-auto scrollbar-none py-0.5 scroll-fade-mask px-0.5">
         {logoTabs.map((tab) => (
           <button type="button"
             aria-label={tab.label}

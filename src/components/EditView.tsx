@@ -338,7 +338,7 @@ export default function EditView() {
           </div>
 
           {/* MOBILE ONLY: Control Tabs Switcher */}
-          <div className="flex lg:hidden items-center gap-1 overflow-x-auto scrollbar-none p-1 bg-surface/90 backdrop-blur-xl rounded-2xl border border-white/10 mb-3 w-full max-w-md mx-auto shadow-lg shadow-black/20 shrink-0">
+          <div className="flex lg:hidden items-center gap-1 overflow-x-auto scrollbar-none p-1 bg-surface/90 backdrop-blur-xl rounded-2xl border border-white/10 mb-3 w-full max-w-md mx-auto shadow-lg shadow-black/20 shrink-0 scroll-fade-mask">
             <button
               type="button"
               onClick={() => setMobileTab("poster")}
@@ -526,15 +526,15 @@ export default function EditView() {
                     <p className="text-sm font-bold tracking-tight text-zinc-50 truncate">{titleOf(selected)}</p>
                     <p className="text-[11px] font-mono text-zinc-500 mt-1">{yearOf(selected)} · {selected.media_type === "movie" ? t("ui.movie") : t("ui.tvSeries")} · TMDB <a href={`https://www.themoviedb.org/${selected.media_type}/${selected.id}`} target="_blank" rel="noopener noreferrer" className="text-zinc-300 hover:text-white underline underline-offset-2">{selected.id}</a>{selected.imdb_id ? <> · IMDB <a href={`https://www.imdb.com/title/${selected.imdb_id}`} target="_blank" rel="noopener noreferrer" className="text-zinc-300 hover:text-white underline underline-offset-2">{selected.imdb_id}</a></> : ""}{tvdbId ? <> · TVDB <a href={`https://thetvdb.com/?tab=series&id=${tvdbId}`} target="_blank" rel="noopener noreferrer" className="text-zinc-300 hover:text-white underline underline-offset-2">{tvdbId}</a></> : ""}</p>
 
-                    <div className="flex items-center gap-2 flex-wrap mt-2">
+                    <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5 scroll-fade-mask mt-2">
                       {cleanPoster && (
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-white/[0.06] border border-white/10 text-muted uppercase tracking-wide">{t("ui.clean")}</span>
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-white/[0.06] border border-white/10 text-muted uppercase tracking-wide shrink-0">{t("ui.clean")}</span>
                       )}
                       {(() => {
                         const key = `${selected.media_type}:${selected.id}`
                         if (!mappingsMap.get(key)) return null
                         return (
-                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 flex items-center gap-1">
+                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 flex items-center gap-1 shrink-0">
                             <Check className="w-3 h-3 stroke-[3]" />
                             {t("ui.savedShort")}
                           </span>
@@ -546,19 +546,19 @@ export default function EditView() {
                 )}
 
                 {/* Relocated Customize Tabs (Desktop) */}
-                <div className="flex items-center gap-1 p-1 bg-white/[0.04] border border-white/10 rounded-xl mb-3 shadow-inner shrink-0 w-full min-w-0">
+                <div className="flex items-center gap-1 p-1 bg-white/[0.04] border border-white/10 rounded-xl mb-3 shadow-inner shrink-0 w-full min-w-0 overflow-x-auto scrollbar-none scroll-fade-mask">
                   {rightTabs.map((tab) => (
                     <button
                       type="button"
                       key={tab.key}
                       onClick={() => setActiveRightTab(tab.key as typeof activeRightTab)}
-                      className={`tab-chip h-auto min-h-[32px] flex-1 min-w-0 py-1.5 px-2 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer flex items-center justify-center gap-1 truncate ${
+                      className={`tab-chip h-auto min-h-[32px] flex-1 shrink-0 py-1.5 px-3 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer flex items-center justify-center gap-1 whitespace-nowrap ${
                         activeRightTab === tab.key
                           ? "tab-chip-active bg-zinc-100 text-zinc-950 shadow-md shadow-white/10 border border-white/80"
                           : "text-zinc-400 hover:text-zinc-100"
                       }`}
                     >
-                      <span className="truncate">{tab.label}</span>
+                      <span className="whitespace-nowrap">{tab.label}</span>
                     </button>
                   ))}
                 </div>

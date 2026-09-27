@@ -753,6 +753,12 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
 }
 
+/* Smooth edge fade mask for horizontal scroll bars */
+.scroll-fade-mask {
+  mask-image: linear-gradient(to right, transparent 0px, #000 12px, #000 calc(100% - 12px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0px, #000 12px, #000 calc(100% - 12px), transparent 100%);
+}
+
 .search-shell {
   background-color: #191A1E;
   border: 1px solid rgba(255, 255, 255, 0.08);
