@@ -39,7 +39,7 @@ export function MoodBoardTile({
     : (m.genreName || "").toLowerCase().includes("anim")
       ? t("ui.filterAnime")
       : t("ui.tvSeries")
-  const displaySrc = m.imgbbUrl || (m.posterPath ? posterUrl(m.posterPath, "w342") : null)
+  const displaySrc = m.imgbbUrl || `/api/poster/${m.mediaType}/${m.tmdbId}` || (m.posterPath ? posterUrl(m.posterPath, "w342") : null)
 
   return (
     <div

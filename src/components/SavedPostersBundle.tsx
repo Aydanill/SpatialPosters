@@ -99,7 +99,7 @@ export function SavedPostersBundle({ onOpenLightbox }: SavedPostersBundleProps) 
               zIndex = 50
             }
 
-            const posterSrc = m.imgbbUrl || (m.posterPath ? posterUrl(m.posterPath, "w342") : null)
+            const posterSrc = m.imgbbUrl || `/api/poster/${m.mediaType}/${m.tmdbId}` || (m.posterPath ? posterUrl(m.posterPath, "w342") : null)
 
             return (
               <div
@@ -120,6 +120,13 @@ export function SavedPostersBundle({ onOpenLightbox }: SavedPostersBundleProps) 
                     alt={m.title}
                     loading="lazy"
                     decoding="async"
+                    onError={(e) => {
+                      const img = e.target as HTMLImageElement
+                      const fallback = m.posterPath ? posterUrl(m.posterPath, "w342") : null
+                      if (fallback && img.src !== fallback) {
+                        img.src = fallback
+                      }
+                    }}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-105"
                   />
                 ) : (
