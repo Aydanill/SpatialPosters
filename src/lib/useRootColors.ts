@@ -35,10 +35,9 @@ export function useRootColors(
     }
     let cancelled = false
     const isExternal = previewPoster.file_path.startsWith("http://") || previewPoster.file_path.startsWith("https://")
-    const rawUrl = posterUrl(previewPoster.file_path, "w342")
     const url = isExternal
-      ? `/api/proxy-image?url=${encodeURIComponent(rawUrl)}`
-      : rawUrl + `?cb=${Date.now()}`
+      ? `/api/proxy-image?url=${encodeURIComponent(previewPoster.file_path)}`
+      : posterUrl(previewPoster.file_path, "w342") + `?cb=${Date.now()}`
     const img = new Image()
     img.crossOrigin = "anonymous"
     const setRootColors = (r: number, g: number, b: number, edgeR: number, edgeG: number, edgeB: number) => {
