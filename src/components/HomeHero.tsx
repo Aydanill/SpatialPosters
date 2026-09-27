@@ -87,6 +87,7 @@ export function HomeHero() {
   const tmdbKey = usePSelector((v) => v.tmdbKey)
   const trending = usePSelector((v) => v.trending)
   const titleOf = usePSelector((v) => v.titleOf)
+  const mappingsMap = usePSelector((v) => v.mappingsMap)
   const navigateToPoster = usePSelector((v) => v.navigateToPoster)
   const { t, lang } = useT()
   const podiumRef = useRef<HTMLDivElement>(null)
@@ -103,20 +104,30 @@ export function HomeHero() {
     const tv = trending.filter((i) => i.media_type === "tv").sort((a, b) => a.rank - b.rank)
     if (movies.length < 2 || tv.length < 1) {
       const key = tmdbKey ? `&api_key=${encodeURIComponent(tmdbKey)}` : ""
-      return FALLBACK_PODIUM.map((p) => ({ ...p, url: p.url(key, lang || "en") }))
+      return FALLBACK_PODIUM.map((p) => {
+        const saved = mappingsMap.get(p.key)
+        const url = saved?.imgbbUrl ? saved.imgbbUrl : p.url(key, lang || "en")
+        return { ...p, url }
+      })
     }
     const [m1, m2] = shuffle(movies)
     const [s1] = shuffle(tv)
     const picks = [m1, m2, s1]
     const key = tmdbKey ? `&api_key=${encodeURIComponent(tmdbKey)}` : ""
-    return picks.map((item, i) => ({
-      key: `${item.media_type}-${item.id}`,
-      className: ["p-frame p-frame-side p-frame-left", "p-frame p-frame-main", "p-frame p-frame-side p-frame-right"][i],
-      alt: titleOf(item),
-      item,
-      url: `/api/poster/${item.media_type}/${item.id}?ranking=&rank=${item.rank}&rs=${SLOT_RANK_STYLES[i]}&tl=0&gradHeight=25&blur=30&bf=50&bd=40&logoFit=0&lang=${lang || "en"}${key}`,
-    }))
-  }, [trending, tmdbKey, titleOf, lang])
+    return picks.map((item, i) => {
+      const itemKey = `${item.media_type}:${item.id}`
+      const saved = mappingsMap.get(itemKey)
+      const defaultUrl = `/api/poster/${item.media_type}/${item.id}?ranking=&rank=${item.rank}&rs=${SLOT_RANK_STYLES[i]}&tl=0&gradHeight=25&blur=30&bf=50&bd=40&logoFit=0&lang=${lang || "en"}${key}`
+      const url = saved?.imgbbUrl ? saved.imgbbUrl : defaultUrl
+      return {
+        key: `${item.media_type}-${item.id}`,
+        className: ["p-frame p-frame-side p-frame-left", "p-frame p-frame-main", "p-frame p-frame-side p-frame-right"][i],
+        alt: titleOf(item),
+        item,
+        url,
+      }
+    })
+  }, [trending, tmdbKey, titleOf, lang, mappingsMap])
 
   // Parallasse attivo solo su dispositivi con hover (desktop); calcolato una
   // volta per non ri-eseguire matchMedia a ogni mousemove.

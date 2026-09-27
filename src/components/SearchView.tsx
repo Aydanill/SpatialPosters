@@ -141,34 +141,52 @@ export function SearchView() {
         <div className="relative animate-fade-scale-in">
           {s.searching && <div className="absolute inset-0 bg-background/60 backdrop-blur-sm z-20 rounded-2xl flex items-center justify-center"><p className="text-sm text-muted animate-pulse">{t("ui.searching")}</p></div>}
           <div className="mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 sm:gap-4 max-w-7xl">
-          {s.results.map((r, idx) => {
-            const mapping = mappingsMap.get(`${r.media_type}:${r.id}`)
-            const year = yearOf(r)
-            const title = titleOf(r)
-            return (
-              <button
-                type="button"
-                key={`${r.media_type}:${r.id}`}
-                onClick={() => navigateToPoster(r)}
-                aria-label={`${title} (${year})`}
-                className="surface-card group relative rounded-xl overflow-hidden transition-all duration-300 ease-out w-full border border-white/10 shadow-2xl hover:-translate-y-[3px] hover:scale-[1.015] hover:shadow-[0_22px_48px_rgba(0,0,0,0.48),0_0_22px_rgba(232,93,42,0.10)] hover:border-white/20 active:scale-[0.98] cursor-pointer animate-stagger-in text-left flex flex-col"
-                style={{ animationDelay: `${Math.min(idx * 30, 300)}ms` }}
-              >
-                {/* NuvioDesktop-style depth edge */}
-                <PosterDepthEdge edgeStrength={35} edgeCoverage={10} />
-                <div className="relative z-[1] w-full flex-1 flex flex-col">
-                  <div className="aspect-[2/3] bg-surface/80 overflow-hidden relative w-full">
-                    {/* Immagine Poster */}
-                    {r.poster_path ? (
-                      // eslint-disable-next-line @next/next/no-img-element -- TMDB dynamic URL
-                      <img
-                        src={posterUrl(r.poster_path, "w342")}
-                        alt={title}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover transition-transform duration-[400ms] ease-out group-hover:scale-[1.06]"
-                      />
-                    ) : (
+            {s.results.map((r, idx) => {
+              const mapping = mappingsMap.get(`${r.media_type}:${r.id}`)
+              const year = yearOf(r)
+              const title = titleOf(r)
+
+              // Resolves poster source prioritizing saved cloud storage (Cloudinary/ImgBB) or customized saved mapping
+              const posterSrc = mapping?.imgbbUrl
+                ? mapping.imgbbUrl
+                : mapping
+                ? `/api/poster/${r.media_type}/${r.id}${tmdbKey ? `?api_key=${encodeURIComponent(tmdbKey)}` : ""}`
+                : r.poster_path
+                ? posterUrl(r.poster_path, "w342")
+                : null
+
+              return (
+                <button
+                  type="button"
+                  key={`${r.media_type}:${r.id}`}
+                  onClick={() => navigateToPoster(r)}
+                  aria-label={`${title} (${year})`}
+                  className="surface-card group relative rounded-xl overflow-hidden transition-all duration-300 ease-out w-full border border-white/10 shadow-2xl hover:-translate-y-[3px] hover:scale-[1.015] hover:shadow-[0_22px_48px_rgba(0,0,0,0.48),0_0_22px_rgba(232,93,42,0.10)] hover:border-white/20 active:scale-[0.98] cursor-pointer animate-stagger-in text-left flex flex-col"
+                  style={{ animationDelay: `${Math.min(idx * 30, 300)}ms` }}
+                >
+                  {/* Saved Poster Indicator Badge */}
+                  {mapping && (
+                    <span className="absolute top-2 right-2 z-20 px-2 py-0.5 rounded-md bg-emerald-500/90 text-black text-[10px] font-bold shadow-lg flex items-center gap-1 backdrop-blur-md">
+                      <Check className="w-3 h-3 stroke-[3]" />
+                      Saved
+                    </span>
+                  )}
+
+                  {/* NuvioDesktop-style depth edge */}
+                  <PosterDepthEdge edgeStrength={35} edgeCoverage={10} />
+                  <div className="relative z-[1] w-full flex-1 flex flex-col">
+                    <div className="aspect-[2/3] bg-surface/80 overflow-hidden relative w-full">
+                      {/* Immagine Poster */}
+                      {posterSrc ? (
+                        // eslint-disable-next-line @next/next/no-img-element -- Dynamic poster URL
+                        <img
+                          src={posterSrc}
+                          alt={title}
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-full object-cover transition-transform duration-[400ms] ease-out group-hover:scale-[1.06]"
+                        />
+                      ) : (
                       <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-zinc-800/50 to-zinc-900/80 gap-2">
                         <svg className="w-8 h-8 text-zinc-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                           <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>

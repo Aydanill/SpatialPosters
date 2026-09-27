@@ -73,6 +73,7 @@ function SecureCarouselImg({ url, alt, className }: { url: string; alt: string; 
 export function PosterCarousel() {
   const navigateToPoster = usePSelector((v) => v.navigateToPoster)
   const tmdbKey = usePSelector((v) => v.tmdbKey)
+  const mappingsMap = usePSelector((v) => v.mappingsMap)
   const trending = usePSelector((v) => v.trending)
   const { t, lang } = useT()
   const containerRef = useRef<HTMLDivElement>(null)
@@ -223,10 +224,10 @@ export function PosterCarousel() {
             className="flex gap-2.5 sm:gap-4 will-change-transform"
           >
             {[...items, ...items].map((ex, i) => {
-              // La chiave personale va in query: senza, i titoli non mappati
-              // fallirebbero l'auto-fetch TMDB (solo chiavi personali, niente
-              // chiave d'istanza). ex.params inizia con "?".
-              const posterUrl = `/api/poster/${ex.type}/${ex.id}${ex.params}${tmdbKey ? `&api_key=${encodeURIComponent(tmdbKey)}` : ""}`
+              const itemKey = `${ex.type}:${ex.id}`
+              const saved = mappingsMap.get(itemKey)
+              const defaultUrl = `/api/poster/${ex.type}/${ex.id}${ex.params}${tmdbKey ? `&api_key=${encodeURIComponent(tmdbKey)}` : ""}`
+              const posterUrl = saved?.imgbbUrl ? saved.imgbbUrl : defaultUrl
               return (
                 <div
                   key={i}
