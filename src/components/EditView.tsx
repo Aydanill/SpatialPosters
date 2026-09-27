@@ -552,7 +552,7 @@ export default function EditView() {
                       type="button"
                       key={tab.key}
                       onClick={() => setActiveRightTab(tab.key as typeof activeRightTab)}
-                      className={`h-auto min-h-[32px] flex-1 min-w-0 py-1.5 px-2 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer flex items-center justify-center gap-1 truncate ${
+                      className={`tab-chip h-auto min-h-[32px] flex-1 min-w-0 py-1.5 px-2 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer flex items-center justify-center gap-1 truncate ${
                         activeRightTab === tab.key
                           ? "tab-chip-active bg-zinc-100 text-zinc-950 shadow-md shadow-white/10 border border-white/80"
                           : "text-zinc-400 hover:text-zinc-100"
