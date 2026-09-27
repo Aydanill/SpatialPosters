@@ -207,7 +207,7 @@
   "ui.clearCacheError": "キャッシュを消去できませんでした",
   "ui.clearCacheUnauthorized": "管理者トークンが必要です",
   "ui.searchError": "検索に失敗しました。もう一度お試しください。",
-  "ui.welcome": "Pictoriumへようこそ",
+  "ui.welcome": "SpatialPostersへようこそ",
   "ui.welcomeSubtitle": "希望の言語を選んでください",
   "ui.chooseLanguage": "希望の言語を選んでください",
   "ui.statusBack": "ホームに戻る",

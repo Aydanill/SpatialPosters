@@ -207,7 +207,7 @@
   "ui.clearCacheError": "Cache não foi limpo",
   "ui.clearCacheUnauthorized": "Token de admin necessário",
   "ui.searchError": "Busca falhou. Tente de novo.",
-  "ui.welcome": "Bem-vindo ao Pictorium",
+  "ui.welcome": "Bem-vindo ao SpatialPosters",
   "ui.welcomeSubtitle": "Escolha seu idioma preferido",
   "ui.chooseLanguage": "Escolha seu idioma preferido",
   "ui.statusBack": "Voltar ao início",

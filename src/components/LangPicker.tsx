@@ -100,13 +100,13 @@ export function LangPicker({ onPickLang, onPickRegion, onDone }: SetupWizardProp
   const getTitle = () => {
     if (step === "pin") return t("ui.setupPinTitle")
     if (step === "region") return t("ui.setupRegionTitle")
-    return t("ui.welcome")
+    return "Welcome to SpatialPosters"
   }
 
   const getSubtitle = () => {
     if (step === "pin") return t("ui.setupPinSubtitle")
     if (step === "region") return t("ui.setupRegionSubtitle")
-    return t("ui.welcomeSubtitle")
+    return "Select your preferred language"
   }
 
   return (
