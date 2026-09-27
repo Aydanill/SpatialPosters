@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import { posterUrl } from "@/lib/utils"
 import { useT } from "@/lib/contexts/TranslationContext"
+import { usePSelector } from "@/lib/context"
 import { Check, ArrowRight, Grid } from "lucide-react"
 import { PosterDepthEdge, PosterDepthSheen } from "@/components/PosterDepthGlow"
 
@@ -39,7 +40,15 @@ export function SimklCard({ items, title, totalCount, meta = [], onClick, onItem
   const isSingle = displayItems.length <= 1
   const count = totalCount ?? items.length
 
+  const mappingsMap = usePSelector((v) => v.mappingsMap)
+
   const imgSrc = (item: SimklCardItem) => {
+    const mediaType = item.media_type || item.mediaType
+    const id = item.tmdbId || item.id
+    if (mediaType && id) {
+      const saved = mappingsMap.get(`${mediaType}:${id}`)
+      if (saved?.imgbbUrl) return saved.imgbbUrl
+    }
     const path = item.poster_path || item.posterPath
     return path ? posterUrl(path, "w185") : ""
   }

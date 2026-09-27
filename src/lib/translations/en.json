@@ -592,7 +592,7 @@
   "ui.setupPinMinDigits": "PIN must contain at least 4 digits",
   "ui.setupPinStremioNotice": "Stremio manifest and posters remain open",
   "ui.pinLockTitle": "Protected Panel",
-  "ui.pinLockSubtitle": "Enter PIN to unlock Pictorium",
+  "ui.pinLockSubtitle": "Enter PIN to unlock SpatialPosters",
   "ui.pinLockWrong": "Incorrect PIN",
   "ui.pinLockDelete": "Delete",
   "ui.pinLockUnlock": "Unlock",
