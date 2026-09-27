@@ -703,14 +703,14 @@ input[type="range"]::-moz-range-thumb {
 
 @media (min-width: 1280px) {
   .editor-workspace {
-    grid-template-columns: minmax(290px, 1.1fr) minmax(320px, 460px) minmax(280px, 1fr);
+    grid-template-columns: minmax(280px, 1fr) minmax(320px, 460px) minmax(280px, 1fr);
     gap: 1.125rem;
   }
 }
 
 @media (min-width: 1536px) {
   .editor-workspace {
-    grid-template-columns: minmax(340px, 1.25fr) minmax(360px, 490px) minmax(320px, 1fr);
+    grid-template-columns: minmax(320px, 1fr) minmax(360px, 490px) minmax(320px, 1fr);
     gap: 1.35rem;
   }
 }

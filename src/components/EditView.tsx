@@ -442,7 +442,7 @@ export default function EditView() {
           </div>
 
           {/* DESKTOP ONLY: 3-Column Workspace */}
-          <div className="editor-workspace w-full px-2 sm:px-4 md:px-6 lg:pl-14 lg:pr-2 xl:pl-16 xl:pr-4 2xl:pl-6 2xl:pr-6 lg:h-[clamp(660px,calc(100dvh-260px),830px)] lg:min-h-0">
+          <div className="editor-workspace w-full max-w-[1600px] mx-auto px-2 sm:px-4 md:px-6 lg:pl-20 lg:pr-12 xl:pl-20 xl:pr-14 2xl:px-14 lg:h-[clamp(660px,calc(100dvh-260px),830px)] lg:min-h-0">
 
             {/* LEFT: Poster */}
             <div className="hidden lg:block h-full min-w-0">
