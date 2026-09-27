@@ -4,7 +4,8 @@ import { useState, useRef, useEffect } from "react"
 import { PICKER_LANGS } from "@/lib/utils"
 import { REGIONS } from "@/lib/regions"
 import { useT } from "@/lib/contexts/TranslationContext"
-import { ChevronLeft, Lock, ArrowRight, ShieldCheck } from "lucide-react"
+import { AnimatedSpatialWord } from "@/components/AnimatedSpatialWord"
+import { ChevronLeft, Lock, ArrowRight, ShieldCheck, Sparkles, Languages, MapPin, Check } from "lucide-react"
 
 interface SetupWizardProps {
   /** Applica la lingua (codice 2 lettere) senza chiudere il wizard. */
@@ -16,7 +17,7 @@ interface SetupWizardProps {
 }
 
 /**
- * Configurazione guidata iniziale in 3 passi:
+ * Configurazione guidata iniziale in 3 passi (SpatialPosters Setup):
  * 1. lingua dell'interfaccia (12 nazionalità),
  * 2. nazionalità delle liste/classifiche (stesse 12),
  * 3. protezione con PIN (per proteggere l'accesso al pannello).
@@ -24,6 +25,8 @@ interface SetupWizardProps {
 export function LangPicker({ onPickLang, onPickRegion, onDone }: SetupWizardProps) {
   const { t } = useT()
   const [step, setStep] = useState<"lang" | "region" | "pin">("lang")
+  const [selectedLang, setSelectedLang] = useState<string | null>(null)
+  const [selectedRegion, setSelectedRegion] = useState<string | null>(null)
   const [pin, setPin] = useState("")
   const [pinError, setPinError] = useState<string | null>(null)
   const [pinLoading, setPinLoading] = useState(false)
@@ -36,13 +39,19 @@ export function LangPicker({ onPickLang, onPickRegion, onDone }: SetupWizardProp
   }, [step])
 
   const pickLang = (code: string) => {
+    setSelectedLang(code)
     onPickLang(code)
-    setStep("region")
+    setTimeout(() => {
+      setStep("region")
+    }, 180)
   }
 
   const pickRegion = (regionCode: string) => {
+    setSelectedRegion(regionCode)
     onPickRegion(regionCode)
-    setStep("pin")
+    setTimeout(() => {
+      setStep("pin")
+    }, 180)
   }
 
   const handleSavePin = async (e?: React.FormEvent) => {
@@ -82,6 +91,12 @@ export function LangPicker({ onPickLang, onPickRegion, onDone }: SetupWizardProp
     onDone()
   }
 
+  const getStepNumber = () => {
+    if (step === "lang") return 1
+    if (step === "region") return 2
+    return 3
+  }
+
   const getTitle = () => {
     if (step === "pin") return t("ui.setupPinTitle")
     if (step === "region") return t("ui.setupRegionTitle")
@@ -95,113 +110,238 @@ export function LangPicker({ onPickLang, onPickRegion, onDone }: SetupWizardProp
   }
 
   return (
-    <div className="fixed inset-0 z-[100] bg-background/95 backdrop-blur-md flex items-center justify-center animate-fade-in">
-      <div className="w-full max-w-lg mx-4">
-        <div className="text-center mb-8">
-          {/* eslint-disable-next-line @next/next/no-img-element -- local SVG asset */}
-          <img src="/SpatialPosters.png" alt="SpatialPosters" loading="eager" decoding="async" className="h-auto w-[min(92vw,430px)] mx-auto mb-4 hover:brightness-110 transition-all duration-150" />
-          <h2 className="text-2xl font-bold text-zinc-100">{getTitle()}</h2>
-          <p className="text-sm text-muted mt-1.5">{getSubtitle()}</p>
+    <div className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-2xl flex items-center justify-center p-4 animate-fade-in overflow-y-auto">
+      {/* Ambient background glows */}
+      <div className="pointer-events-none absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent-orange/15 rounded-full blur-[130px] opacity-70" />
+      <div className="pointer-events-none absolute bottom-1/4 right-1/4 w-[350px] h-[350px] bg-purple-600/10 rounded-full blur-[110px] opacity-60" />
 
-          {/* Step dots */}
-          <div className="flex items-center justify-center gap-1.5 mt-4" aria-hidden="true">
-            <span className={`h-1.5 rounded-full transition-all duration-300 ${step === "lang" ? "w-6 bg-accent-orange" : "w-1.5 bg-zinc-600"}`} />
-            <span className={`h-1.5 rounded-full transition-all duration-300 ${step === "region" ? "w-6 bg-accent-orange" : "w-1.5 bg-zinc-600"}`} />
-            <span className={`h-1.5 rounded-full transition-all duration-300 ${step === "pin" ? "w-6 bg-accent-orange" : "w-1.5 bg-zinc-600"}`} />
-          </div>
-        </div>
+      <div className="relative z-10 w-full max-w-xl my-auto">
+        {/* Main Glass Card Container */}
+        <div className="glass-card p-6 sm:p-8 rounded-3xl border border-white/12 shadow-[0_20px_60px_rgba(0,0,0,0.7)] backdrop-blur-xl relative overflow-hidden">
+          
+          {/* Top Decorative Highlight Bar */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 via-accent-orange to-purple-500" />
 
-        {step === "lang" && (
-          <div key="lang" className="grid grid-cols-2 gap-2 max-h-[52vh] overflow-y-auto pr-0.5 animate-step-enter">
-            {PICKER_LANGS.map((l) => (
-              <button type="button" key={l.key} onClick={() => pickLang(l.code)} className="surface-card flex items-center gap-2 px-4 py-3.5 rounded-2xl hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-200 text-left group cursor-pointer">
-                <span className="text-2xl shrink-0">{l.flag}</span>
-                <div>
-                  <p className="text-sm font-medium text-zinc-200 group-hover:text-accent transition-colors">{l.name}</p>
-                  <p className="text-xs text-muted uppercase tracking-wider">{l.sub}</p>
-                </div>
-              </button>
-            ))}
-          </div>
-        )}
-
-        {step === "region" && (
-          <div key="region" className="grid grid-cols-2 gap-2 max-h-[52vh] overflow-y-auto pr-0.5 animate-step-enter">
-            {REGIONS.map((r) => (
-              <button type="button" key={r.code} onClick={() => pickRegion(r.code)} className="surface-card flex items-center gap-2 px-4 py-3.5 rounded-2xl hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-200 text-left group cursor-pointer">
-                <span className="text-2xl shrink-0">{r.flag}</span>
-                <div>
-                  <p className="text-sm font-medium text-zinc-200 group-hover:text-accent transition-colors">{r.label}</p>
-                  <p className="text-xs text-muted uppercase tracking-wider">{r.code}</p>
-                </div>
-              </button>
-            ))}
-          </div>
-        )}
-
-        {step === "pin" && (
-          <div key="pin" className="surface-card p-6 sm:p-8 rounded-3xl animate-step-enter max-w-sm mx-auto flex flex-col items-center">
-            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-4">
-              <Lock className="w-6 h-6" />
+          {/* Rebranded Header */}
+          <div className="text-center mb-7 relative">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.06] border border-white/12 backdrop-blur-md mb-4 shadow-sm">
+              <Sparkles className="w-3.5 h-3.5 text-accent-orange animate-pulse" />
+              <span className="text-[11px] font-semibold tracking-wider text-zinc-300 uppercase">
+                Welcome to <AnimatedSpatialWord />
+              </span>
             </div>
 
-            <form onSubmit={handleSavePin} className="w-full space-y-4">
-              <div>
-                <input
-                  ref={pinInputRef}
-                  type="password"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  maxLength={8}
-                  value={pin}
-                  onChange={(e) => {
-                    setPin(e.target.value.replace(/\D/g, ""))
-                    setPinError(null)
-                  }}
-                  placeholder="••••"
-                  className="w-full text-center text-2xl font-mono tracking-[0.3em] py-3 px-4 rounded-2xl bg-black/40 border border-white/10 text-white placeholder-zinc-600 focus:outline-none focus:border-amber-500/50 transition-colors"
-                />
-                {pinError && (
-                  <p className="text-xs text-rose-400 text-center mt-2 font-medium">{pinError}</p>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              {getTitle()}
+            </h2>
+            <p className="text-xs sm:text-sm text-zinc-400 mt-1.5 max-w-md mx-auto">
+              {getSubtitle()}
+            </p>
+
+            {/* Stepper Bar */}
+            <div className="flex items-center justify-center gap-3 mt-6">
+              {/* Step 1: Language */}
+              <div className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold transition-all duration-300 ${
+                step === "lang" 
+                  ? "bg-accent-orange/20 border border-accent-orange/40 text-accent-orange shadow-[0_0_15px_rgba(249,115,22,0.2)]" 
+                  : step === "region" || step === "pin"
+                  ? "bg-emerald-500/15 border border-emerald-500/30 text-emerald-400"
+                  : "bg-white/5 border border-white/10 text-zinc-500"
+              }`}>
+                {step === "region" || step === "pin" ? (
+                  <Check className="w-3.5 h-3.5" />
+                ) : (
+                  <Languages className="w-3.5 h-3.5" />
                 )}
+                <span>1. Language</span>
               </div>
 
-              <div className="flex items-center gap-1.5 text-[11px] text-zinc-400 justify-center">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span>{t("ui.setupPinStremioNotice")}</span>
+              <div className="w-4 h-[1px] bg-white/15" />
+
+              {/* Step 2: Region */}
+              <div className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold transition-all duration-300 ${
+                step === "region" 
+                  ? "bg-accent-orange/20 border border-accent-orange/40 text-accent-orange shadow-[0_0_15px_rgba(249,115,22,0.2)]" 
+                  : step === "pin"
+                  ? "bg-emerald-500/15 border border-emerald-500/30 text-emerald-400"
+                  : "bg-white/5 border border-white/10 text-zinc-500"
+              }`}>
+                {step === "pin" ? (
+                  <Check className="w-3.5 h-3.5" />
+                ) : (
+                  <MapPin className="w-3.5 h-3.5" />
+                )}
+                <span>2. Region</span>
               </div>
 
-              <button
-                type="submit"
-                disabled={pin.length < 4 || pinLoading}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-black font-semibold text-xs tracking-wide uppercase hover:opacity-90 active:scale-98 disabled:opacity-30 disabled:pointer-events-none transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <span>{pinLoading ? t("ui.setupPinSaving") : t("ui.setupPinSave")}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              <div className="w-4 h-[1px] bg-white/15" />
 
+              {/* Step 3: PIN */}
+              <div className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold transition-all duration-300 ${
+                step === "pin" 
+                  ? "bg-accent-orange/20 border border-accent-orange/40 text-accent-orange shadow-[0_0_15px_rgba(249,115,22,0.2)]" 
+                  : "bg-white/5 border border-white/10 text-zinc-500"
+              }`}>
+                <Lock className="w-3.5 h-3.5" />
+                <span>3. Security</span>
+              </div>
+            </div>
+          </div>
+
+          {/* STEP 1: LANGUAGE SELECTION GRID */}
+          {step === "lang" && (
+            <div key="lang" className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[48vh] overflow-y-auto pr-1 scrollbar-none animate-step-enter">
+              {PICKER_LANGS.map((l) => {
+                const isSelected = selectedLang === l.code
+                return (
+                  <button
+                    type="button"
+                    key={l.key}
+                    onClick={() => pickLang(l.code)}
+                    className={`group relative flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-all duration-200 cursor-pointer overflow-hidden ${
+                      isSelected
+                        ? "bg-accent-orange/20 border-accent-orange/60 shadow-[0_0_20px_rgba(249,115,22,0.25)] scale-[0.98]"
+                        : "bg-white/[0.03] hover:bg-white/[0.08] border-white/10 hover:border-white/25 hover:-translate-y-0.5 active:scale-[0.98]"
+                    }`}
+                  >
+                    <span className="text-3xl shrink-0 p-1.5 rounded-xl bg-white/[0.05] border border-white/10 shadow-inner group-hover:scale-110 transition-transform">
+                      {l.flag}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-zinc-100 group-hover:text-accent-orange transition-colors truncate">
+                        {l.name}
+                      </p>
+                      <p className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest mt-0.5">
+                        {l.sub}
+                      </p>
+                    </div>
+                    {isSelected ? (
+                      <div className="w-6 h-6 rounded-full bg-accent-orange text-black flex items-center justify-center shrink-0">
+                        <Check className="w-3.5 h-3.5 stroke-[3]" />
+                      </div>
+                    ) : (
+                      <ArrowRight className="w-4 h-4 text-zinc-500 group-hover:text-zinc-200 group-hover:translate-x-1 transition-all shrink-0" />
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+          )}
+
+          {/* STEP 2: REGION SELECTION GRID */}
+          {step === "region" && (
+            <div key="region" className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[48vh] overflow-y-auto pr-1 scrollbar-none animate-step-enter">
+              {REGIONS.map((r) => {
+                const isSelected = selectedRegion === r.code
+                return (
+                  <button
+                    type="button"
+                    key={r.code}
+                    onClick={() => pickRegion(r.code)}
+                    className={`group relative flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-all duration-200 cursor-pointer overflow-hidden ${
+                      isSelected
+                        ? "bg-accent-orange/20 border-accent-orange/60 shadow-[0_0_20px_rgba(249,115,22,0.25)] scale-[0.98]"
+                        : "bg-white/[0.03] hover:bg-white/[0.08] border-white/10 hover:border-white/25 hover:-translate-y-0.5 active:scale-[0.98]"
+                    }`}
+                  >
+                    <span className="text-3xl shrink-0 p-1.5 rounded-xl bg-white/[0.05] border border-white/10 shadow-inner group-hover:scale-110 transition-transform">
+                      {r.flag}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-zinc-100 group-hover:text-accent-orange transition-colors truncate">
+                        {r.label}
+                      </p>
+                      <p className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest mt-0.5">
+                        {r.code}
+                      </p>
+                    </div>
+                    {isSelected ? (
+                      <div className="w-6 h-6 rounded-full bg-accent-orange text-black flex items-center justify-center shrink-0">
+                        <Check className="w-3.5 h-3.5 stroke-[3]" />
+                      </div>
+                    ) : (
+                      <ArrowRight className="w-4 h-4 text-zinc-500 group-hover:text-zinc-200 group-hover:translate-x-1 transition-all shrink-0" />
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+          )}
+
+          {/* STEP 3: OPTIONAL PIN STEP */}
+          {step === "pin" && (
+            <div key="pin" className="animate-step-enter max-w-md mx-auto flex flex-col items-center">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500/20 to-accent-orange/20 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-5 shadow-[0_0_25px_rgba(245,158,11,0.25)]">
+                <Lock className="w-7 h-7" />
+              </div>
+
+              <form onSubmit={handleSavePin} className="w-full space-y-4">
+                <div className="relative">
+                  <input
+                    ref={pinInputRef}
+                    type="password"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={8}
+                    value={pin}
+                    onChange={(e) => {
+                      setPin(e.target.value.replace(/\D/g, ""))
+                      setPinError(null)
+                    }}
+                    placeholder="••••"
+                    className="w-full text-center text-3xl font-mono tracking-[0.4em] py-3.5 px-4 rounded-2xl bg-black/60 border border-white/15 text-white placeholder-zinc-700 focus:outline-none focus:border-amber-500/70 focus:ring-2 focus:ring-amber-500/20 transition-all shadow-inner"
+                  />
+                  {pinError && (
+                    <p className="text-xs text-rose-400 text-center mt-2 font-semibold animate-shake">
+                      {pinError}
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2 text-xs text-zinc-400 justify-center bg-white/[0.03] border border-white/10 rounded-xl p-3">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>{t("ui.setupPinStremioNotice")}</span>
+                </div>
+
+                <div className="pt-2 space-y-2">
+                  <button
+                    type="submit"
+                    disabled={pin.length < 4 || pinLoading}
+                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-accent-orange to-rose-500 text-black font-extrabold text-xs tracking-wider uppercase hover:brightness-110 active:scale-[0.98] disabled:opacity-30 disabled:pointer-events-none transition-all shadow-[0_4px_20px_rgba(249,115,22,0.35)] flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <span>{pinLoading ? t("ui.setupPinSaving") : t("ui.setupPinSave")}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleSkipPin}
+                    className="w-full py-2.5 text-center text-xs font-semibold text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all cursor-pointer"
+                  >
+                    {t("ui.setupPinSkip")}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* BACK BUTTON */}
+          {step !== "lang" && (
+            <div className="mt-6 pt-4 border-t border-white/10 flex justify-center">
               <button
                 type="button"
-                onClick={handleSkipPin}
-                className="w-full py-2 text-center text-xs text-zinc-400 hover:text-zinc-200 transition-colors cursor-pointer"
+                onClick={() => setStep(step === "pin" ? "region" : "lang")}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white hover:bg-white/10 transition-all active:scale-95 cursor-pointer"
               >
-                {t("ui.setupPinSkip")}
+                <ChevronLeft className="w-4 h-4" />
+                {t("ui.back")}
               </button>
-            </form>
-          </div>
-        )}
+            </div>
+          )}
 
-        {step !== "lang" && (
-          <button
-            type="button"
-            onClick={() => setStep(step === "pin" ? "region" : "lang")}
-            className="mx-auto mt-5 flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/5 transition-all active:scale-95 cursor-pointer"
-          >
-            <ChevronLeft className="w-3.5 h-3.5" />
-            {t("ui.back")}
-          </button>
-        )}
+        </div>
       </div>
     </div>
   )
 }
+
