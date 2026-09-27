@@ -173,24 +173,24 @@ export function BadgeControls() {
 
         {/* Trend & Network logo & Ribbon side */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-zinc-300 font-medium flex items-center gap-1.5">
-              <Trophy className="w-3.5 h-3.5 text-amber-500" />
-              {t("ui.trendBadge")}
+          <div className="flex items-center justify-between gap-2 min-w-0">
+            <span className="text-zinc-300 font-medium flex items-center gap-1.5 min-w-0 truncate">
+              <Trophy className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+              <span className="truncate">{t("ui.trendBadge")}</span>
             </span>
             <Toggle value={ed.rankingBadges} onChange={(v) => ed.setRankingBadges(v)} label={t("ui.trendBadge")} />
           </div>
 
-          <div className="flex items-center justify-between gap-3">
-            <span className="text-zinc-300 font-medium flex items-center gap-1.5 shrink-0">
-              <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-              {t("ui.badgeResolution") || "Resolution"}
+          <div className="flex items-center justify-between gap-2 min-w-0">
+            <span className="text-zinc-300 font-medium flex items-center gap-1.5 min-w-0 truncate">
+              <Sparkles className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+              <span className="truncate">{t("ui.badgeResolution") || "Resolution"}</span>
             </span>
-            <div className="relative shrink-0 w-32">
+            <div className="relative shrink-0 w-28 max-w-[48%] min-w-0">
               <select
                 value={ed.manualQuality || ""}
                 onChange={(e) => ed.setManualQuality(e.target.value)}
-                className="w-full appearance-none bg-surface3/50 hover:bg-surface3 border border-surface2 text-zinc-100 text-xs font-semibold py-1.5 pl-3 pr-7 rounded-lg transition-colors cursor-pointer outline-none focus:ring-1 focus:ring-accent-purple"
+                className="w-full appearance-none bg-surface3/50 hover:bg-surface3 border border-surface2 text-zinc-100 text-xs font-semibold py-1.5 pl-2.5 pr-6 rounded-lg transition-colors cursor-pointer outline-none focus:ring-1 focus:ring-accent-purple truncate"
               >
                 <option value="">None</option>
                 <option value="4k-black">4K</option>
@@ -198,22 +198,22 @@ export function BadgeControls() {
                 <option value="1080p-black">1080p</option>
                 <option value="720p-black">720p</option>
               </select>
-              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
+              <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
                 <ChevronDown className="w-3.5 h-3.5 text-zinc-400" />
               </div>
             </div>
           </div>
 
-          <div className="flex items-center justify-between gap-3">
-            <span className="text-zinc-300 font-medium flex items-center gap-1.5 shrink-0">
-              <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-              {t("ui.badgeFormat") || "Format"}
+          <div className="flex items-center justify-between gap-2 min-w-0">
+            <span className="text-zinc-300 font-medium flex items-center gap-1.5 min-w-0 truncate">
+              <Sparkles className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+              <span className="truncate">{t("ui.badgeFormat") || "Format"}</span>
             </span>
-            <div className="relative shrink-0 w-32">
+            <div className="relative shrink-0 w-28 max-w-[48%] min-w-0">
               <select
                 value={ed.badgeFormat || ""}
                 onChange={(e) => ed.setBadgeFormat(e.target.value)}
-                className="w-full appearance-none bg-surface3/50 hover:bg-surface3 border border-surface2 text-zinc-100 text-xs font-semibold py-1.5 pl-3 pr-7 rounded-lg transition-colors cursor-pointer outline-none focus:ring-1 focus:ring-accent-purple"
+                className="w-full appearance-none bg-surface3/50 hover:bg-surface3 border border-surface2 text-zinc-100 text-xs font-semibold py-1.5 pl-2.5 pr-6 rounded-lg transition-colors cursor-pointer outline-none focus:ring-1 focus:ring-accent-purple truncate"
               >
                 <option value="">None</option>
                 <option value="dolby-vision-black">Dolby Vision</option>
@@ -224,26 +224,26 @@ export function BadgeControls() {
                 <option value="imax-black">IMAX</option>
                 <option value="imax-enhanced-black">IMAX Enhanced</option>
               </select>
-              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
+              <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
                 <ChevronDown className="w-3.5 h-3.5 text-zinc-400" />
               </div>
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <span className="text-zinc-300 font-medium flex items-center gap-1.5">
-              <Tv className="w-3.5 h-3.5 text-sky-400" />
-              {t("ui.networkLogo")}
+          <div className="flex items-center justify-between gap-2 min-w-0">
+            <span className="text-zinc-300 font-medium flex items-center gap-1.5 min-w-0 truncate">
+              <Tv className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+              <span className="truncate">{t("ui.networkLogo")}</span>
             </span>
             <Toggle value={ed.networkLogo} onChange={(v) => ed.setNetworkLogo(v)} label={t("ui.networkLogo")} />
           </div>
 
-          <div className="flex items-center justify-between gap-3 pt-1">
-            <span className="text-zinc-300 font-medium flex items-center gap-1.5 shrink-0">
-              <Flame className="w-3.5 h-3.5 text-accent-orange" />
-              {t("ui.badgePosition")}
+          <div className="flex items-center justify-between gap-2 pt-1 min-w-0">
+            <span className="text-zinc-300 font-medium flex items-center gap-1.5 min-w-0 truncate">
+              <Flame className="w-3.5 h-3.5 text-accent-orange shrink-0" />
+              <span className="truncate">{t("ui.badgePosition")}</span>
             </span>
-            <div className="grid grid-cols-2 gap-1 w-36 shrink-0">
+            <div className="grid grid-cols-2 gap-1 w-32 max-w-[48%] shrink-0">
               <button
                 type="button"
                 onClick={() => ed.setRibbonSide("left")}

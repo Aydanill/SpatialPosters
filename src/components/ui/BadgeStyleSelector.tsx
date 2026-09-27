@@ -40,7 +40,7 @@ export function BadgeStyleSelector<S extends string>({
   accentColor?: string | null
   disabled?: readonly S[]
 }) {
-  const gridCols = options.length <= 3 ? "grid-cols-3" : "grid-cols-3 sm:grid-cols-6"
+  const gridCols = "grid-cols-3"
   return (
     <div className={`grid ${gridCols} gap-1.5 w-full`}>
       {options.map((s) => {
