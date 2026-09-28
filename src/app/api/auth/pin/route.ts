@@ -47,22 +47,22 @@ export async function POST(req: NextRequest) {
 
   const pin = typeof body?.pin === "string" ? body.pin.trim() : ""
   if (!pin) {
-    return Response.json({ error: "PIN mancante" }, { status: 400 })
+    return Response.json({ error: "Admin Password / PIN is required" }, { status: 400 })
   }
 
   const hasPin = await hasPinConfigured()
   if (!hasPin) {
-    return Response.json({ error: "Nessun PIN configurato" }, { status: 400 })
+    return Response.json({ error: "No Admin Password or PIN is configured" }, { status: 400 })
   }
 
   const isValid = await verifyPin(pin)
   if (!isValid) {
-    return Response.json({ error: "PIN non corretto" }, { status: 401 })
+    return Response.json({ error: "Incorrect Admin Password / PIN" }, { status: 401 })
   }
 
   const token = await createSessionToken()
   if (!token) {
-    return Response.json({ error: "Errore generazione sessione" }, { status: 500 })
+    return Response.json({ error: "Failed to generate session token" }, { status: 500 })
   }
 
   const cookie = buildSessionCookie(token)
