@@ -403,6 +403,11 @@ function StatusContent() {
                     status="ok"
                   />
                   <StatusMetricRow
+                    label="Upstash Redis (KV)"
+                    value={data?.storage?.mode === "kv" ? "Active" : "Not Configured"}
+                    status={data?.storage?.mode === "kv" ? "ok" : "neutral"}
+                  />
+                  <StatusMetricRow
                     label="Cloudflare R2 Storage"
                     value={data?.storage?.r2?.configured ? `Active (${data.storage.r2.bucket})` : "Not Configured"}
                     status={data?.storage?.r2?.configured ? "ok" : "neutral"}

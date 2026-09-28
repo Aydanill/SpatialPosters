@@ -183,12 +183,15 @@ docker run -d \
 
 ### ☁️ 1-Click Cloud Deployment
 
-#### Deploy to Vercel
+#### Deploy to Vercel (Best Free Recommended Setup)
 1. Click the **Deploy with Vercel** button above or import your repository on [vercel.com](https://vercel.com).
-2. Add Environment Variables:
-   * `SPATIALPOSTERS_TMDB_KEY` = *your TMDB API key*
+2. Connect **Upstash Redis** storage via Vercel Integrations (Free Tier) for lightning-fast configuration caching.
+3. Add the following **100% Free Optimized** Environment Variables:
+   * `SPATIALPOSTERS_TMDB_KEY` = *your TMDB v3 API key*
    * `SPATIALPOSTERS_PUBLIC_INSTANCE` = `1`
-3. Connect **Upstash Redis** storage via Vercel Integrations for persistent key-value caching.
+   * `CLOUDINARY_CLOUD_NAME` = *your Cloudinary Cloud Name (Free 25GB Tier)*
+   * `CLOUDINARY_API_KEY` = *your Cloudinary API Key*
+   * `CLOUDINARY_API_SECRET` = *your Cloudinary API Secret*
 
 #### Deploy to Render / HuggingFace Spaces
 Deploy using the included `Dockerfile` on any Docker-compatible hosting platform.
