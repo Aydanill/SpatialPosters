@@ -102,6 +102,10 @@ Here are actual real-time poster compositions generated on demand by the Spatial
 * **10,000+ Vector Logos**: Access crystal-clear SVG logos for major studios and networks.
 * **Focal Area Detection**: Smart computer-vision algorithms analyze focal zones (such as actors' faces) to automatically position and scale title logos without obscuring key visual elements.
 
+### 🌐 Universal Custom Poster URL Import
+* **Limitless Artwork Sourcing**: Easily import custom poster artwork from **Pinterest**, **Reddit**, **ThePosterDB (TPDB)**, **Imgur**, or any direct web image link.
+* **Instant Studio Compositing**: Paste any custom poster URL directly into the studio workspace—SpatialPosters instantly applies vector logos, 4K resolution badges, and rating overlays onto your custom artwork in real-time.
+
 ### 📺 Smart Season & Anime Unpacker
 * **Multi-Part Series Detection**: Automatically groups multi-part series (e.g. *Money Heist*, *Lupin*) into their intended watch order.
 * **Anime Mega-Season Unpacker**: Unpacks collapsed TMDB mega-seasons (e.g. *Jujutsu Kaisen*, *Re:ZERO*) into distinct seasonal story arcs.
