@@ -2,11 +2,11 @@
 
   <img src="public/Screen/banner.jpg" alt="SpatialPosters Banner" width="100%" style="border-radius: 14px; margin-bottom: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.6);" />
 
-  <h1>🎬 SpatialPosters</h1>
+  <h1>SpatialPosters</h1>
   <p><b>Next-Generation Dynamic Poster Studio & Stremio Artwork Engine</b></p>
   <p>Created by <a href="https://instagram.com/TheAceOfficials"><b>@TheAceOfficials</b></a></p>
 
-  <p>
+  <p align="center">
     <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FTheAceOfficials%2FSpatialPosters"><img src="https://vercel.com/button" alt="Deploy with Vercel" /></a>
     <a href="#-docker--docker-compose-setup"><img src="https://img.shields.io/badge/Docker-Supported-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker" /></a>
     <a href="https://patreon.com/theaceofficials"><img src="https://img.shields.io/badge/Patreon-Support-FF424D?style=flat-square&logo=patreon&logoColor=white" alt="Support on Patreon" /></a>
@@ -33,22 +33,22 @@ It transforms ordinary poster thumbnails into stunning, studio-grade cinematic a
 Explore the intuitive, liquid-glass visual interface designed for effortless poster customization and catalog management.
 
 <div align="center">
-  <img src="public/Screen/interface1..jpg" alt="SpatialPosters Studio Workspace" width="100%" style="border-radius: 12px; margin-bottom: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);" />
-  <p><em>✨ <b>WYSIWYG Live Poster Studio Workspace</b> — Live 3-Column desktop workspace featuring interactive poster options, real-time preview, and full customization controls.</em></p>
+  <img src="public/Screen/interface1..jpg" alt="3D Poster Deck Showcase" width="100%" style="border-radius: 12px; margin-bottom: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);" />
+  <p><em>✨ <b>3D Poster Deck & Collection Showcase</b> — Interactive Apple TV & Netflix-style 3D poster decks for previewing saved media items.</em></p>
 </div>
 
 <br />
 
 <div align="center">
-  <img src="public/Screen/interface2.jpg" alt="Customization Controls & Badge Options" width="100%" style="border-radius: 12px; margin-bottom: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);" />
-  <p><em>🎨 <b>Customization Panel & Fine-Tuning Controls</b> — Comprehensive controls for badge styles, vector logo scaling, backdrop blur, offset adjustments, quality badges, and trend ribbons.</em></p>
+  <img src="public/Screen/interface2.jpg" alt="My Posters Library & Catalog Manager" width="100%" style="border-radius: 12px; margin-bottom: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);" />
+  <p><em>📚 <b>My Posters Library & Catalog Manager</b> — Organise your saved poster collection, manage custom catalogs, and browse media items in high resolution.</em></p>
 </div>
 
 <br />
 
 <div align="center">
-  <img src="public/Screen/interface3.jpg" alt="Custom Catalogs & Saved Poster Library" width="100%" style="border-radius: 12px; margin-bottom: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);" />
-  <p><em>📚 <b>My Posters Library & Custom Catalogs Manager</b> — Organise your saved poster collection, manage custom catalogs, and preview items with Apple TV / Netflix style 3D card decks.</em></p>
+  <img src="public/Screen/interface3.jpg" alt="WYSIWYG Live Poster Studio Workspace" width="100%" style="border-radius: 12px; margin-bottom: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);" />
+  <p><em>🎨 <b>WYSIWYG Live Poster Studio Workspace</b> — Live 3-Column desktop workspace featuring vector title logo selection, real-time preview, badge styling, and fine-tuning controls.</em></p>
 </div>
 
 ---
@@ -65,7 +65,9 @@ Here are actual real-time poster compositions generated on demand by the Spatial
   <img src="public/Screen/poster5.jpg" alt="Poster Output 5" width="19%" style="border-radius: 8px; margin: 0 0.5%; box-shadow: 0 8px 24px rgba(0,0,0,0.4);" />
 </div>
 
-<p align="center"><em>Pristine textless graphics, vector studio logos, rating badges, streaming resolution indicators, award ribbons, and dynamic color detection.</em></p>
+<br />
+
+<p align="center"><b>✨ Key Composition Features:</b> Pristine textless graphics • Vector studio logos • Multi-provider ratings • 4K streaming indicators • Award ribbons • Auto accent color detection</p>
 
 ---
 
@@ -218,9 +220,22 @@ Below is the complete reference of environment variables supported by SpatialPos
 | **`R2_BUCKET_NAME`** | Optional | Cloudflare R2 Bucket Name | `spatialposters` |
 | **`KV_REST_API_URL`** | Optional | Upstash Redis REST API URL for KV store | `https://xxx.upstash.io` |
 | **`KV_REST_API_TOKEN`** | Optional | Upstash Redis REST API Token | `your_upstash_token` |
+| **`SPATIALPOSTERS_ADMIN_PIN`** | Optional | Set Admin Password/PIN to lock instance settings (only owner can modify) | `mysecret2026` |
 | **`SPATIALPOSTERS_PUBLIC_INSTANCE`** | Optional | Set to `1` to enable public multi-user instance mode | `1` |
-| **`SPATIALPOSTERS_ADMIN_TOKEN`** | Optional | Secret PIN/Token for protecting admin routes | `supersecret` |
+| **`SPATIALPOSTERS_ADMIN_TOKEN`** | Optional | Secret PIN/Token for protecting admin API routes | `supersecret` |
 | **`SPATIALPOSTERS_DATA_DIR`** | Optional | Path to local persistent data storage directory | `/data` |
+
+---
+
+### 🛡️ Admin Password Protection (`SPATIALPOSTERS_ADMIN_PIN`)
+
+SpatialPosters features owner-only password protection to prevent unauthorized users from tampering with your self-hosted instance's settings.
+
+> [!NOTE]
+> **How Password Protection Works:**
+> - **Default Unlocked Mode (No Env Set)**: If `SPATIALPOSTERS_ADMIN_PIN` (or `SPATIALPOSTERS_SITE_PASSWORD`) is **not set**, SpatialPosters runs completely open and unlocked. First-time visitors will **never** be prompted for a password or PIN setup.
+> - **Owner Controlled Protection (Env Set)**: To lock your studio workspace, set `SPATIALPOSTERS_ADMIN_PIN=your_secret_password` in your Vercel / server environment variables. Only you as the instance owner control access—no visitor can ever overwrite or set a random PIN!
+> - **Session Persistence**: Entering the correct password grants a secure **30-day session cookie**, saving you from re-entering your password on every visit.
 
 ---
 
@@ -242,6 +257,27 @@ https://<your-domain>/api/poster/tv/<tmdbId>
 ```
 * **Jellyfin**: Edit Metadata ➔ Images ➔ Enter the poster API URL or saved Cloudinary image URL.
 * **Plex**: Edit Poster ➔ Enter custom URL.
+
+---
+
+## 💖 Support & Sponsorship
+
+**SpatialPosters** is built with passion and provided 100% free and open-source under the AGPLv3 license. 
+
+If you love using SpatialPosters or want to support future open-source projects created by **@TheAceOfficials**, consider backing on **Patreon**:
+
+<div align="center">
+  <br />
+  <a href="https://patreon.com/theaceofficials">
+    <img src="https://img.shields.io/badge/Patreon-Support_@TheAceOfficials-FF424D?style=for-the-badge&logo=patreon&logoColor=white" alt="Support on Patreon" height="44" />
+  </a>
+  <br /><br />
+</div>
+
+### 🌟 Membership Tiers
+* ☕ **Coffee Supporter ($3/mo)**: Supporter credit in GitHub README & App UI + Early dev updates.
+* 🔥 **Priority Feature Requester ($5/mo)**: Fast-track feature requests & shape future project roadmaps.
+* 👑 **Supporter Hall of Fame ($10/mo)**: Official Sponsor Logo/Link credit across all @TheAceOfficials projects.
 
 ---
 
