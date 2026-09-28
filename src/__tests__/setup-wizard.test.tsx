@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest"
-import { screen } from "@testing-library/react"
+import { screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { LangPicker } from "@/components/LangPicker"
 import { renderWithCtx } from "@/__tests__/test-utils"
@@ -22,7 +22,7 @@ describe("SetupWizard", () => {
     expect(screen.getByText("USA · English")).toBeInTheDocument()
     expect(screen.getByText("Messico · Español (México)")).toBeInTheDocument()
     expect(screen.getByText("Giappone · 日本語")).toBeInTheDocument()
-    expect(screen.queryByText("ui.back")).not.toBeInTheDocument()
+    expect(screen.queryByText("Back")).not.toBeInTheDocument()
   })
 
   it("passa alla scelta del paese dopo la lingua e completa", async () => {
@@ -31,14 +31,19 @@ describe("SetupWizard", () => {
 
     await user.click(screen.getByText("USA · English"))
     expect(onPickLang).toHaveBeenCalledWith("en")
-    // Passo regione: titolo tradotto (mock) + voci paese
-    expect(screen.getByText("ui.setupRegionTitle")).toBeInTheDocument()
+    
+    // Attendi la transizione del passo (180ms timeout)
+    await waitFor(() => {
+      expect(screen.getByText("ui.setupRegionTitle")).toBeInTheDocument()
+    })
     expect(screen.getByText("Italia")).toBeInTheDocument()
     expect(screen.queryByText("USA · English")).not.toBeInTheDocument()
 
     await user.click(screen.getByText("Giappone"))
     expect(onPickRegion).toHaveBeenCalledWith("JP")
-    expect(onDone).toHaveBeenCalledTimes(1)
+    await waitFor(() => {
+      expect(onDone).toHaveBeenCalledTimes(1)
+    })
   })
 
   it("il tasto indietro torna alla lingua senza completare", async () => {
@@ -47,10 +52,19 @@ describe("SetupWizard", () => {
 
     await user.click(screen.getByText("Francia · Français"))
     expect(onPickLang).toHaveBeenCalledWith("fr")
+    await waitFor(() => {
+      expect(screen.getByText("ui.setupRegionTitle")).toBeInTheDocument()
+    })
+
     await user.click(screen.getByText("Indietro"))
     expect(screen.getByText("Italia · Italiano")).toBeInTheDocument()
     expect(onPickRegion).not.toHaveBeenCalled()
     expect(onDone).not.toHaveBeenCalled()
   })
 })
+
+
+
+
+
 
