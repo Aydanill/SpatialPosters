@@ -98,6 +98,24 @@ export function readSecurityConfigSync(): SecurityConfig {
   return cachedConfig ?? {}
 }
 
+export function getAdminPinFromEnv(): string | null {
+  const pin =
+    process.env.SPATIALPOSTERS_ADMIN_PIN ||
+    process.env.SPATIALPOSTERS_SITE_PASSWORD ||
+    process.env.SPATIALPOSTERS_ADMIN_TOKEN ||
+    process.env.SPATIALPOSTERS_PIN ||
+    process.env.PICTORIUM_ADMIN_PIN ||
+    process.env.ADMIN_PIN ||
+    process.env.SITE_PASSWORD ||
+    envWithFallback("SPATIALPOSTERS_ADMIN_PIN") ||
+    envWithFallback("SPATIALPOSTERS_SITE_PASSWORD") ||
+    envWithFallback("SPATIALPOSTERS_ADMIN_TOKEN")
+  if (pin && typeof pin === "string" && pin.trim().length > 0) {
+    return pin.trim()
+  }
+  return null
+}
+
 export function isPinDisabled(): boolean {
   return (
     envWithFallback("DISABLE_PIN") === "1" ||
@@ -115,13 +133,22 @@ function isValidPinHash(pinHash?: string): boolean {
 
 export function hasPinConfiguredSync(): boolean {
   if (isPinDisabled()) return false
+  if (getAdminPinFromEnv()) return true
   const cfg = readSecurityConfigSync()
   return isValidPinHash(cfg.pinHash)
 }
 
-export function verifySessionFromRequestSync(request: Request): boolean {
+export function getSessionSecretSync(): string {
+  const envPin = getAdminPinFromEnv()
+  if (envPin) {
+    return crypto.createHash("sha256").update(`spatialposters_session_secret_${envPin}`).digest("hex")
+  }
   const cfg = readSecurityConfigSync()
-  if (!cfg.pinHash || !cfg.sessionSecret) return false
+  return cfg.sessionSecret || "spatialposters_default_session_secret"
+}
+
+export function verifySessionFromRequestSync(request: Request): boolean {
+  if (!hasPinConfiguredSync()) return true
 
   const token = extractSessionToken(request)
   if (!token) return false
@@ -133,7 +160,8 @@ export function verifySessionFromRequestSync(request: Request): boolean {
   const expiresAt = Number(payload)
   if (Number.isNaN(expiresAt) || expiresAt < Date.now()) return false
 
-  const expectedSignature = crypto.createHmac("sha256", cfg.sessionSecret).update(payload).digest("hex")
+  const secret = getSessionSecretSync()
+  const expectedSignature = crypto.createHmac("sha256", secret).update(payload).digest("hex")
   if (expectedSignature.length !== signature.length) return false
   return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature))
 }
@@ -184,19 +212,31 @@ export function hashPin(pin: string, salt?: string): { hash: string; salt: strin
 
 export async function hasPinConfigured(): Promise<boolean> {
   if (isPinDisabled()) return false
+  if (getAdminPinFromEnv()) return true
   const cfg = await readSecurityConfig()
   return isValidPinHash(cfg.pinHash)
 }
 
 export async function verifyPin(pin: string): Promise<boolean> {
   if (!pin || typeof pin !== "string") return false
+  const clean = pin.trim()
+  const envPin = getAdminPinFromEnv()
+  if (envPin) {
+    if (clean === envPin) return true
+    // Allow timing safe comparison for equal length
+    const a = Buffer.from(clean)
+    const b = Buffer.from(envPin)
+    if (a.length !== b.length) return false
+    return crypto.timingSafeEqual(a, b)
+  }
+
   const cfg = await readSecurityConfig()
   if (!cfg.pinHash) return false
 
   const [salt, storedHash] = cfg.pinHash.split(":")
   if (!salt || !storedHash) return false
 
-  const candidate = crypto.scryptSync(pin, salt, 64).toString("hex")
+  const candidate = crypto.scryptSync(clean, salt, 64).toString("hex")
   if (candidate.length !== storedHash.length) return false
   return crypto.timingSafeEqual(Buffer.from(candidate), Buffer.from(storedHash))
 }
@@ -230,20 +270,21 @@ export async function removePin(currentPin: string): Promise<boolean> {
 }
 
 export async function createSessionToken(): Promise<string | null> {
-  const cfg = await readSecurityConfig()
-  if (!cfg.pinHash || !cfg.sessionSecret) return null
+  const hasPin = await hasPinConfigured()
+  if (!hasPin) return null
+  const secret = getSessionSecretSync()
 
   const expiresAt = Date.now() + SESSION_DURATION_SECONDS * 1000
   const payload = String(expiresAt)
-  const signature = crypto.createHmac("sha256", cfg.sessionSecret).update(payload).digest("hex")
+  const signature = crypto.createHmac("sha256", secret).update(payload).digest("hex")
   return `${payload}.${signature}`
 }
 
 export function buildSessionCookie(token: string): string {
   const isProd = process.env.NODE_ENV === "production"
   const secure = isProd ? "; Secure" : ""
-  // Senza Max-Age: scade automaticamente alla chiusura della sessione del browser
-  return `${PIN_COOKIE_NAME}=${token}; Path=/; HttpOnly; SameSite=Lax${secure}`
+  // Max-Age=30 giorni
+  return `${PIN_COOKIE_NAME}=${token}; Path=/; Max-Age=${SESSION_DURATION_SECONDS}; HttpOnly; SameSite=Lax${secure}`
 }
 
 export function buildClearSessionCookie(): string {
@@ -259,10 +300,8 @@ export async function verifySessionToken(token: string | null | undefined): Prom
   const expiresAt = Number(payload)
   if (Number.isNaN(expiresAt) || expiresAt < Date.now()) return false
 
-  const cfg = await readSecurityConfig()
-  if (!cfg.sessionSecret) return false
-
-  const expectedSignature = crypto.createHmac("sha256", cfg.sessionSecret).update(payload).digest("hex")
+  const secret = getSessionSecretSync()
+  const expectedSignature = crypto.createHmac("sha256", secret).update(payload).digest("hex")
   if (expectedSignature.length !== signature.length) return false
   return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature))
 }

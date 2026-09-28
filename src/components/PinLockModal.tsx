@@ -79,22 +79,19 @@ export function PinLockModal({ onSuccess }: PinLockModalProps) {
         <h2 className="text-lg font-bold text-zinc-100 mb-1">{t("ui.pinLockTitle")}</h2>
         <p className="text-xs text-zinc-400 mb-6">{t("ui.pinLockSubtitle")}</p>
 
-        {/* Input PIN visivo */}
+        {/* Input PIN / Password */}
         <form onSubmit={handleSubmit} className="w-full mb-6">
           <input
             ref={inputRef}
             type="password"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            maxLength={8}
+            maxLength={64}
             value={pin}
             onChange={(e) => {
-              const val = e.target.value.replace(/\D/g, "")
-              setPin(val)
+              setPin(e.target.value)
               setError(null)
             }}
-            placeholder="••••"
-            className="w-full text-center text-3xl font-mono tracking-[0.4em] py-3 px-4 rounded-2xl bg-black/40 border border-white/10 text-white placeholder-zinc-600 focus:outline-none focus:border-amber-500/50 transition-colors"
+            placeholder="••••••••"
+            className="w-full text-center text-2xl font-mono tracking-widest py-3 px-4 rounded-2xl bg-black/40 border border-white/10 text-white placeholder-zinc-600 focus:outline-none focus:border-amber-500/50 transition-colors"
           />
 
           {error && (

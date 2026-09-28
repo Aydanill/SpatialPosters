@@ -8,6 +8,7 @@ import {
   buildSessionCookie,
   buildClearSessionCookie,
   verifySessionFromRequest,
+  getAdminPinFromEnv,
 } from "@/lib/pin-auth"
 import { isSameOrigin, originMismatchResponse, checkAdminToken } from "@/lib/auth"
 import { rateLimit, rateLimitKey, rateLimitResponse } from "@/lib/rate-limit"
@@ -78,6 +79,10 @@ export async function PUT(req: NextRequest) {
   const rl = await rateLimit(rateLimitKey(req), "auth-pin")
   if (!rl.ok) return rateLimitResponse(rl.retAfter)
   if (!isSameOrigin(req)) return originMismatchResponse()
+
+  if (getAdminPinFromEnv()) {
+    return Response.json({ error: "PIN protection is managed securely via environment variable SPATIALPOSTERS_ADMIN_PIN" }, { status: 403 })
+  }
 
   let body: { currentPin?: string; newPin?: string }
   try {
