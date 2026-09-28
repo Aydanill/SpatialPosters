@@ -133,9 +133,7 @@ function isValidPinHash(pinHash?: string): boolean {
 
 export function hasPinConfiguredSync(): boolean {
   if (isPinDisabled()) return false
-  if (getAdminPinFromEnv()) return true
-  const cfg = readSecurityConfigSync()
-  return isValidPinHash(cfg.pinHash)
+  return !!getAdminPinFromEnv()
 }
 
 export function getSessionSecretSync(): string {
@@ -212,9 +210,7 @@ export function hashPin(pin: string, salt?: string): { hash: string; salt: strin
 
 export async function hasPinConfigured(): Promise<boolean> {
   if (isPinDisabled()) return false
-  if (getAdminPinFromEnv()) return true
-  const cfg = await readSecurityConfig()
-  return isValidPinHash(cfg.pinHash)
+  return !!getAdminPinFromEnv()
 }
 
 export async function verifyPin(pin: string): Promise<boolean> {
