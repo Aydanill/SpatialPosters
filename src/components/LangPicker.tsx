@@ -1,11 +1,11 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState } from "react"
 import { PICKER_LANGS } from "@/lib/utils"
 import { REGIONS } from "@/lib/regions"
 import { useT } from "@/lib/contexts/TranslationContext"
 import { AnimatedSpatialWord } from "@/components/AnimatedSpatialWord"
-import { ChevronLeft, Lock, ArrowRight, ShieldCheck, Sparkles, Languages, MapPin, Check } from "lucide-react"
+import { ChevronLeft, ArrowRight, Sparkles, Languages, MapPin, Check } from "lucide-react"
 
 interface SetupWizardProps {
   /** Applica la lingua (codice 2 lettere) senza chiudere il wizard. */
@@ -17,26 +17,15 @@ interface SetupWizardProps {
 }
 
 /**
- * Configurazione guidata iniziale in 3 passi (SpatialPosters Setup):
+ * Configurazione guidata iniziale in 2 passi (SpatialPosters Setup):
  * 1. lingua dell'interfaccia (12 nazionalità),
- * 2. nazionalità delle liste/classifiche (stesse 12),
- * 3. protezione con PIN (per proteggere l'accesso al pannello).
+ * 2. nazionalità delle liste/classifiche (stesse 12).
  */
 export function LangPicker({ onPickLang, onPickRegion, onDone }: SetupWizardProps) {
   const { t } = useT()
-  const [step, setStep] = useState<"lang" | "region" | "pin">("lang")
+  const [step, setStep] = useState<"lang" | "region">("lang")
   const [selectedLang, setSelectedLang] = useState<string | null>(null)
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null)
-  const [pin, setPin] = useState("")
-  const [pinError, setPinError] = useState<string | null>(null)
-  const [pinLoading, setPinLoading] = useState(false)
-  const pinInputRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    if (step === "pin") {
-      pinInputRef.current?.focus()
-    }
-  }, [step])
 
   const pickLang = (code: string) => {
     setSelectedLang(code)
@@ -50,67 +39,22 @@ export function LangPicker({ onPickLang, onPickRegion, onDone }: SetupWizardProp
     setSelectedRegion(regionCode)
     onPickRegion(regionCode)
     setTimeout(() => {
-      setStep("pin")
+      onDone()
     }, 180)
   }
 
-  const handleSavePin = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault()
-    if (pin.length < 4) {
-      setPinError(t("ui.setupPinMinDigits"))
-      return
-    }
-    setPinLoading(true)
-    setPinError(null)
-
-    try {
-      const res = await fetch("/api/auth/pin", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ newPin: pin }),
-      })
-
-      if (res.ok) {
-        if (typeof window !== "undefined") {
-          window.dispatchEvent(new CustomEvent("spatialposters:pin-change", { detail: { unlocked: true } }))
-          window.dispatchEvent(new CustomEvent("pictorium:pin-change", { detail: { unlocked: true } }))
-        }
-        onDone()
-      } else {
-        const err = await res.json().catch(() => ({}))
-        setPinError(err.error || t("ui.pinSaveError"))
-      }
-    } catch {
-      setPinError(t("ui.pinConnError"))
-    } finally {
-      setPinLoading(false)
-    }
-  }
-
-  const handleSkipPin = () => {
-    onDone()
-  }
-
-  const getStepNumber = () => {
-    if (step === "lang") return 1
-    if (step === "region") return 2
-    return 3
-  }
-
   const getTitle = () => {
-    if (step === "pin") return t("ui.setupPinTitle")
     if (step === "region") return t("ui.setupRegionTitle")
     return "Welcome to SpatialPosters"
   }
 
   const getSubtitle = () => {
-    if (step === "pin") return t("ui.setupPinSubtitle")
     if (step === "region") return t("ui.setupRegionSubtitle")
     return "Select your preferred language"
   }
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-2xl flex items-center justify-center p-4 animate-fade-in overflow-y-auto">
+    <div className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-2xl flex items-center justify-center p-4 animate-fade-in overflow-y-auto select-none">
       {/* Ambient background glows */}
       <div className="pointer-events-none absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent-orange/15 rounded-full blur-[130px] opacity-70" />
       <div className="pointer-events-none absolute bottom-1/4 right-1/4 w-[350px] h-[350px] bg-purple-600/10 rounded-full blur-[110px] opacity-60" />
@@ -138,17 +82,15 @@ export function LangPicker({ onPickLang, onPickRegion, onDone }: SetupWizardProp
               {getSubtitle()}
             </p>
 
-            {/* Stepper Bar */}
+            {/* Stepper Bar (2 Steps Only) */}
             <div className="flex items-center justify-center gap-3 mt-6">
               {/* Step 1: Language */}
               <div className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold transition-all duration-300 ${
                 step === "lang" 
                   ? "bg-accent-orange/20 border border-accent-orange/40 text-accent-orange shadow-[0_0_15px_rgba(249,115,22,0.2)]" 
-                  : step === "region" || step === "pin"
-                  ? "bg-emerald-500/15 border border-emerald-500/30 text-emerald-400"
-                  : "bg-white/5 border border-white/10 text-zinc-500"
+                  : "bg-emerald-500/15 border border-emerald-500/30 text-emerald-400"
               }`}>
-                {step === "region" || step === "pin" ? (
+                {step === "region" ? (
                   <Check className="w-3.5 h-3.5" />
                 ) : (
                   <Languages className="w-3.5 h-3.5" />
@@ -162,28 +104,10 @@ export function LangPicker({ onPickLang, onPickRegion, onDone }: SetupWizardProp
               <div className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold transition-all duration-300 ${
                 step === "region" 
                   ? "bg-accent-orange/20 border border-accent-orange/40 text-accent-orange shadow-[0_0_15px_rgba(249,115,22,0.2)]" 
-                  : step === "pin"
-                  ? "bg-emerald-500/15 border border-emerald-500/30 text-emerald-400"
                   : "bg-white/5 border border-white/10 text-zinc-500"
               }`}>
-                {step === "pin" ? (
-                  <Check className="w-3.5 h-3.5" />
-                ) : (
-                  <MapPin className="w-3.5 h-3.5" />
-                )}
+                <MapPin className="w-3.5 h-3.5" />
                 <span>2. Region</span>
-              </div>
-
-              <div className="w-4 h-[1px] bg-white/15" />
-
-              {/* Step 3: PIN */}
-              <div className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold transition-all duration-300 ${
-                step === "pin" 
-                  ? "bg-accent-orange/20 border border-accent-orange/40 text-accent-orange shadow-[0_0_15px_rgba(249,115,22,0.2)]" 
-                  : "bg-white/5 border border-white/10 text-zinc-500"
-              }`}>
-                <Lock className="w-3.5 h-3.5" />
-                <span>3. Security</span>
               </div>
             </div>
           </div>
@@ -268,69 +192,12 @@ export function LangPicker({ onPickLang, onPickRegion, onDone }: SetupWizardProp
             </div>
           )}
 
-          {/* STEP 3: OPTIONAL PIN STEP */}
-          {step === "pin" && (
-            <div key="pin" className="animate-step-enter max-w-md mx-auto flex flex-col items-center">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500/20 to-accent-orange/20 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-5 shadow-[0_0_25px_rgba(245,158,11,0.25)]">
-                <Lock className="w-7 h-7" />
-              </div>
-
-              <form onSubmit={handleSavePin} className="w-full space-y-4">
-                <div className="relative">
-                  <input
-                    ref={pinInputRef}
-                    type="password"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    maxLength={8}
-                    value={pin}
-                    onChange={(e) => {
-                      setPin(e.target.value.replace(/\D/g, ""))
-                      setPinError(null)
-                    }}
-                    placeholder="••••"
-                    className="w-full text-center text-3xl font-mono tracking-[0.4em] py-3.5 px-4 rounded-2xl bg-black/60 border border-white/15 text-white placeholder-zinc-700 focus:outline-none focus:border-amber-500/70 focus:ring-2 focus:ring-amber-500/20 transition-all shadow-inner"
-                  />
-                  {pinError && (
-                    <p className="text-xs text-rose-400 text-center mt-2 font-semibold animate-shake">
-                      {pinError}
-                    </p>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-2 text-xs text-zinc-400 justify-center bg-white/[0.03] border border-white/10 rounded-xl p-3">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>{t("ui.setupPinStremioNotice")}</span>
-                </div>
-
-                <div className="pt-2 space-y-2">
-                  <button
-                    type="submit"
-                    disabled={pin.length < 4 || pinLoading}
-                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-accent-orange to-rose-500 text-black font-extrabold text-xs tracking-wider uppercase hover:brightness-110 active:scale-[0.98] disabled:opacity-30 disabled:pointer-events-none transition-all shadow-[0_4px_20px_rgba(249,115,22,0.35)] flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    <span>{pinLoading ? t("ui.setupPinSaving") : t("ui.setupPinSave")}</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleSkipPin}
-                    className="w-full py-2.5 text-center text-xs font-semibold text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all cursor-pointer"
-                  >
-                    {t("ui.setupPinSkip")}
-                  </button>
-                </div>
-              </form>
-            </div>
-          )}
-
           {/* BACK BUTTON */}
-          {step !== "lang" && (
+          {step === "region" && (
             <div className="mt-6 pt-4 border-t border-white/10 flex justify-center">
               <button
                 type="button"
-                onClick={() => setStep(step === "pin" ? "region" : "lang")}
+                onClick={() => setStep("lang")}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white hover:bg-white/10 transition-all active:scale-95 cursor-pointer"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -344,4 +211,3 @@ export function LangPicker({ onPickLang, onPickRegion, onDone }: SetupWizardProp
     </div>
   )
 }
-
