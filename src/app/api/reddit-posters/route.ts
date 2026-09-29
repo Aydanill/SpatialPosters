@@ -5,6 +5,7 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
     const tmdbId = searchParams.get("tmdbId")
+    const force = searchParams.get("force") === "true"
     
     if (!tmdbId) {
       return NextResponse.json(
@@ -13,7 +14,7 @@ export async function GET(request: Request) {
       )
     }
 
-    const posters = await fetchRedditPosters(tmdbId)
+    const posters = await fetchRedditPosters(tmdbId, force)
 
     return NextResponse.json({
       success: true,

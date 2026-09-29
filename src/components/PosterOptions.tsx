@@ -39,8 +39,11 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
     if (isRefreshing) return
     setIsRefreshing(true)
     try {
+      if (selected?.id) {
+        await fetchReddit(true)
+      }
       await refreshPosters()
-      toast.success(t("ui.postersRefreshed") || "Refreshed latest posters from TMDB!")
+      toast.success(t("ui.postersRefreshed") || "Refreshed latest posters from TMDB & Reddit!")
     } catch {
       toast.error(t("ui.refreshFailed") || "Failed to refresh posters")
     } finally {
@@ -64,29 +67,33 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
   const [isFetchingReddit, setIsFetchingReddit] = useState(false)
 
   // Fetch Reddit Posters
-  useEffect(() => {
+  const fetchReddit = async (force = false) => {
     if (!selected?.id) return
-    let mounted = true
     setIsFetchingReddit(true)
-    fetch(`/api/reddit-posters?tmdbId=${selected.id}`)
-      .then(r => r.json())
-      .then(data => {
-        if (mounted && data.success) {
-          const imgs: TMDBImage[] = data.posters.map((rp: any) => ({
-            file_path: rp.url,
-            width: 1000,
-            height: 1500,
-            iso_639_1: null,
-            vote_average: rp.upvotes || 0,
-            _redditAuthor: rp.author,
-            _redditFlair: rp.flair
-          }))
-          setRedditPosters(imgs)
-        }
-      })
-      .catch(console.error)
-      .finally(() => { if (mounted) setIsFetchingReddit(false) })
-    return () => { mounted = false }
+    try {
+      const res = await fetch(`/api/reddit-posters?tmdbId=${selected.id}${force ? '&force=true' : ''}`)
+      const data = await res.json()
+      if (data.success) {
+        const imgs: TMDBImage[] = data.posters.map((rp: any) => ({
+          file_path: rp.url,
+          width: 1000,
+          height: 1500,
+          iso_639_1: null,
+          vote_average: rp.upvotes || 0,
+          _redditAuthor: rp.author,
+          _redditFlair: rp.flair
+        }))
+        setRedditPosters(imgs)
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsFetchingReddit(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchReddit()
   }, [selected?.id])
 
   // Load saved custom posters from localStorage

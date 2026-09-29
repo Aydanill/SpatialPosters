@@ -11,13 +11,16 @@ export interface RedditPoster {
 }
 
 const REDDIT_CACHE_TTL = 24 * 60 * 60 * 1000 // 24 hours
+const REDDIT_EMPTY_TTL = 60 * 1000 // 1 minute for empty results (waiting for Reddit index)
 
-export async function fetchRedditPosters(tmdbId: string): Promise<RedditPoster[]> {
+export async function fetchRedditPosters(tmdbId: string, forceRefetch = false): Promise<RedditPoster[]> {
   const cacheKey = `reddit_posters_${tmdbId}`
   
   // 1. Check Cache
-  const cached = await cacheGet<RedditPoster[]>(cacheKey)
-  if (cached) return cached
+  if (!forceRefetch) {
+    const cached = await cacheGet<RedditPoster[]>(cacheKey)
+    if (cached) return cached
+  }
   
   try {
     // 2. Query Reddit JSON API
@@ -70,8 +73,9 @@ export async function fetchRedditPosters(tmdbId: string): Promise<RedditPoster[]
         }
       })
 
-    // 4. Set Cache
-    await cacheSet(cacheKey, posters, ["reddit-posters"], REDDIT_CACHE_TTL)
+    // 4. Set Cache (Short TTL if empty)
+    const ttl = posters.length > 0 ? REDDIT_CACHE_TTL : REDDIT_EMPTY_TTL
+    await cacheSet(cacheKey, posters, ["reddit-posters"], ttl)
     
     return posters
   } catch (error) {
