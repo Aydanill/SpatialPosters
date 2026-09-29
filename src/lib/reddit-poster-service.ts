@@ -71,7 +71,7 @@ export async function fetchRedditPosters(tmdbId: string): Promise<RedditPoster[]
       })
 
     // 4. Set Cache
-    await cacheSet(cacheKey, posters, REDDIT_CACHE_TTL)
+    await cacheSet(cacheKey, posters, ["reddit-posters"], REDDIT_CACHE_TTL)
     
     return posters
   } catch (error) {
