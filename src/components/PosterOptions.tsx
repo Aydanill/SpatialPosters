@@ -60,6 +60,35 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
   const [gridCols, setGridCols] = useState<2 | 3>(2)
   const [isResolvingUrl, setIsResolvingUrl] = useState(false)
 
+  const [redditPosters, setRedditPosters] = useState<TMDBImage[]>([])
+  const [isFetchingReddit, setIsFetchingReddit] = useState(false)
+
+  // Fetch Reddit Posters
+  useEffect(() => {
+    if (!selected?.id) return
+    let mounted = true
+    setIsFetchingReddit(true)
+    fetch(`/api/reddit-posters?tmdbId=${selected.id}`)
+      .then(r => r.json())
+      .then(data => {
+        if (mounted && data.success) {
+          const imgs: TMDBImage[] = data.posters.map((rp: any) => ({
+            file_path: rp.url,
+            width: 1000,
+            height: 1500,
+            iso_639_1: null,
+            vote_average: rp.upvotes || 0,
+            _redditAuthor: rp.author,
+            _redditFlair: rp.flair
+          }))
+          setRedditPosters(imgs)
+        }
+      })
+      .catch(console.error)
+      .finally(() => { if (mounted) setIsFetchingReddit(false) })
+    return () => { mounted = false }
+  }, [selected?.id])
+
   // Load saved custom posters from localStorage
   useEffect(() => {
     try {
@@ -191,6 +220,9 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
   const posterTabs = useMemo(() => {
     const tabs: { key: string; label: string; count: number }[] = []
     if (hasClean) tabs.push({ key: "clean", label: "Clean", count: cleanPosters.length })
+    if (redditPosters.length > 0) {
+      tabs.push({ key: "reddit", label: "Reddit", count: redditPosters.length })
+    }
     for (const [language, imgs] of langGroups) {
       const unexcludedCount = imgs.filter(img => !excludedSet.has(img.file_path)).length
       if (unexcludedCount > 0) tabs.push({ key: language, label: LANG_NAMES[language] || language, count: unexcludedCount })
@@ -199,7 +231,7 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
       tabs.push({ key: "excluded", label: t("ui.excluded") || "Excluded", count: excludedSet.size })
     }
     return tabs
-  }, [hasClean, cleanPosters.length, langGroups, excludedSet.size, t, excludedSet])
+  }, [hasClean, cleanPosters.length, langGroups, excludedSet.size, t, excludedSet, redditPosters.length])
 
   const [internalActiveGroup, setInternalActiveGroup] = useState("clean")
   const activeGroup = controlledActiveGroup ?? internalActiveGroup
@@ -332,9 +364,12 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
       const defaultExcluded = posters.filter((img) => excludedSet.has(img.file_path))
       return [...customExcluded, ...defaultExcluded]
     }
+    if (activeGroup === "reddit") {
+      return redditPosters.filter((img) => !excludedSet.has(img.file_path))
+    }
     const rawImgs = !activeClean ? langGroups.find(([l]) => l === activeGroup)?.[1] ?? [] : []
     return rawImgs.filter((img) => !excludedSet.has(img.file_path))
-  }, [activeClean, langGroups, activeGroup, posters, customPosters, excludedSet])
+  }, [activeClean, langGroups, activeGroup, posters, customPosters, excludedSet, redditPosters])
 
   const visibleLangImgs = useMemo(() => {
     return activeLangImgs.slice(0, visibleLangCount)

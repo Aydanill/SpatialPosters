@@ -36,6 +36,20 @@ export const PosterBtn = React.memo(function PosterBtn({ img, active, onSelect, 
           </>
         )}
         {!active && <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-white/5 transition-opacity duration-300" />}
+        
+        {/* Reddit Meta Data Overlay */}
+        {(img as any)._redditAuthor && (
+          <div className="absolute bottom-1 left-1 right-1 flex flex-col gap-0.5 opacity-90 transition-opacity">
+            {(img as any)._redditFlair && (
+              <span className="self-start text-[8px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded-sm bg-accent-orange/90 text-white shadow-sm backdrop-blur-sm">
+                {(img as any)._redditFlair}
+              </span>
+            )}
+            <span className="self-start text-[9px] font-medium px-1.5 py-0.5 rounded-sm bg-black/60 text-zinc-200 backdrop-blur-sm truncate max-w-full">
+              u/{(img as any)._redditAuthor}
+            </span>
+          </div>
+        )}
       </div>
       {title && <p className="text-xs text-muted truncate px-1 py-1 text-left group-hover:text-accent transition-colors">{title}</p>}
     </button>
