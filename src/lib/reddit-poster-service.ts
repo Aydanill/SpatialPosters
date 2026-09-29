@@ -23,16 +23,16 @@ export async function fetchRedditPosters(tmdbId: string, forceRefetch = false): 
   }
   
   try {
-    // 2. Query Reddit JSON API
+    // 2. Query Reddit RSS API (bypasses datacenter JSON blocks)
     // Search for the TMDB ID in the SpatialPosters subreddit
-    const query = encodeURIComponent(`[TMDB: ${tmdbId}]`)
+    const query = encodeURIComponent(`${tmdbId}`)
     const res = await fetch(
-      `https://www.reddit.com/r/SpatialPosters/search.json?q=${query}&restrict_sr=on&sort=top&raw_json=1`,
+      `https://www.reddit.com/r/SpatialPosters/search.rss?q=${query}&restrict_sr=on&sort=new`,
       {
         headers: {
-          "User-Agent": "SpatialPosters/1.0 (Server-side image fetcher)"
+          "User-Agent": "web:SpatialPosters:v1.0 (by /u/TheAceOfficials)",
+          "Accept": "application/atom+xml,application/xml,text/xml"
         },
-        // We use fetch cache bypass if needed, but depend on our own Redis/Memory cache
         cache: "no-store" 
       }
     )
@@ -42,36 +42,57 @@ export async function fetchRedditPosters(tmdbId: string, forceRefetch = false): 
       return []
     }
 
-    const data = await res.json()
-    const posts = data?.data?.children || []
+    const xmlText = await res.text()
     
-    // 3. Parse and filter valid image posts
-    const posters: RedditPoster[] = posts
-      .map((child: any) => child.data)
-      .filter((post: any) => {
-        // Must be an image post (i.redd.it or has preview image)
-        const isImage = post.url && (post.url.includes("i.redd.it") || post.url.includes("imgur.com") || post.post_hint === "image")
-        return isImage && !post.is_video
-      })
-      .map((post: any) => {
-        // Get the best high-res image URL available
-        let imageUrl = post.url
-        
-        // Use preview source URL if available (reliable raw image)
-        if (post.preview?.images?.[0]?.source?.url) {
-          imageUrl = post.preview.images[0].source.url
-        }
+    // 3. Parse XML using Regex to extract entries
+    const entryRegex = /<entry>([\s\S]*?)<\/entry>/g
+    const entries = [...xmlText.matchAll(entryRegex)].map(m => m[1])
 
-        return {
-          id: post.id,
-          title: post.title,
-          url: imageUrl,
-          author: post.author,
-          upvotes: post.score,
-          flair: post.link_flair_text || null,
-          permalink: `https://www.reddit.com${post.permalink}`
+    const posters: RedditPoster[] = []
+
+    for (const entry of entries) {
+      // Must match TMDB ID specifically
+      if (!entry.includes(`[TMDB: ${tmdbId}]`)) continue
+
+      // Extract author
+      const authorMatch = entry.match(/<author><name>\/u\/([^<]+)<\/name>/)
+      const author = authorMatch ? authorMatch[1] : "Unknown"
+
+      // Extract title
+      const titleMatch = entry.match(/<title>([^<]+)<\/title>/)
+      const title = titleMatch ? titleMatch[1] : `Post for TMDB ${tmdbId}`
+      
+      let flair = "Reddit Poster"
+      if (title.toLowerCase().includes("text")) flair = "Text Poster"
+      else if (title.toLowerCase().includes("clean")) flair = "Clean Poster"
+
+      // Extract image URL (Reddit direct image link)
+      let url = ""
+      const linkMatch = entry.match(/href=(?:&quot;|")([^&"]+i\.redd\.it[^&"]+)(?:&quot;|")/)
+      if (linkMatch) {
+        url = linkMatch[1]
+      } else {
+        const thumbMatch = entry.match(/<media:thumbnail url="([^"]+)"/)
+        if (thumbMatch) {
+           url = thumbMatch[1].replace(/&amp;/g, "&")
         }
-      })
+      }
+      
+      const idMatch = entry.match(/<id>([^<]+)<\/id>/)
+      const id = idMatch ? idMatch[1] : Math.random().toString()
+
+      if (url) {
+        posters.push({
+          id,
+          title,
+          url,
+          author,
+          upvotes: 0, // RSS doesn't provide score easily
+          flair,
+          permalink: `https://www.reddit.com/r/SpatialPosters/search?q=${tmdbId}`
+        })
+      }
+    }
 
     // 4. Set Cache (Short TTL if empty)
     const ttl = posters.length > 0 ? REDDIT_CACHE_TTL : REDDIT_EMPTY_TTL
