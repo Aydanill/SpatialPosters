@@ -110,6 +110,10 @@ Here are actual real-time poster compositions generated on demand by the Spatial
 * **Multi-Part Series Detection**: Automatically groups multi-part series (e.g. *Money Heist*, *Lupin*) into their intended watch order.
 * **Anime Mega-Season Unpacker**: Unpacks collapsed TMDB mega-seasons (e.g. *Jujutsu Kaisen*, *Re:ZERO*) into distinct seasonal story arcs.
 
+### 🌐 Reddit Community Posters (r/SpatialPosters)
+* **Real-time Subreddit Syncing**: SpatialPosters features a zero-setup, direct integration with the [**r/SpatialPosters**](https://www.reddit.com/r/SpatialPosters/) Reddit community.
+* **Crowdsourced Excellence**: Users can discover and instantly apply community-made cinematic posters uploaded on Reddit right within the SpatialPosters Live Studio Workspace, making it the ultimate hub for high-quality crowdsourced artwork.
+
 ### ⚡ Multi-Cloud Storage & High-Speed Caching
 * **Cloudinary Storage Provider**: Instant 25GB free tier hosting with automatic WebP/AVIF format optimization and direct CDN URL generation.
 * **ImgBB Hosting**: 100% free image hosting integration with zero credit card requirements.
@@ -285,6 +289,16 @@ If you love using SpatialPosters or want to support future open-source projects 
 * ☕ **Coffee Supporter ($3/mo)**: Supporter credit in GitHub README & App UI + Early dev updates.
 * 🔥 **Priority Feature Requester ($5/mo)**: Fast-track feature requests & shape future project roadmaps.
 * 👑 **Supporter Hall of Fame ($10/mo)**: Official Sponsor Logo/Link credit across all @TheAceOfficials projects.
+
+---
+
+## 🤝 Acknowledgments
+
+SpatialPosters is a powerful evolution and advanced fork of the amazing [**Pictorium**](https://github.com/aarnow/pictorium) project. We want to express our massive appreciation to the original developers for laying down such a phenomenal foundation!
+
+We've built upon their incredible groundwork to bring you **SpatialPosters**—packed with enhanced features, dynamic auto-rotations, Reddit community syncing, new glassmorphic aesthetics, and advanced quality indicators. 
+
+> *We don't force anyone to use SpatialPosters over Pictorium! Both are fantastic tools. We encourage you to try both and choose whichever one gives you the better media experience! Massive credit goes to the original devs.*
 
 ---
 
