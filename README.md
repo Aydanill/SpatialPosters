@@ -294,11 +294,11 @@ If you love using SpatialPosters or want to support future open-source projects 
 
 ## 🤝 Acknowledgments
 
-SpatialPosters is a powerful evolution and advanced fork of the amazing [**Pictorium**](https://github.com/aarnow/pictorium) project. We want to express our massive appreciation to the original developers for laying down such a phenomenal foundation!
+A huge shoutout to the original [**Pictorium**](https://github.com/Eful97/Pictorium) project! SpatialPosters actually started out as a fork of their awesome work. They laid down a really solid foundation, and I want to give full credit to the original devs for getting the ball rolling.
 
-We've built upon their incredible groundwork to bring you **SpatialPosters**—packed with enhanced features, dynamic auto-rotations, Reddit community syncing, new glassmorphic aesthetics, and advanced quality indicators. 
+From there, I decided to take things in a different direction and built **SpatialPosters** to add the features I personally wanted—like the live Reddit community syncing, auto-rotating posters, 4K streaming badges, and a fresh UI overhaul.
 
-> *We don't force anyone to use SpatialPosters over Pictorium! Both are fantastic tools. We encourage you to try both and choose whichever one gives you the better media experience! Massive credit goes to the original devs.*
+At the end of the day, there's no pressure to use SpatialPosters over Pictorium. Both are great tools built for the community. I highly encourage you to check out both and just use whichever one fits your vibe better!
 
 ---
 
