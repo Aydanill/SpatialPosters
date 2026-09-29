@@ -633,7 +633,7 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
               const isBestFit = bestFitPath === img.file_path
               const showBadge = isBestFit && bestScore >= 0.45
               const isHighScore = bestScore >= 0.65
-              const isCustom = img.file_path.startsWith("http://") || img.file_path.startsWith("https://")
+              const isCustom = (img.file_path.startsWith("http://") || img.file_path.startsWith("https://")) && !(img as any)._redditAuthor
 
               return (
                 <div key={img.file_path} className={`relative group rounded-xl overflow-hidden transition-all duration-200 ${isBestFit && bestScore >= 0.45 ? `ring-1 ${isHighScore ? "ring-orange-400/70 shadow-[0_0_18px_rgba(232,93,42,0.15)]" : "ring-amber-400/50"}` : ""}`}>
@@ -721,7 +721,7 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
             {visibleLangImgs.map((img) => {
               const stagger = idx++
               const isExcluded = excludedSet.has(img.file_path)
-              const isCustom = img.file_path.startsWith("http://") || img.file_path.startsWith("https://")
+              const isCustom = (img.file_path.startsWith("http://") || img.file_path.startsWith("https://")) && !(img as any)._redditAuthor
 
               return (
                 <div key={img.file_path} className="relative group rounded-xl overflow-hidden">
