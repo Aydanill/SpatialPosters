@@ -369,7 +369,8 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
     if (activeGroup === "excluded") {
       const customExcluded = customPosters.filter((img) => excludedSet.has(img.file_path))
       const defaultExcluded = posters.filter((img) => excludedSet.has(img.file_path))
-      return [...customExcluded, ...defaultExcluded]
+      const redditExcluded = redditPosters.filter((img) => excludedSet.has(img.file_path))
+      return [...customExcluded, ...defaultExcluded, ...redditExcluded]
     }
     if (activeGroup === "reddit") {
       return redditPosters.filter((img) => !excludedSet.has(img.file_path))
@@ -747,6 +748,16 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     )}
+
+                    <button
+                      type="button"
+                      aria-label={ed.rotationPosters.includes(img.file_path) ? t("ui.removeFromRotation") : t("ui.addToRotation")}
+                      onClick={(e) => { e.stopPropagation(); toggleRotation(img.file_path) }}
+                      className={`w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md shadow-lg transition-all duration-200 hover:scale-110 border border-white/10 ${ed.rotationPosters.includes(img.file_path) ? "bg-accent-orange text-white" : "bg-black/80 text-white/90 hover:bg-accent-orange hover:text-white"}`}
+                      title={ed.rotationPosters.includes(img.file_path) ? t("ui.removeFromRotation") : t("ui.addToRotation")}
+                    >
+                      {ed.rotationPosters.includes(img.file_path) ? <Check className="w-3.5 h-3.5" /> : <RotateCcw className="w-3.5 h-3.5" />}
+                    </button>
 
                     <button
                       type="button"
