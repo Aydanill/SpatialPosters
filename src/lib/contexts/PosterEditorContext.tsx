@@ -82,6 +82,8 @@ export interface PosterEditorCtx {
   setDefaultRatingSources: (v: string[] | ((prev: string[]) => string[])) => void
   defaultAutoRotateClean: boolean
   setDefaultAutoRotateClean: (v: boolean | ((prev: boolean) => boolean)) => void
+  defaultDisableCleanPosters: boolean
+  setDefaultDisableCleanPosters: (v: boolean | ((prev: boolean) => boolean)) => void
   defaultLogoFitEnabled: boolean
   setDefaultLogoFitEnabled: (v: boolean | ((prev: boolean) => boolean)) => void
   defaultNetworkLogo: boolean
@@ -194,7 +196,7 @@ export function PosterEditorProvider({
     defaultBlurEnabled, defaultBlurIntensity, defaultBlurFade, defaultBlurDarkness,
     defaultGradientHeight, defaultGlobalBadges, defaultRankingBadges,
     defaultBadgeGenre, defaultBadgeYear, defaultBadgeRating, defaultManualQuality, defaultBadgeFormat, defaultRatingSources,
-    defaultAutoRotateClean, defaultLogoFitEnabled, defaultNetworkLogo, defaultRibbonSide,
+    defaultAutoRotateClean, defaultDisableCleanPosters, defaultLogoFitEnabled, defaultNetworkLogo, defaultRibbonSide,
     episodeMetadataSource, defaultEpisodeMetadataSource,
     region, defaultRegion,
     loadDefaultsToState, update,
@@ -370,6 +372,11 @@ export function PosterEditorProvider({
       update({ defaultAutoRotateClean: next })
       setAutoRotateClean(next)
     }, [defaultAutoRotateClean, update])
+  const setDefaultDisableCleanPosters = useCallback(
+    (v: boolean | ((prev: boolean) => boolean)) => {
+      const next = typeof v === "function" ? v(defaultDisableCleanPosters) : v
+      update({ defaultDisableCleanPosters: next })
+    }, [defaultDisableCleanPosters, update])
   const setDefaultLogoFitEnabled = useCallback(
     (v: boolean | ((prev: boolean) => boolean)) => {
       const next = typeof v === "function" ? v(defaultLogoFitEnabled) : v
@@ -475,6 +482,8 @@ export function PosterEditorProvider({
       setDefaultRatingSources,
       defaultAutoRotateClean,
       setDefaultAutoRotateClean,
+      defaultDisableCleanPosters,
+      setDefaultDisableCleanPosters,
       defaultLogoFitEnabled,
       setDefaultLogoFitEnabled,
       defaultNetworkLogo,

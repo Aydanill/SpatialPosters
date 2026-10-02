@@ -358,6 +358,8 @@
   "ui.chooseBestPosterAria": "Choose best poster for the logo",
   "ui.analyzing": "Analyzing...",
   "ui.hide": "Hide",
+  "ui.disableCleanPosters": "Disable clean posters",
+  "ui.disableCleanPostersHint": "Use original TMDB default posters instead of textless clean artwork.",
   "ui.debugFit": "Debug fit",
   "ui.debugBestFit": "Best fit debug",
   "ui.best": "Best:",

@@ -794,6 +794,17 @@ export function SettingsPanel({ setSettingsOpen, exportData, importData, mobile,
         </div>
         <div className="flex items-center justify-between py-0.5">
           <span className="text-zinc-300 font-medium flex items-center gap-1.5">
+            <Flame className="w-3.5 h-3.5 text-rose-400" />
+            {t("ui.disableCleanPosters")}
+          </span>
+          <Toggle
+            value={ed.defaultDisableCleanPosters}
+            onChange={ed.setDefaultDisableCleanPosters}
+            label={t("ui.disableCleanPosters")}
+          />
+        </div>
+        <div className="flex items-center justify-between py-0.5">
+          <span className="text-zinc-300 font-medium flex items-center gap-1.5">
             <Palette className="w-3.5 h-3.5 text-purple-400" />
             {t("ui.uiAccentDynamic")}
           </span>

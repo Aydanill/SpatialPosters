@@ -27,6 +27,7 @@ export interface ServerDefaults {
   badgeFormat?: string
   ratingSources?: string[]
   autoRotateClean?: boolean
+  disableCleanPosters?: boolean
   defaultLogoFitEnabled?: boolean
   networkLogo?: boolean
   ribbonSide?: "left" | "right"
@@ -78,6 +79,7 @@ function defaultsFromEnv(): ServerDefaults {
   const blurEn = envBool("BLUR_ENABLED")
   const netLogo = envBool("NETWORK_LOGO")
   const autoRotate = envBool("AUTO_ROTATE_CLEAN")
+  const disClean = envBool("DISABLE_CLEAN_POSTERS")
   const logoFit = envBool("LOGO_FIT_ENABLED")
   if (bG !== undefined) d.globalBadges = bG
   if (bR !== undefined) d.rankingBadges = bR
@@ -90,6 +92,7 @@ function defaultsFromEnv(): ServerDefaults {
   if (blurEn !== undefined) d.blurEnabled = blurEn
   if (netLogo !== undefined) d.networkLogo = netLogo
   if (autoRotate !== undefined) d.autoRotateClean = autoRotate
+  if (disClean !== undefined) d.disableCleanPosters = disClean
   if (logoFit !== undefined) d.defaultLogoFitEnabled = logoFit
   const bs = getEnv("BADGE_STYLE")?.trim()
   const rbs = getEnv("RANKING_BADGE_STYLE")?.trim()

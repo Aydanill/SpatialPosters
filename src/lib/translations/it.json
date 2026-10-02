@@ -358,6 +358,8 @@
   "ui.chooseBestPosterAria": "Scegli miglior poster per il logo",
   "ui.analyzing": "Analisi...",
   "ui.hide": "Nascondi",
+  "ui.disableCleanPosters": "Disattiva locandine clean",
+  "ui.disableCleanPostersHint": "Usa le locandine TMDB di default con testo invece di quelle senza testo.",
   "ui.debugFit": "Debug adattamento",
   "ui.debugBestFit": "Debug miglior adattamento",
   "ui.best": "Best:",

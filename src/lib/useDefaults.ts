@@ -25,6 +25,7 @@ export interface DefaultsState {
   defaultBadgeFormat: string
   defaultRatingSources: string[]
   defaultAutoRotateClean: boolean
+  defaultDisableCleanPosters: boolean
   defaultLogoFitEnabled: boolean
   defaultNetworkLogo: boolean
   defaultRibbonSide: RibbonSide
@@ -70,6 +71,7 @@ const DEFAULTS: DefaultsState = {
   defaultBadgeFormat: "",
   defaultRatingSources: [],
   defaultAutoRotateClean: false,
+  defaultDisableCleanPosters: false,
   defaultLogoFitEnabled: true,
   defaultNetworkLogo: true,
   defaultRibbonSide: "left",
@@ -129,6 +131,8 @@ interface StoredDefaults {
   defaultBadgeFormat?: string
   defaultRatingSources?: string[]
   defaultAutoRotateClean?: boolean
+  defaultDisableCleanPosters?: boolean
+  disableCleanPosters?: boolean
   defaultLogoFitEnabled?: boolean
   defaultNetworkLogo?: boolean
   defaultRibbonSide?: RibbonSide
@@ -175,6 +179,7 @@ function buildFromStored(d: StoredDefaults | null): DefaultsState {
     defaultBadgeFormat: d.defaultBadgeFormat ?? d.badgeFormat ?? "",
     defaultRatingSources: d.defaultRatingSources ?? d.ratingSources ?? [],
     defaultAutoRotateClean: d.defaultAutoRotateClean ?? d.autoRotateClean ?? false,
+    defaultDisableCleanPosters: d.defaultDisableCleanPosters ?? d.disableCleanPosters ?? false,
     defaultLogoFitEnabled: d.defaultLogoFitEnabled ?? true,
     defaultNetworkLogo: d.defaultNetworkLogo ?? d.networkLogo ?? true,
     defaultRibbonSide: d.defaultRibbonSide ?? d.ribbonSide ?? "left",
@@ -226,6 +231,7 @@ function defaultsToPayload(d: DefaultsState): Record<string, unknown> {
     badgeFormat: d.defaultBadgeFormat,
     ratingSources: d.defaultRatingSources,
     autoRotateClean: d.defaultAutoRotateClean,
+    disableCleanPosters: d.defaultDisableCleanPosters,
     defaultLogoFitEnabled: d.defaultLogoFitEnabled,
     networkLogo: d.defaultNetworkLogo,
     ribbonSide: d.defaultRibbonSide,

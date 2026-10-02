@@ -39,6 +39,7 @@ const defaultsSchema = z.object({
   manualQuality: z.string().optional(),
   ratingSources: z.array(z.string()).optional(),
   autoRotateClean: z.boolean().optional(),
+  disableCleanPosters: z.boolean().optional(),
   defaultLogoFitEnabled: z.boolean().optional(),
   networkLogo: z.boolean().optional(),
   ribbonSide: z.enum(["left", "right"]).optional(),

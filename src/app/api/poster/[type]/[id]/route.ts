@@ -477,7 +477,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<RouteP
           return posterErrorResponse(503)
         }
       }
-      const clean = images.posters.find((p: TMDBImage) => p.iso_639_1 === null)
+      const cleanEnabled = sd.disableCleanPosters !== true
+      const clean = cleanEnabled ? images.posters.find((p: TMDBImage) => p.iso_639_1 === null) : undefined
       if (clean) {
         if (queryLogo) {
           const exact = images.logos.find((l: TMDBImage) => l.file_path === queryLogo)
