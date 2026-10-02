@@ -11,6 +11,7 @@ import { usePSelector } from "@/lib/context"
 import { useT } from "@/lib/contexts/TranslationContext"
 import { usePosterEditor } from "@/lib/contexts/PosterEditorContext"
 import { usePosterFit } from "@/lib/usePosterFit"
+import { useFanartPosters } from "@/lib/useFanartPosters"
 import { RotateCcw, Check, Clock, Sparkles, ArrowUpDown, EyeOff, Eye, ChevronDown, Link, Plus, Trash2, Grid2X2, Grid3X3, RefreshCw } from "lucide-react"
 import { BladeSpinner } from "@/components/ui/BladeSpinner"
 
@@ -224,11 +225,16 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
     [lang, posters],
   )
 
+  const fanart = useFanartPosters(showTabs)
+
   const posterTabs = useMemo(() => {
     const tabs: { key: string; label: string; count: number }[] = []
     if (hasClean) tabs.push({ key: "clean", label: "Clean", count: cleanPosters.length })
     if (redditPosters.length > 0) {
       tabs.push({ key: "reddit", label: "Reddit", count: redditPosters.length })
+    }
+    if (fanart.status === "ready" || fanart.status === "loading" || fanart.status === "empty" || fanart.status === "not_configured") {
+      tabs.push({ key: "fanart", label: "Fanart.tv", count: fanart.posters.length })
     }
     for (const [language, imgs] of langGroups) {
       const unexcludedCount = imgs.filter(img => !excludedSet.has(img.file_path)).length
@@ -238,7 +244,7 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
       tabs.push({ key: "excluded", label: t("ui.excluded") || "Excluded", count: excludedSet.size })
     }
     return tabs
-  }, [hasClean, cleanPosters.length, langGroups, excludedSet.size, t, excludedSet, redditPosters.length])
+  }, [hasClean, cleanPosters.length, langGroups, excludedSet.size, t, excludedSet, redditPosters.length, fanart.status, fanart.posters.length])
 
   const [internalActiveGroup, setInternalActiveGroup] = useState("clean")
   const activeGroup = controlledActiveGroup ?? internalActiveGroup
@@ -716,7 +722,37 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
         <p className="text-center py-12 text-muted text-xs">{t("ui.loading")}</p>
       )}
 
-      {!activeClean && (
+      {activeGroup === "fanart" && (
+        <div className="py-2">
+          {fanart.status === "loading" && (
+            <div className="flex flex-col items-center justify-center py-12 gap-2 text-zinc-400">
+              <BladeSpinner size="20px" />
+              <span className="text-xs font-medium">{t("ui.loadingFanart") || "Loading Fanart.tv posters..."}</span>
+            </div>
+          )}
+          {fanart.status === "not_configured" && (
+            <div className="text-center py-10 px-4 bg-white/[0.02] border border-white/10 rounded-2xl">
+              <p className="text-xs text-zinc-400">{t("ui.fanartNotConfigured") || "Fanart.tv project key is not configured on this instance."}</p>
+            </div>
+          )}
+          {fanart.status === "empty" && (
+            <div className="text-center py-10 px-4 bg-white/[0.02] border border-white/10 rounded-2xl">
+              <p className="text-xs text-zinc-400">{t("ui.noFanartFound") || "No Fanart.tv posters found for this title."}</p>
+            </div>
+          )}
+          {fanart.status === "ready" && (
+            <div className={`grid ${gridCols === 2 ? "grid-cols-2 gap-3" : "grid-cols-3 gap-2"} transition-all duration-200`}>
+              {fanart.posters.map((img) => (
+                <div key={img.file_path} className="relative group rounded-xl overflow-hidden">
+                  <PosterBtn img={img} active={posterActivePath === img.file_path} onSelect={selectPoster} />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {!activeClean && activeGroup !== "fanart" && (
         <>
           <div className={`grid ${gridCols === 2 ? "grid-cols-2 gap-3" : "grid-cols-3 gap-2"} transition-all duration-200`}>
             {visibleLangImgs.map((img) => {
