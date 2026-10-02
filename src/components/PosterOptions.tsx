@@ -233,7 +233,7 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
     if (redditPosters.length > 0) {
       tabs.push({ key: "reddit", label: "Reddit", count: redditPosters.length })
     }
-    if (fanart.status === "ready" || fanart.status === "loading" || fanart.status === "empty" || fanart.status === "not_configured") {
+    if (fanart.status === "ready" || fanart.status === "loading" || fanart.status === "empty") {
       tabs.push({ key: "fanart", label: "Fanart.tv", count: fanart.posters.length })
     }
     for (const [language, imgs] of langGroups) {

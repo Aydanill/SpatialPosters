@@ -44,6 +44,9 @@ interface HealthData {
     justwatch: CheckResult
     flixpatrol: CheckResult
   }
+  fanart?: {
+    configured: boolean
+  }
   storage: {
     mode: "kv" | "file"
     mappingsCount: number
@@ -336,6 +339,11 @@ function StatusContent() {
                     value={cacheStatus?.tmdb?.cacheHitRate ?? "100% Active"}
                     status={cacheStatus?.tmdb?.cacheHits ? "ok" : "neutral"}
                     badge={cacheStatus?.tmdb?.totalCalls ? `${cacheStatus.tmdb.totalCalls} calls` : undefined}
+                  />
+                  <StatusMetricRow
+                    label="Fanart.tv API"
+                    value={data?.fanart?.configured ? "Connected" : "Not Configured"}
+                    status={data?.fanart?.configured ? "ok" : "warn"}
                   />
                 </div>
               </div>

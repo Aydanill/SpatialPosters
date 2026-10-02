@@ -11,6 +11,7 @@ import { getServerDefaults } from "@/lib/server-defaults"
 import { getR2Config } from "@/lib/r2-storage"
 import { isImgBBConfigured } from "@/lib/imgbb-storage"
 import { isCloudinaryConfigured, getCloudinaryConfig } from "@/lib/cloudinary-storage"
+import { fanartProjectKey } from "@/lib/fanart"
 
 export const dynamic = "force-dynamic"
 
@@ -167,6 +168,7 @@ export async function GET(request: Request) {
     // aiuterebbe a bersagliare CVE note. L'endpoint dice solo se l'istanza
     // risponde e se le dipendenze esterne sono raggiungibili.
     streaming: { justwatch, flixpatrol },
+    fanart: { configured: !!fanartProjectKey() },
     storage,
   }
 
