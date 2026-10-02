@@ -292,13 +292,19 @@ If you love using SpatialPosters or want to support future open-source projects 
 
 ---
 
-## 🤝 Acknowledgments
+## 🤝 Acknowledgments & Upstream Attribution
 
-A huge shoutout to the original [**Pictorium**](https://github.com/Eful97/Pictorium) project! SpatialPosters actually started out as a fork of their awesome work. They laid down a really solid foundation, and I want to give full credit to the original devs for getting the ball rolling.
+A huge shoutout to the original [**Pictorium**](https://github.com/Eful97/Pictorium) project created by [**@Eful97**](https://github.com/Eful97)! SpatialPosters originally started out as a fork of their incredible artwork engine. They laid down a solid foundation, and we give full credit to the original developers for their work.
 
-From there, I decided to take things in a different direction and built **SpatialPosters** to add the features I personally wanted—like the live Reddit community syncing, auto-rotating posters, 4K streaming badges, and a fresh UI overhaul.
+SpatialPosters actively honors and adapts selected core capabilities from the upstream **Pictorium** engine, including:
+* 📦 **Full-Space Configuration Backup & Restore**: JSON export/import of poster mappings, server defaults, and user preferences.
+* 🎨 **Fanart.tv Poster Sourcing**: Support for high-res artwork sourcing and custom project keys.
+* 🖼️ **TMDB Default Text Poster Toggle**: Option to toggle between clean textless posters and original TMDB posters with text.
+* 📜 **Trakt, TVDB & IMDb Catalog Sourcing**: Custom catalog imports from official Trakt/TVDB lists and IMDb CSV files.
 
-At the end of the day, there's no pressure to use SpatialPosters over Pictorium. Both are great tools built for the community. I highly encourage you to check out both and just use whichever one fits your vibe better!
+Alongside these upstream capabilities, SpatialPosters incorporates custom features built for our community—such as direct [**r/SpatialPosters**](https://www.reddit.com/r/SpatialPosters/) Reddit community syncing, Upstash KV indicators, custom admin PIN protection, and a liquid-glass UI overhaul.
+
+Both projects are great open-source tools built for cinephiles. We highly encourage checking out both repositories!
 
 ---
 
