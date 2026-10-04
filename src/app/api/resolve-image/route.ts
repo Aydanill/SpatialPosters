@@ -143,7 +143,7 @@ export async function resolveToImageUrl(rawUrl: string): Promise<{ imageUrl: str
     parsed.hostname === "redd.it"
 
   // Choose UA based on host
-  let ua = isPinterest || isReddit ? BOT_UA : BROWSER_UA
+  const ua = isPinterest || isReddit ? BOT_UA : BROWSER_UA
 
   const res = await fetch(rawUrl, {
     headers: {
