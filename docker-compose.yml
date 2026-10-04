@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: theaceofficials/spatialposters:latest
+    image: spatialposters:latest
     container_name: spatialposters
     restart: unless-stopped
     ports:
