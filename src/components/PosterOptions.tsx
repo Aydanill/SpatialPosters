@@ -56,7 +56,7 @@ export function PosterOptions({ posters, posterActivePath, lang, selectPoster, a
 
   const storageKey = useMemo(() => {
     return selected?.id ? `spatial_custom_posters_${selected.id}` : "spatial_custom_posters_global"
-  }, [selected?.id])
+  }, [selected])
 
   const [customPosters, setCustomPosters] = useState<TMDBImage[]>([])
   const [customUrlInput, setCustomUrlInput] = useState("")

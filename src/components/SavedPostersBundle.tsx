@@ -22,8 +22,7 @@ export function SavedPostersBundle({ onOpenLightbox }: SavedPostersBundleProps) 
   // Select 5-6 random posters on initial client load
   const bundleItems = useMemo(() => {
     if (!mappings || mappings.length === 0) return []
-    const shuffled = [...mappings].sort(() => 0.5 - Math.random())
-    return shuffled.slice(0, Math.min(6, mappings.length))
+    return mappings.slice(0, Math.min(6, mappings.length))
   }, [mappings])
 
   if (!mappings || mappings.length === 0 || bundleItems.length === 0) {
@@ -87,7 +86,7 @@ export function SavedPostersBundle({ onOpenLightbox }: SavedPostersBundleProps) 
 
             // Calculate 3D transforms for stacked fan-out
             let rotate = offset * 7
-            let translateX = offset * (containerHovered ? 65 : 42)
+            const translateX = offset * (containerHovered ? 65 : 42)
             let translateY = Math.abs(offset) * 8
             let scale = 1 - Math.abs(offset) * 0.05
             let zIndex = count - Math.abs(Math.round(offset))
