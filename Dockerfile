@@ -1,12 +1,12 @@
 FROM node:22-bookworm AS source
 WORKDIR /src
-ARG SOURCE_REPO=https://github.com/Eful97/Pictorium.git
-ARG SOURCE_REF=master
+ARG SOURCE_REPO=https://github.com/TheAceOfficials/SpatialPosters.git
+ARG SOURCE_REF=main
 COPY . .
 RUN if [ ! -f package.json ]; then \
       apt-get update -o Acquire::Check-Valid-Until=false && apt-get install -y --no-install-recommends git ca-certificates && rm -rf /var/lib/apt/lists/* && \
-      git clone --depth 1 --branch "$SOURCE_REF" "$SOURCE_REPO" /tmp/pictorium && \
-      cp -a /tmp/pictorium/. .; \
+      git clone --depth 1 --branch "$SOURCE_REF" "$SOURCE_REPO" /tmp/spatialposters && \
+      cp -a /tmp/spatialposters/. .; \
     fi && test -f package.json
 
 FROM node:22-bookworm AS deps
@@ -33,16 +33,17 @@ ARG NODE_MAX_OLD_SPACE=384
 ENV NODE_OPTIONS="--max-old-space-size=${NODE_MAX_OLD_SPACE}"
 ENV SHARP_CONCURRENCY=2
 ENV SHARP_CACHE_MEMORY_MB=64
+ENV SPATIALPOSTERS_DATA_DIR=/data
 ENV PICTORIUM_DATA_DIR=/data
 ENV POSTERIUM_DATA_DIR=/data
 
 # In node:22-bookworm l'utente 'node' ha già uid 1000 / gid 1000,
 # che coincide esattamente con l'owner dello storage HF Spaces (persistenza distribuita).
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=builder /app/public ./public
+COPY --from=deps --chown=node:node /app/node_modules ./node_modules
+COPY --from=builder --chown=node:node /app/public ./public
 COPY --from=builder --chown=node:node /app/.next/standalone ./
 COPY --from=builder --chown=node:node /app/.next/static ./.next/static
-COPY --from=builder /app/entrypoint.sh /entrypoint.sh
+COPY --from=builder --chown=node:node /app/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh && mkdir -p /data && chown -R node:node /data
 
 # Esegui il server come utente non-root (principio del minimo privilegio).

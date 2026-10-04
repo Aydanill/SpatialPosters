@@ -160,8 +160,11 @@ export async function GET(request: Request) {
     },
   }
 
+  const tmdbOk = apiKey ? (tmdbTrending.ok && tmdbSearch.ok) : true
+  const storageOk = storageMode === "kv" || storage.dataDirWritable || storage.mappingCount === 0
+
   const health = {
-    status: tmdbTrending.ok && tmdbSearch.ok ? "healthy" : "degraded",
+    status: tmdbOk && storageOk ? "healthy" : "degraded",
     timestamp: new Date().toISOString(),
     tmdb: { apiKey: !!apiKey, trending: tmdbTrending, search: tmdbSearch, popular: tmdbPopular, externalIds },
     // Nessun dettaglio di runtime (versioni, platform, NODE_ENV): rivelerli
@@ -172,7 +175,6 @@ export async function GET(request: Request) {
     storage,
   }
 
-  const storageOk = storageMode === "kv" || storage.dataDirWritable || storage.mappingCount === 0
-  const statusCode = tmdbTrending.ok && tmdbSearch.ok && storageOk ? 200 : 503
+  const statusCode = tmdbOk && storageOk ? 200 : 503
   return NextResponse.json(health, { status: statusCode })
 }

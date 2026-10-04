@@ -1,11 +1,11 @@
 #!/bin/sh
 set -e
 
-DATA_DIR="${PICTORIUM_DATA_DIR:-${POSTERIUM_DATA_DIR:-/data}}"
+DATA_DIR="${SPATIALPOSTERS_DATA_DIR:-${PICTORIUM_DATA_DIR:-${POSTERIUM_DATA_DIR:-/data}}}"
 HF_STORAGE="${HF_STORAGE_DIR:-}"
 
 echo "[entrypoint] ============================================"
-echo "[entrypoint] Pictorium storage diagnostics"
+echo "[entrypoint] SpatialPosters storage diagnostics"
 echo "[entrypoint] ============================================"
 echo "[entrypoint] DATA_DIR          = $DATA_DIR"
 echo "[entrypoint] HF_STORAGE_DIR    = ${HF_STORAGE_DIR:-<not set>}"
@@ -55,12 +55,12 @@ echo "[entrypoint] ============================================"
 # Self-warmup post-deploy (P4): la cache dei poster è in-memory, quindi ogni
 # restart parte a freddo. Dopo il boot riscalda in background i poster più visti
 # (trending + JustWatch + mappings) così le griglie Stremio non soffrono il primo
-# burst a freddo. Disattivabile con PICTORIUM_SELF_WARMUP=0.
+# burst a freddo. Disattivabile con SPATIALPOSTERS_SELF_WARMUP=0.
 # Auth: se un ADMIN_TOKEN è configurato la route warmup lo richiede; altrimenti
 # nessun header (istanza pubblica / dev: la route è fail-open). Il fallimento
 # del warmup non deve mai bloccare il boot.
 # ---------------------------------------------------------------------------
-WARMUP_ENABLED="${PICTORIUM_SELF_WARMUP:-${POSTERIUM_SELF_WARMUP:-1}}"
+WARMUP_ENABLED="${SPATIALPOSTERS_SELF_WARMUP:-${PICTORIUM_SELF_WARMUP:-${POSTERIUM_SELF_WARMUP:-1}}}"
 if [ "$WARMUP_ENABLED" = "1" ]; then
   (
     HEALTH_URL="http://127.0.0.1:${PORT:-8080}/api/health"
@@ -73,8 +73,8 @@ if [ "$WARMUP_ENABLED" = "1" ]; then
       sleep 1
     done
     if [ "$UP" = "1" ]; then
-      WARMUP_TOKEN="${PICTORIUM_WARMUP_TOKEN:-${POSTERIUM_WARMUP_TOKEN:-}}"
-      ADMIN_TOKEN_VAL="${PICTORIUM_ADMIN_TOKEN:-${POSTERIUM_ADMIN_TOKEN:-$ADMIN_TOKEN}}"
+      WARMUP_TOKEN="${SPATIALPOSTERS_WARMUP_TOKEN:-${PICTORIUM_WARMUP_TOKEN:-${POSTERIUM_WARMUP_TOKEN:-}}}"
+      ADMIN_TOKEN_VAL="${SPATIALPOSTERS_ADMIN_TOKEN:-${PICTORIUM_ADMIN_TOKEN:-${POSTERIUM_ADMIN_TOKEN:-$ADMIN_TOKEN}}}"
       if [ -n "$WARMUP_TOKEN" ]; then
         curl -sS -m 300 -X POST -H "x-warmup-token: $WARMUP_TOKEN" "$WARMUP_URL" >/dev/null 2>&1 || true
       elif [ -n "$ADMIN_TOKEN_VAL" ]; then
@@ -89,4 +89,4 @@ if [ "$WARMUP_ENABLED" = "1" ]; then
   ) &
 fi
 
-exec env PICTORIUM_DATA_DIR="$DATA_DIR" POSTERIUM_DATA_DIR="$DATA_DIR" node server.js
+exec env SPATIALPOSTERS_DATA_DIR="$DATA_DIR" PICTORIUM_DATA_DIR="$DATA_DIR" POSTERIUM_DATA_DIR="$DATA_DIR" node server.js

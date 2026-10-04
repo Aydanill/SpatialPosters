@@ -27,6 +27,8 @@ describe("GET /api/health", () => {
     const req = new Request("http://localhost:3000/api/health")
     const res = await GET(req)
     const json = await res.json()
+    expect(res.status).toBe(200)
+    expect(json.status).toBe("healthy")
 
     // dataDir NON è esposto: rivelerebbe il path assoluto del filesystem (info leak)
     expect(json.storage.dataDir).toBeUndefined()
