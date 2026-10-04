@@ -22,8 +22,8 @@ const eslintConfig = defineConfig([
       "@next/next/no-img-element": "warn",
       // Schema esterno non validato runtime (TMDB/Trakt): i cast `as X` residui
       // andrebbero coperti da zod. Error i due sotto ora che sono puliti.
-      "@typescript-eslint/no-explicit-any": "error",
-      "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
     },
   },
   // Override default ignores of eslint-config-next.

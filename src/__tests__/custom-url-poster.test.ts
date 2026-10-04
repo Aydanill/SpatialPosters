@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest"
+import { describe, it, expect } from "vitest"
 import { useSecurePosterUrl } from "@/lib/useSecurePosterUrl"
 import { renderHook } from "@testing-library/react"
 import { GET as proxyImageGET } from "@/app/api/proxy-image/route"

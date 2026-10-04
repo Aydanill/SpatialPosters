@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest"
-import { isImgBBConfigured, uploadToImgBB, getImgBBCachedUrl, setImgBBCachedUrl, getImgBBCachedUrlAsync, setImgBBCachedUrlAsync } from "@/lib/imgbb-storage"
+import { isImgBBConfigured, uploadToImgBB, getImgBBCachedUrl, getImgBBCachedUrlAsync, setImgBBCachedUrlAsync } from "@/lib/imgbb-storage"
 
 describe("ImgBB Storage Adapter", () => {
   const origEnv = { ...process.env }
