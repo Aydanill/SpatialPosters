@@ -115,6 +115,7 @@ export default function EditView() {
       badgeGenre: ed.badgeGenre,
       badgeYear: ed.badgeYear,
       badgeRating: ed.badgeRating,
+      ageRating: ed.ageRating,
       manualQuality: ed.manualQuality,
       ratingSources: ed.ratingSources,
       badgeStyle: ed.badgeStyle,

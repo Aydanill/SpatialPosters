@@ -26,6 +26,8 @@ export interface PosterEditorCtx {
   setBadgeYear: (v: boolean | ((prev: boolean) => boolean)) => void
   badgeRating: boolean
   setBadgeRating: (v: boolean | ((prev: boolean) => boolean)) => void
+  ageRating: boolean
+  setAgeRating: (v: boolean | ((prev: boolean) => boolean)) => void
   manualQuality: string
   setManualQuality: (v: string | ((prev: string) => string)) => void
   badgeFormat: string
@@ -74,6 +76,8 @@ export interface PosterEditorCtx {
   setDefaultBadgeYear: (v: boolean | ((prev: boolean) => boolean)) => void
   defaultBadgeRating: boolean
   setDefaultBadgeRating: (v: boolean | ((prev: boolean) => boolean)) => void
+  defaultAgeRating: boolean
+  setDefaultAgeRating: (v: boolean | ((prev: boolean) => boolean)) => void
   defaultManualQuality: string
   setDefaultManualQuality: (v: string | ((prev: string) => string)) => void
   defaultBadgeFormat: string
@@ -189,13 +193,13 @@ export function PosterEditorProvider({
 
   const {
     globalBadges, rankingBadges, networkLogo, ribbonSide,
-    badgeGenre, badgeYear, badgeRating, manualQuality, badgeFormat, ratingSources,
+    badgeGenre, badgeYear, badgeRating, ageRating, manualQuality, badgeFormat, ratingSources,
     gradientHeight, blurIntensity, blurFade, blurDarkness, blurEnabled,
     badgeStyle, rankingBadgeStyle,
     defaultBadgeStyle, defaultRankingBadgeStyle,
     defaultBlurEnabled, defaultBlurIntensity, defaultBlurFade, defaultBlurDarkness,
     defaultGradientHeight, defaultGlobalBadges, defaultRankingBadges,
-    defaultBadgeGenre, defaultBadgeYear, defaultBadgeRating, defaultManualQuality, defaultBadgeFormat, defaultRatingSources,
+    defaultBadgeGenre, defaultBadgeYear, defaultBadgeRating, defaultAgeRating, defaultManualQuality, defaultBadgeFormat, defaultRatingSources,
     defaultAutoRotateClean, defaultDisableCleanPosters, defaultLogoFitEnabled, defaultNetworkLogo, defaultRibbonSide,
     episodeMetadataSource, defaultEpisodeMetadataSource,
     region, defaultRegion,
@@ -227,6 +231,11 @@ export function PosterEditorProvider({
       const next = typeof v === "function" ? v(badgeRating) : v
       update({ badgeRating: next, defaultBadgeRating: next })
     }, [badgeRating, update])
+  const setAgeRating = useCallback(
+    (v: boolean | ((prev: boolean) => boolean)) => {
+      const next = typeof v === "function" ? v(ageRating) : v
+      update({ ageRating: next, defaultAgeRating: next })
+    }, [ageRating, update])
   const setManualQuality = useCallback(
     (v: string | ((prev: string) => string)) => {
       const next = typeof v === "function" ? v(manualQuality) : v
@@ -351,6 +360,11 @@ export function PosterEditorProvider({
       const next = typeof v === "function" ? v(defaultBadgeRating) : v
       update({ defaultBadgeRating: next, badgeRating: next })
     }, [defaultBadgeRating, update])
+  const setDefaultAgeRating = useCallback(
+    (v: boolean | ((prev: boolean) => boolean)) => {
+      const next = typeof v === "function" ? v(defaultAgeRating) : v
+      update({ defaultAgeRating: next, ageRating: next })
+    }, [defaultAgeRating, update])
   const setDefaultManualQuality = useCallback(
     (v: string | ((prev: string) => string)) => {
       const next = typeof v === "function" ? v(defaultManualQuality) : v
@@ -426,6 +440,8 @@ export function PosterEditorProvider({
       setBadgeYear,
       badgeRating,
       setBadgeRating,
+      ageRating,
+      setAgeRating,
       manualQuality,
       setManualQuality,
       badgeFormat,
@@ -474,6 +490,8 @@ export function PosterEditorProvider({
       setDefaultBadgeYear,
       defaultBadgeRating,
       setDefaultBadgeRating,
+      defaultAgeRating,
+      setDefaultAgeRating,
       defaultManualQuality,
       setDefaultManualQuality,
       defaultBadgeFormat,
@@ -548,7 +566,7 @@ export function PosterEditorProvider({
       rankingBadges, setRankingBadges,
       badgeGenre, setBadgeGenre,
       badgeYear, setBadgeYear,
-      badgeRating, setBadgeRating,
+      badgeRating, setBadgeRating, ageRating, setAgeRating,
       manualQuality, setManualQuality,
       badgeFormat, setBadgeFormat,
       ratingSources, setRatingSources,
@@ -574,7 +592,7 @@ export function PosterEditorProvider({
       defaultRankingBadges, setDefaultRankingBadges,
       defaultBadgeGenre, setDefaultBadgeGenre,
       defaultBadgeYear, setDefaultBadgeYear,
-      defaultBadgeRating, setDefaultBadgeRating,
+      defaultBadgeRating, setDefaultBadgeRating, defaultAgeRating, setDefaultAgeRating,
       defaultManualQuality, setDefaultManualQuality,
       defaultBadgeFormat, setDefaultBadgeFormat,
       defaultRatingSources, setDefaultRatingSources,

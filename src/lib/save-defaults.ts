@@ -12,6 +12,7 @@ export function saveDefaults(p: { selected: SpatialCtx["selected"]; mappingsMap:
     badgeGenre: ed.defaultBadgeGenre,
     badgeYear: ed.defaultBadgeYear,
     badgeRating: ed.defaultBadgeRating,
+    ageRating: ed.defaultAgeRating,
     manualQuality: ed.defaultManualQuality,
     ratingSources: ed.defaultRatingSources,
     badgeStyle: ed.defaultBadgeStyle,
@@ -55,6 +56,7 @@ export function saveDefaults(p: { selected: SpatialCtx["selected"]; mappingsMap:
   ed.setBadgeGenre(d.badgeGenre)
   ed.setBadgeYear(d.badgeYear)
   ed.setBadgeRating(d.badgeRating)
+  ed.setAgeRating(d.ageRating)
   ed.setManualQuality(d.manualQuality)
   ed.setNetworkLogo(d.networkLogo)
   ed.setRibbonSide(d.ribbonSide)

@@ -54,6 +54,8 @@ export interface PosterRenderConfig {
   badgeGenre: boolean
   badgeYear: boolean
   badgeRating: boolean
+  /** Badge classificazione per età (query `ar`, poi server defaults; default OFF). */
+  ageRating: boolean
   manualQuality: string | null
   badgeFormat: string | null
   ratingSources: string[]
@@ -97,7 +99,7 @@ export function resolvePosterRenderConfig(input: PosterRenderConfigInput): Poste
   // Prima il mapping salvato con blur custom non veniva mai applicato.
   const blurEnabled = q.get("be") !== null
     ? q.get("be") !== "0"
-    : (mapping?.blurEnabled != null ? mapping.blurEnabled : (configOverride !== null ? configOverride.blurEnabled : true))
+    : (mapping?.blurEnabled != null ? mapping.blurEnabled : (configOverride !== null ? configOverride.blurEnabled : (sd.blurEnabled ?? true)))
   // Clamp espliciti: impediscono a valori estremi (query o config) di arrivare a
   // sharp.blur con sigma enormi o gradienti fuori scala (potenziale DoS CPU).
   const rawGradHeight = q.get("gradHeight") ? Number(q.get("gradHeight")) : NaN
@@ -105,30 +107,30 @@ export function resolvePosterRenderConfig(input: PosterRenderConfigInput): Poste
     ? clamp(rawGradHeight, 5, 100)
     : (mapping?.gradientHeight != null && Number.isFinite(mapping.gradientHeight)
         ? clamp(mapping.gradientHeight, 5, 100)
-        : (configOverride !== null ? clamp(configOverride.gradientHeight, 5, 100) : 30))
+        : (configOverride !== null ? clamp(configOverride.gradientHeight, 5, 100) : clamp(sd.gradientHeight ?? 30, 5, 100)))
   const rawBlur = q.get("blur") ? Number(q.get("blur")) : NaN
   const blurIntensity = Number.isFinite(rawBlur)
     ? clamp(rawBlur, 1, 100)
     : (mapping?.blurIntensity != null && Number.isFinite(mapping.blurIntensity)
         ? clamp(mapping.blurIntensity, 1, 100)
-        : (configOverride !== null ? clamp(configOverride.blurIntensity, 1, 100) : 5))
+        : (configOverride !== null ? clamp(configOverride.blurIntensity, 1, 100) : clamp(sd.blurIntensity ?? 5, 1, 100)))
   const rawBf = q.get("bf") ? Number(q.get("bf")) : NaN
   const blurFade = Number.isFinite(rawBf)
     ? clamp(rawBf, 0, 100)
     : (mapping?.blurFade != null && Number.isFinite(mapping.blurFade)
         ? clamp(mapping.blurFade, 0, 100)
-        : (configOverride !== null ? clamp(configOverride.blurFade, 0, 100) : 60))
+        : (configOverride !== null ? clamp(configOverride.blurFade, 0, 100) : clamp(sd.blurFade ?? 60, 0, 100)))
   const rawBd = q.get("bd") ? Number(q.get("bd")) : NaN
   const blurDarkness = Number.isFinite(rawBd)
     ? clamp(rawBd, 0, 100)
     : (mapping?.blurDarkness != null && Number.isFinite(mapping.blurDarkness)
         ? clamp(mapping.blurDarkness, 0, 100)
-        : (configOverride !== null ? clamp(configOverride.blurDarkness, 0, 100) : 40))
+        : (configOverride !== null ? clamp(configOverride.blurDarkness, 0, 100) : clamp(sd.blurDarkness ?? 40, 0, 100)))
 
   const qBadges = q.get("badges")
   const qRanking = q.get("ranking")
-  const badgesEnabled = hasQuery ? (qBadges !== null ? qBadges !== "0" : (configOverride !== null ? configOverride.globalBadges : showBadges)) : true
-  const rankingEnabled = hasQuery ? (qRanking !== null ? qRanking !== "0" : (configOverride !== null ? configOverride.rankingBadges : rankingBadges)) : true
+  const badgesEnabled = hasQuery ? (qBadges !== null ? qBadges !== "0" : (configOverride !== null ? configOverride.globalBadges : showBadges)) : (sd.globalBadges ?? true)
+  const rankingEnabled = hasQuery ? (qRanking !== null ? qRanking !== "0" : (configOverride !== null ? configOverride.rankingBadges : rankingBadges)) : (sd.rankingBadges ?? true)
 
   // Componenti badge genere/rating — precedenza: query `bg/by/br` > mapping salvato
   // > config token/profilo > server defaults > true (tutti ON di default).
@@ -139,6 +141,8 @@ export function resolvePosterRenderConfig(input: PosterRenderConfigInput): Poste
   const badgeGenre = qBg !== null ? qBg !== "0" : (mapping?.badgeGenre ?? configOverride?.badgeGenre ?? sd.badgeGenre ?? true)
   const badgeYear = qBy !== null ? qBy !== "0" : (mapping?.badgeYear ?? configOverride?.badgeYear ?? sd.badgeYear ?? true)
   const badgeRating = qBr !== null ? qBr !== "0" : (mapping?.badgeRating ?? configOverride?.badgeRating ?? sd.badgeRating ?? true)
+  const qAr = q.get("ar")
+  const ageRating = qAr !== null ? qAr !== "0" : (sd.ageRating ?? false)
   const qMq = q.get("mq")
   const manualQuality = qMq !== null ? qMq : (mapping?.manualQuality ?? configOverride?.manualQuality ?? sd.manualQuality ?? null)
   const qMf = q.get("mf")
@@ -148,7 +152,7 @@ export function resolvePosterRenderConfig(input: PosterRenderConfigInput): Poste
   const validSources = SUPPORTED_RATING_SOURCES as readonly string[]
   const ratingSources: string[] = qRsrc !== null
     ? qRsrc.split(",").map((s) => s.trim().toLowerCase()).filter((s) => validSources.includes(s))
-    : (configOverride?.ratingSources ?? [...DEFAULT_RATING_SOURCES])
+    : (configOverride?.ratingSources ?? (sd.ratingSources?.filter((x) => validSources.includes(x)).length ? sd.ratingSources.filter((x) => validSources.includes(x)) : [...DEFAULT_RATING_SOURCES]))
 
   // Badge style — confinamento della query string al union type: valori non validi
   // cadono sul default (il renderer in passato li trattava come "shadow" nel ramo else).
@@ -181,7 +185,7 @@ export function resolvePosterRenderConfig(input: PosterRenderConfigInput): Poste
     ? "right"
     : qSide === "left"
       ? "left"
-      : (mapping?.ribbonSide === "right" || configOverride?.ribbonSide === "right" ? "right" : "left")
+      : ((mapping?.ribbonSide ?? configOverride?.ribbonSide ?? sd.ribbonSide) === "right" ? "right" : "left")
 
 
   return {
@@ -197,6 +201,7 @@ export function resolvePosterRenderConfig(input: PosterRenderConfigInput): Poste
     badgeGenre,
     badgeYear,
     badgeRating,
+    ageRating,
     manualQuality,
     badgeFormat,
     ratingSources,

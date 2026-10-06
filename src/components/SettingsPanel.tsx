@@ -295,6 +295,17 @@ export function SettingsPanel({ setSettingsOpen, exportData, importData, mobile,
                   label={t("ui.badgeRating")}
                 />
               </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted">Age rating</span>
+                <Toggle
+                  value={ed.defaultAgeRating}
+                  onChange={(v) => {
+                    ed.setDefaultAgeRating(v)
+                    ed.setAgeRating(v)
+                  }}
+                  label="Age rating"
+                />
+              </div>
 
               {/* Accordion Provider del voto */}
               {ed.defaultBadgeRating && (

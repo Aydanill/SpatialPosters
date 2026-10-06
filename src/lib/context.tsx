@@ -321,6 +321,7 @@ export function usePictorium(): PictoriumCtx {
     badgeGenre, setBadgeGenre,
     badgeYear, setBadgeYear,
     badgeRating, setBadgeRating,
+    ageRating,
     manualQuality, setManualQuality,
     badgeFormat, setBadgeFormat,
     ratingSources,
@@ -595,11 +596,11 @@ export function usePictorium(): PictoriumCtx {
   useEffect(() => {
     setUrlPattern(buildUrlPattern({
       globalBadges, rankingBadges, badgeStyle, rankingBadgeStyle,
-      badgeGenre, badgeYear, badgeRating, manualQuality, badgeFormat, ratingSources,
+      badgeGenre, badgeYear, badgeRating, ageRating, manualQuality, badgeFormat, ratingSources,
       customBadge, gradientHeight, blurIntensity, blurFade, blurDarkness, blurEnabled, networkLogo, ribbonSide,
       tmdbKey, lang, mdblistApiKey,
     }))
-  }, [globalBadges, rankingBadges, badgeGenre, badgeYear, badgeRating, manualQuality, badgeFormat, ratingSources, networkLogo, ribbonSide, gradientHeight, blurIntensity, blurFade, blurDarkness, blurEnabled, badgeStyle, rankingBadgeStyle, tmdbKey, lang, mdblistApiKey]) // eslint-disable-line react-hooks/exhaustive-deps -- customBadge intentionally excluded to avoid loop
+  }, [globalBadges, rankingBadges, badgeGenre, badgeYear, badgeRating, ageRating, manualQuality, badgeFormat, ratingSources, networkLogo, ribbonSide, gradientHeight, blurIntensity, blurFade, blurDarkness, blurEnabled, badgeStyle, rankingBadgeStyle, tmdbKey, lang, mdblistApiKey]) // eslint-disable-line react-hooks/exhaustive-deps -- customBadge intentionally excluded to avoid loop
 
   // --- Preview URL ---
   const buildPreviewUrlCb = useCallback(() => {
@@ -615,14 +616,14 @@ export function usePictorium(): PictoriumCtx {
         topEdgeColor, accentColor, lang, tmdbKey,
         region: editorCtx.defaultRegion,
       },
-      { globalBadges, rankingBadges, badgeStyle, rankingBadgeStyle, badgeGenre, badgeYear, badgeRating, manualQuality, badgeFormat, ratingSources, customBadge, gradientHeight, blurIntensity, blurFade, blurDarkness, blurEnabled, networkLogo, ribbonSide }
+      { globalBadges, rankingBadges, badgeStyle, rankingBadgeStyle, badgeGenre, badgeYear, badgeRating, ageRating, manualQuality, badgeFormat, ratingSources, customBadge, gradientHeight, blurIntensity, blurFade, blurDarkness, blurEnabled, networkLogo, ribbonSide }
     )
     setPreviewUrl(url)
   }, [navigation.selected, navigation.previewPoster, navigation.selectedLogo, selectedBackdrop,
     logoScale, logoOffsetX, logoOffsetY, backdropScale, backdropOffsetX, backdropOffsetY,
     metaInfo, trendRank, trending.mdblistAnimeList, topEdgeColor, accentColor, lang, tmdbKey,
     editorCtx.defaultRegion,
-    globalBadges, rankingBadges, badgeStyle, rankingBadgeStyle, badgeGenre, badgeYear, badgeRating, manualQuality, badgeFormat, ratingSources, customBadge, gradientHeight, blurIntensity, blurFade, blurDarkness, blurEnabled, networkLogo, ribbonSide])
+    globalBadges, rankingBadges, badgeStyle, rankingBadgeStyle, badgeGenre, badgeYear, badgeRating, ageRating, manualQuality, badgeFormat, ratingSources, customBadge, gradientHeight, blurIntensity, blurFade, blurDarkness, blurEnabled, networkLogo, ribbonSide])
 
   useEffect(() => {
     if (!navigation.selected) { setPreviewUrl(""); return }
