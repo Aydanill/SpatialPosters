@@ -10,6 +10,7 @@ import { AmbientBackground } from "@/components/AmbientBackground"
 import { useT } from "@/lib/contexts/TranslationContext"
 import { setLang, getLang } from "@/lib/i18n"
 import { BladeSpinner } from "@/components/ui/BladeSpinner"
+import { JellyfinSendBar } from "@/components/JellyfinSendBar"
 
 interface PosterEditorContainerProps {
   id: number
@@ -22,6 +23,7 @@ function PosterEditorContent({ id, mediaType }: PosterEditorContainerProps) {
   const navigateToPoster = usePSelector((v) => v.navigateToPoster)
   const titleOf = usePSelector((v) => v.titleOf)
   const yearOf = usePSelector((v) => v.yearOf)
+  const previewUrl = usePSelector((v) => v.previewUrl)
   const [init, setInit] = useState(false)
 
   const [, setLangTick] = useState(0)
@@ -83,6 +85,7 @@ function PosterEditorContent({ id, mediaType }: PosterEditorContainerProps) {
           ))}
 
           <EditView />
+          <JellyfinSendBar previewUrl={previewUrl} />
         </div>
       </ToastProvider>
     </div>

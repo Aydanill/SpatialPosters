@@ -276,9 +276,23 @@ export async function createSessionToken(): Promise<string | null> {
   return `${payload}.${signature}`
 }
 
-export function buildSessionCookie(token: string): string {
-  const isProd = process.env.NODE_ENV === "production"
-  const secure = isProd ? "; Secure" : ""
+/**
+ * True when the browser reached us over HTTPS (directly, or through a TLS-terminating
+ * proxy that sets X-Forwarded-Proto). A `Secure` cookie set over plain http is silently
+ * dropped by browsers, which made the PIN "work" while every later request was refused.
+ */
+export function isSecureRequest(request: Request): boolean {
+  const proto = request.headers.get("x-forwarded-proto")?.split(",")[0].trim().toLowerCase()
+  if (proto) return proto === "https"
+  try {
+    return new URL(request.url).protocol === "https:"
+  } catch {
+    return false
+  }
+}
+
+export function buildSessionCookie(token: string, opts?: { secure?: boolean }): string {
+  const secure = (opts?.secure ?? process.env.NODE_ENV === "production") ? "; Secure" : ""
   // Max-Age=30 giorni
   return `${PIN_COOKIE_NAME}=${token}; Path=/; Max-Age=${SESSION_DURATION_SECONDS}; HttpOnly; SameSite=Lax${secure}`
 }

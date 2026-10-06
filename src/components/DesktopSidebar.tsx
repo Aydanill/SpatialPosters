@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Home, RefreshCw, Settings, Check, Heart } from "lucide-react"
+import { Home, RefreshCw, Settings, Check, Heart, Clapperboard } from "lucide-react"
 import { useT } from "@/lib/contexts/TranslationContext"
 import { setLang, getLang } from "@/lib/i18n"
 import { LANG_NAMES, UI_LANGUAGES } from "@/lib/utils"
@@ -79,6 +79,7 @@ export function DesktopSidebar() {
   const isInstallActive = pathname === "/install"
   const isStatusActive = pathname === "/status"
   const isSettingsActive = pathname === "/settings"
+  const isJellyfinActive = pathname === "/jellyfin"
 
   return (
     <>
@@ -281,6 +282,18 @@ export function DesktopSidebar() {
             />
             <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 text-xs font-semibold rounded-xl border opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50 bg-zinc-900 text-zinc-100 border-white/10 shadow-black/80">
               Status
+            </span>
+          </Link>
+
+          {/* Jellyfin library */}
+          <Link
+            href="/jellyfin"
+            title="Jellyfin"
+            className={`group sidebar-dock-btn ${isJellyfinActive ? "sidebar-dock-btn-active" : ""}`}
+          >
+            <Clapperboard className="w-4.5 h-4.5 transition-all duration-200 text-zinc-300 group-hover:text-white" />
+            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 text-xs font-semibold rounded-xl border opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap shadow-xl z-50 bg-zinc-900 text-zinc-100 border-white/10 shadow-black/80">
+              Jellyfin
             </span>
           </Link>
 

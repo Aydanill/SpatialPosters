@@ -6,6 +6,7 @@ import {
   removePin,
   createSessionToken,
   buildSessionCookie,
+  isSecureRequest,
   buildClearSessionCookie,
   verifySessionFromRequest,
   getAdminPinFromEnv,
@@ -65,7 +66,7 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: "Failed to generate session token" }, { status: 500 })
   }
 
-  const cookie = buildSessionCookie(token)
+  const cookie = buildSessionCookie(token, { secure: isSecureRequest(req) })
   return new Response(JSON.stringify({ success: true, token }), {
     status: 200,
     headers: {
@@ -115,7 +116,7 @@ export async function PUT(req: NextRequest) {
   const token = await createSessionToken()
   const headers: Record<string, string> = { "Content-Type": "application/json" }
   if (token) {
-    headers["Set-Cookie"] = buildSessionCookie(token)
+    headers["Set-Cookie"] = buildSessionCookie(token, { secure: isSecureRequest(req) })
   }
 
   return new Response(JSON.stringify({ success: true, token }), {

@@ -1,90 +1,28 @@
-version: "3.9"
-
+# SpatialPosters, prebuilt image (no build, no git needed).
+#   1. Replace the CHANGE ME values.
+#   2. docker compose up -d
+#   3. Open http://<this-machine>:8080/jellyfin and unlock it with your PIN.
+# To update later: docker compose pull && docker compose up -d
 services:
   spatialposters:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: spatialposters:latest
+    image: ghcr.io/aydanill/spatialposters:latest
     container_name: spatialposters
     restart: unless-stopped
     ports:
       - "8080:8080"
     environment:
-      # ── API Keys & Configuration ──
-      - SPATIALPOSTERS_TMDB_KEY=${SPATIALPOSTERS_TMDB_KEY:-}
-      - SPATIALPOSTERS_MDBLIST_KEY=${SPATIALPOSTERS_MDBLIST_KEY:-}
-      - SPATIALPOSTERS_TVDB_API_KEY=${SPATIALPOSTERS_TVDB_API_KEY:-}
-
-      # ── Admin & Security ──
-      - SPATIALPOSTERS_ADMIN_TOKEN=${SPATIALPOSTERS_ADMIN_TOKEN:-}
-      - SPATIALPOSTERS_ADMIN_PIN=${SPATIALPOSTERS_ADMIN_PIN:-}
-      - SPATIALPOSTERS_PUBLIC_INSTANCE=${SPATIALPOSTERS_PUBLIC_INSTANCE:-}
-      - CONFIG_HMAC_SECRET=${CONFIG_HMAC_SECRET:-}
-      - PROFILE_ENCRYPTION_KEY=${PROFILE_ENCRYPTION_KEY:-}
-
-      # ── Legacy Security Compatibility Aliases ──
-      - PICTORIUM_ADMIN_TOKEN=${PICTORIUM_ADMIN_TOKEN:-}
-      - POSTERIUM_ADMIN_TOKEN=${POSTERIUM_ADMIN_TOKEN:-}
-
-      # ── Cloud Storage (Cloudinary, ImgBB, R2) ──
-      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME:-}
-      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY:-}
-      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET:-}
-      - CLOUDINARY_URL=${CLOUDINARY_URL:-}
-      - IMGBB_API_KEY=${IMGBB_API_KEY:-}
-      - R2_ACCOUNT_ID=${R2_ACCOUNT_ID:-}
-      - R2_ACCESS_KEY_ID=${R2_ACCESS_KEY_ID:-}
-      - R2_SECRET_ACCESS_KEY=${R2_SECRET_ACCESS_KEY:-}
-      - R2_BUCKET_NAME=${R2_BUCKET_NAME:-}
-
-      # ── Distributed Persistence (KV / Upstash) ──
-      - KV_REST_API_URL=${KV_REST_API_URL:-}
-      - KV_REST_API_TOKEN=${KV_REST_API_TOKEN:-}
-
-      # ── Cache Configuration ──
-      - SPATIALPOSTERS_CACHE_MAX=${SPATIALPOSTERS_CACHE_MAX:-2000}
-      - SPATIALPOSTERS_CACHE_MAX_MB=${SPATIALPOSTERS_CACHE_MAX_MB:-150}
-      - SPATIALPOSTERS_CACHE_REFRESH_HOUR=${SPATIALPOSTERS_CACHE_REFRESH_HOUR:-3}
-
-      # ── Render Pipeline Performance Tuning ──
-      - SPATIALPOSTERS_MAX_CONCURRENT_RENDERS=${SPATIALPOSTERS_MAX_CONCURRENT_RENDERS:-4}
-      - SPATIALPOSTERS_RENDER_SLOT_WAIT_MS=${SPATIALPOSTERS_RENDER_SLOT_WAIT_MS:-15000}
-      - SPATIALPOSTERS_RENDER_TIMEOUT_MS=${SPATIALPOSTERS_RENDER_TIMEOUT_MS:-30000}
-
-      # ── Sharp Optimization & Logging ──
-      - SHARP_CONCURRENCY=${SHARP_CONCURRENCY:-2}
-      - SHARP_CACHE_MEMORY_MB=${SHARP_CACHE_MEMORY_MB:-64}
-      - SPATIALPOSTERS_LOG_LEVEL=${SPATIALPOSTERS_LOG_LEVEL:-info}
-      - SPATIALPOSTERS_LOG_FORMAT=${SPATIALPOSTERS_LOG_FORMAT:-}
-
-      # ── CDN ──
-      - POSTER_CDN_URL=${POSTER_CDN_URL:-}
-      - NEXT_PUBLIC_POSTER_CDN_URL=${NEXT_PUBLIC_POSTER_CDN_URL:-}
-
-      # ── Runtime ──
-      - NODE_ENV=production
-      - PORT=8080
-      - HOSTNAME=0.0.0.0
-    cap_drop:
-      - ALL
-    security_opt:
-      - no-new-privileges:true
+      # CHANGE ME: TMDB v3 API key
+      - SPATIALPOSTERS_TMDB_KEY=your_tmdb_v3_key
+      # CHANGE ME: how this container reaches Jellyfin (e.g. http://192.168.1.10:8096)
+      - SPATIALPOSTERS_JELLYFIN_URL=http://YOUR_JELLYFIN_HOST:8096
+      # Jellyfin Dashboard > API Keys
+      - SPATIALPOSTERS_JELLYFIN_API_KEY=your_jellyfin_api_key
+      # CHANGE ME: PIN that unlocks settings and the Jellyfin page
+      - SPATIALPOSTERS_ADMIN_PIN=choose_a_pin
+      # Behind a reverse proxy and saving fails with "Cross-origin request rejected"? Add your domain:
+      # - SPATIALPOSTERS_ALLOWED_HOSTS=posters.example.com
     volumes:
       - spatialposters-data:/data
-    healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://localhost:8080/api/health').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"]
-      interval: 30s
-      timeout: 5s
-      start_period: 15s
-      retries: 3
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-        reservations:
-          memory: 256M
 
 volumes:
   spatialposters-data:
-    driver: local
