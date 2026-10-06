@@ -23,6 +23,7 @@ export interface ServerDefaults {
   badgeGenre?: boolean
   badgeYear?: boolean
   badgeRating?: boolean
+  ageRating?: boolean
   manualQuality?: string
   badgeFormat?: string
   ratingSources?: string[]
@@ -75,6 +76,7 @@ function defaultsFromEnv(): ServerDefaults {
   const bg = envBool("BADGE_GENRE")
   const by = envBool("BADGE_YEAR")
   const br = envBool("BADGE_RATING")
+  const ar = envBool("AGE_RATING")
   const mq = getEnv("MANUAL_QUALITY")?.trim()
   const blurEn = envBool("BLUR_ENABLED")
   const netLogo = envBool("NETWORK_LOGO")
@@ -86,6 +88,7 @@ function defaultsFromEnv(): ServerDefaults {
   if (bg !== undefined) d.badgeGenre = bg
   if (by !== undefined) d.badgeYear = by
   if (br !== undefined) d.badgeRating = br
+  if (ar !== undefined) d.ageRating = ar
   if (mq !== undefined) d.manualQuality = mq
   const rsrcEnv = getEnv("RATING_SOURCES")?.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean)
   if (rsrcEnv && rsrcEnv.length > 0) d.ratingSources = rsrcEnv

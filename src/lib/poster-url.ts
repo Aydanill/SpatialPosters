@@ -17,6 +17,8 @@ interface BadgeParams {
   badgeGenre?: boolean
   badgeYear?: boolean
   badgeRating?: boolean
+  /** Badge classificazione per età (`ar=1`). Default OFF. */
+  ageRating?: boolean
   manualQuality?: string | null
   badgeFormat?: string | null
   ratingSources?: string[]
@@ -103,6 +105,7 @@ export function buildPreviewUrl(ps: PosterState, bp: BadgeParams): string {
   params.push(`bg=${bp.badgeGenre !== false ? "1" : "0"}`)
   params.push(`by=${bp.badgeYear !== false ? "1" : "0"}`)
   params.push(`br=${bp.badgeRating !== false ? "1" : "0"}`)
+  params.push(`ar=${bp.ageRating ? "1" : "0"}`)
   if (bp.manualQuality) params.push(`mq=${encodeURIComponent(bp.manualQuality)}`)
   if (bp.badgeFormat) params.push(`mf=${encodeURIComponent(bp.badgeFormat)}`)
   if (bp.ratingSources && bp.ratingSources.length > 0) params.push(`rsrc=${encodeURIComponent(bp.ratingSources.join(","))}`)

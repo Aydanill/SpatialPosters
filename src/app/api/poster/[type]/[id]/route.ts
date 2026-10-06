@@ -6,6 +6,7 @@ import { getJWRankings } from "@/lib/justwatch"
 import { getById } from "@/lib/store"
 import { rateLimit, rateLimitKey, rateLimitResponse } from "@/lib/rate-limit"
 import { getServerDefaults } from "@/lib/server-defaults"
+import { fetchAgeRating } from "@/lib/age-rating"
 import { getRegionDef, normalizeRegion, parseRegion, defaultRegionForLang } from "@/lib/regions"
 import { BEST_FIT_GLOBAL } from "@/lib/best-fit-config"
 import { warmFonts } from "@/lib/svg-badge"
@@ -608,8 +609,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<RouteP
     // trend. Con un config token la personalizzazione è esplicita → i flag off
     // devono valere.
     const hasQueryEarly = !!queryPoster || !!mapping || !!configToken
-    const badgesEnabledEarly = hasQueryEarly ? (qBadgesEarly !== null ? qBadgesEarly !== "0" : showBadges) : true
-    const rankingEnabledEarly = hasQueryEarly ? (qRankingEarly !== null ? qRankingEarly !== "0" : rankingBadges) : true
+    const badgesEnabledEarly = hasQueryEarly ? (qBadgesEarly !== null ? qBadgesEarly !== "0" : showBadges) : (sd.globalBadges ?? true)
+    const rankingEnabledEarly = hasQueryEarly ? (qRankingEarly !== null ? qRankingEarly !== "0" : rankingBadges) : (sd.rankingBadges ?? true)
     const qMqEarly = req.nextUrl.searchParams.get("mq")
     const manualQuality = qMqEarly !== null ? qMqEarly : (mapping?.manualQuality ?? configOverride?.manualQuality ?? sd.manualQuality ?? null)
 
@@ -819,12 +820,18 @@ export async function GET(req: NextRequest, { params }: { params: Promise<RouteP
       badgeStyle, rankingBadgeStyle,
       blurEnabled, blurHeight, blurIntensity, blurFade, blurDarkness,
       badgesEnabled, rankingEnabled,
-      badgeGenre, badgeYear, badgeRating, badgeFormat,
+      badgeGenre, badgeYear, badgeRating, ageRating, badgeFormat,
       logoScale, logoOffsetX, logoOffsetY,
       queryExtra, qNetLogo, networkLogo, ribbonSide,
     } = renderConfig
 
 
+
+    // Age rating (opt-in): best effort, never blocks or fails the render.
+    let ageRatingLabel: string | null = null
+    if (ageRating && badgesEnabled) {
+      ageRatingLabel = await fetchAgeRating(mediaType as "movie" | "tv", tmdbId, resolveRequestApiKey(req), AbortSignal.timeout(3000)).catch(() => null)
+    }
 
     const locale = req.nextUrl.searchParams.get("lang") || mapping?.language || "it"
     const targetCenter = Math.round(30 * STD_H / 570)
@@ -961,7 +968,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<RouteP
       tvType, tvStatus, releaseDate, firstAirDate,
       lastAirDate, seasonCount, originCountries,
       wikidataResult, tmdbKeywords, locale, t,
-      qLabel, queryExtra, qNetLogo, networkLogo, sd,
+      qLabel, queryExtra, qNetLogo, networkLogo, sd, ageRatingLabel,
       accentOverride, imdbTop250,
       posterSrc: posterPath,
       logoSrc: logoPath,

@@ -21,6 +21,8 @@ export interface DefaultsState {
   defaultBadgeGenre: boolean
   defaultBadgeYear: boolean
   defaultBadgeRating: boolean
+  /** Badge classificazione per età (PG-13, TV-MA…) — default OFF. */
+  defaultAgeRating: boolean
   defaultManualQuality: string
   defaultBadgeFormat: string
   defaultRatingSources: string[]
@@ -39,6 +41,7 @@ export interface DefaultsState {
   badgeGenre: boolean
   badgeYear: boolean
   badgeRating: boolean
+  ageRating: boolean
   manualQuality: string
   badgeFormat: string
   ratingSources: string[]
@@ -67,6 +70,7 @@ const DEFAULTS: DefaultsState = {
   defaultBadgeGenre: true,
   defaultBadgeYear: true,
   defaultBadgeRating: true,
+  defaultAgeRating: false,
   defaultManualQuality: "",
   defaultBadgeFormat: "",
   defaultRatingSources: [],
@@ -83,6 +87,7 @@ const DEFAULTS: DefaultsState = {
   badgeGenre: true,
   badgeYear: true,
   badgeRating: true,
+  ageRating: false,
   manualQuality: "",
   badgeFormat: "",
   ratingSources: [],
@@ -104,6 +109,7 @@ interface StoredDefaults {
   badgeGenre?: boolean
   badgeYear?: boolean
   badgeRating?: boolean
+  ageRating?: boolean
   manualQuality?: string
   badgeFormat?: string
   ratingSources?: string[]
@@ -127,6 +133,7 @@ interface StoredDefaults {
   defaultBadgeGenre?: boolean
   defaultBadgeYear?: boolean
   defaultBadgeRating?: boolean
+  defaultAgeRating?: boolean
   defaultManualQuality?: string
   defaultBadgeFormat?: string
   defaultRatingSources?: string[]
@@ -175,6 +182,7 @@ function buildFromStored(d: StoredDefaults | null): DefaultsState {
     defaultBadgeGenre: d.defaultBadgeGenre ?? d.badgeGenre ?? true,
     defaultBadgeYear: d.defaultBadgeYear ?? d.badgeYear ?? true,
     defaultBadgeRating: d.defaultBadgeRating ?? d.badgeRating ?? true,
+    defaultAgeRating: d.defaultAgeRating ?? d.ageRating ?? false,
     defaultManualQuality: d.defaultManualQuality ?? d.manualQuality ?? "",
     defaultBadgeFormat: d.defaultBadgeFormat ?? d.badgeFormat ?? "",
     defaultRatingSources: d.defaultRatingSources ?? d.ratingSources ?? [],
@@ -191,6 +199,7 @@ function buildFromStored(d: StoredDefaults | null): DefaultsState {
     badgeGenre: d.badgeGenre ?? d.defaultBadgeGenre ?? true,
     badgeYear: d.badgeYear ?? d.defaultBadgeYear ?? true,
     badgeRating: d.badgeRating ?? d.defaultBadgeRating ?? true,
+    ageRating: d.ageRating ?? d.defaultAgeRating ?? false,
     manualQuality: d.manualQuality ?? d.defaultManualQuality ?? "",
     badgeFormat: d.badgeFormat ?? d.defaultBadgeFormat ?? "",
     ratingSources: d.ratingSources ?? d.defaultRatingSources ?? [],
@@ -227,6 +236,7 @@ function defaultsToPayload(d: DefaultsState): Record<string, unknown> {
     badgeGenre: d.defaultBadgeGenre,
     badgeYear: d.defaultBadgeYear,
     badgeRating: d.defaultBadgeRating,
+    ageRating: d.defaultAgeRating,
     manualQuality: d.defaultManualQuality,
     badgeFormat: d.defaultBadgeFormat,
     ratingSources: d.defaultRatingSources,

@@ -695,3 +695,9 @@ function resolveFindId(data: { movie_results?: { id?: number }[]; tv_results?: {
     : (data.tv_results?.[0]?.id ?? data.movie_results?.[0]?.id)
   return typeof id === "number" && id > 0 ? id : null
 }
+
+/** Raw certification payloads (movie release_dates / tv content_ratings). */
+export async function getCertificationData(mediaType: "movie" | "tv", id: number, apiKey?: string, signal?: AbortSignal): Promise<unknown> {
+  const path = mediaType === "movie" ? `/movie/${id}/release_dates` : `/tv/${id}/content_ratings`
+  return tmdbFetch(path, apiKey, signal)
+}

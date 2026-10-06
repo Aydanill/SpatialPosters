@@ -81,6 +81,10 @@ export function BadgeControls() {
                 <span className="text-muted">{t("ui.badgeRating")}</span>
                 <Toggle value={ed.badgeRating} onChange={(v) => ed.setBadgeRating(v)} label={t("ui.badgeRating")} />
               </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted">Age rating</span>
+                <Toggle value={ed.ageRating} onChange={(v) => ed.setAgeRating(v)} label="Age rating" />
+              </div>
 
               {/* Provider del voto accordion */}
               {ed.badgeRating && (
