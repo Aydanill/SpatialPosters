@@ -24,6 +24,8 @@ export interface ServerDefaults {
   badgeYear?: boolean
   badgeRating?: boolean
   ageRating?: boolean
+  /** Automatic top badges switched off (keys from AUTO_BADGE_KEYS). */
+  disabledBadges?: string[]
   manualQuality?: string
   badgeFormat?: string
   ratingSources?: string[]
@@ -77,6 +79,7 @@ function defaultsFromEnv(): ServerDefaults {
   const by = envBool("BADGE_YEAR")
   const br = envBool("BADGE_RATING")
   const ar = envBool("AGE_RATING")
+  const offBadges = getEnv("DISABLED_BADGES")?.split(",").map((s) => s.trim()).filter(Boolean)
   const mq = getEnv("MANUAL_QUALITY")?.trim()
   const blurEn = envBool("BLUR_ENABLED")
   const netLogo = envBool("NETWORK_LOGO")
@@ -89,6 +92,7 @@ function defaultsFromEnv(): ServerDefaults {
   if (by !== undefined) d.badgeYear = by
   if (br !== undefined) d.badgeRating = br
   if (ar !== undefined) d.ageRating = ar
+  if (offBadges && offBadges.length > 0) d.disabledBadges = offBadges
   if (mq !== undefined) d.manualQuality = mq
   const rsrcEnv = getEnv("RATING_SOURCES")?.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean)
   if (rsrcEnv && rsrcEnv.length > 0) d.ratingSources = rsrcEnv

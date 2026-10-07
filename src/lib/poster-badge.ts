@@ -33,7 +33,14 @@ export interface BadgeInput {
   keywords?: string[]
   /** IMDb Top 250 badge flag — resolved externally (async fetch). */
   imdbTop250?: boolean
+  /** Automatic top badges to suppress (see AUTO_BADGE_KEYS), e.g. ["bingeWorthy"]. */
+  disabledBadges?: readonly string[]
 }
+
+export const AUTO_BADGE_KEYS = [
+  "bingeWorthy", "newEpisode", "newSeason", "newMovie", "newSeries", "newAnime",
+  "award", "nomination", "absoluteCinema", "subGenre", "kdrama", "director", "studio",
+] as const
 
 export interface ComputedTopBadge {
   readonly badge: BadgeResult | null
@@ -177,25 +184,27 @@ export function computeTopBadge(input: BadgeInput, t: BadgeT, locale?: string): 
     ? lastAirTime <= now && (now - lastAirTime) < TWO_WEEKS_MS && Number.isFinite(firstAirTime) && (now - firstAirTime) >= TWO_WEEKS_MS
     : false
 
+  // Badge automatici disattivati dall'utente: non partecipano alla scelta del badge in alto.
+  const off = new Set(input.disabledBadges ?? [])
   const badge = computeBadge({
     mediaType: input.mediaType,
     upcomingRelease,
-    isNewMovie,
-    isNewSeries,
-    isNewAnime,
-    isNewEpisode,
-    isBingeWorthy,
-    newSeason,
+    isNewMovie: isNewMovie && !off.has("newMovie"),
+    isNewSeries: isNewSeries && !off.has("newSeries"),
+    isNewAnime: isNewAnime && !off.has("newAnime"),
+    isNewEpisode: isNewEpisode && !off.has("newEpisode"),
+    isBingeWorthy: isBingeWorthy && !off.has("bingeWorthy"),
+    newSeason: off.has("newSeason") ? null : newSeason,
     animeRank: input.animeRank,
     trendRank: input.trendRank,
-    award: awardBadge,
-    nomination,
-    studio,
-    director: input.director,
-    subGenre: subGenreBadge,
-    isKDrama: isKDramaOrigin(input.originCountries),
-    imdbTop250: !!input.imdbTop250,
-    extra: extraFallback,
+    award: off.has("award") ? null : awardBadge,
+    nomination: off.has("nomination") ? null : nomination,
+    studio: off.has("studio") ? null : studio,
+    director: off.has("director") ? null : input.director,
+    subGenre: off.has("subGenre") ? null : subGenreBadge,
+    isKDrama: isKDramaOrigin(input.originCountries) && !off.has("kdrama"),
+    imdbTop250: !!input.imdbTop250 && !off.has("absoluteCinema"),
+    extra: off.has("absoluteCinema") ? null : extraFallback,
   }, t)
 
   return {

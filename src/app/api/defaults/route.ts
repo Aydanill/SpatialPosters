@@ -37,6 +37,7 @@ const defaultsSchema = z.object({
   badgeYear: z.boolean().optional(),
   badgeRating: z.boolean().optional(),
   ageRating: z.boolean().optional(),
+  disabledBadges: z.array(z.string().max(30)).max(30).optional(),
   manualQuality: z.string().optional(),
   ratingSources: z.array(z.string()).optional(),
   autoRotateClean: z.boolean().optional(),

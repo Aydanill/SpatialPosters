@@ -517,6 +517,7 @@ export async function generatePosterBuffer(input: GenerationInput): Promise<Buff
 
   const badgeInput: BadgeInput = {
     mediaType,
+    disabledBadges: sd.disabledBadges,
     releaseDate: releaseDate ?? null,
     firstAirDate: firstAirDate ?? null,
     lastAirDate: lastAirDate ?? null,

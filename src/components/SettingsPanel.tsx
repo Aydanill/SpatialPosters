@@ -9,6 +9,7 @@ import { ApiError, http } from "@/lib/http"
 import { saveDefaults } from "@/lib/save-defaults"
 import { SliderRow } from "@/components/SliderRow"
 import { Toggle } from "@/components/Toggle"
+import { AutoBadgeToggles } from "@/components/AutoBadgeToggles"
 import { BadgeStyleSelector, MenuItem } from "@/components/ui"
 import { UI_RATING_SOURCES } from "@/lib/ratings"
 import { REGIONS } from "@/lib/regions"
@@ -306,6 +307,7 @@ export function SettingsPanel({ setSettingsOpen, exportData, importData, mobile,
                   label="Age rating"
                 />
               </div>
+              <AutoBadgeToggles />
 
               {/* Accordion Provider del voto */}
               {ed.defaultBadgeRating && (
