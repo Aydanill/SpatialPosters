@@ -54,3 +54,12 @@ describe("resolvePosterRenderConfig with server defaults only (plugin request)",
     expect(q.ageRating).toBe(true)
   })
 })
+
+import { serverDefaultsDiffer } from "@/lib/useDefaults"
+describe("serverDefaultsDiffer", () => {
+  it("detects settings the server never received", () => {
+    expect(serverDefaultsDiffer({}, { ageRating: true })).toBe(true)
+    expect(serverDefaultsDiffer({ ageRating: true, ratingSources: ["imdb"] }, { ageRating: true, ratingSources: ["imdb"] })).toBe(false)
+    expect(serverDefaultsDiffer({ blurIntensity: 5, extra: 1 }, { blurIntensity: 22 })).toBe(true)
+  })
+})

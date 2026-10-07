@@ -250,6 +250,11 @@ function defaultsToPayload(d: DefaultsState): Record<string, unknown> {
   }
 }
 
+/** True when the server's saved defaults miss or disagree with the local payload. */
+export function serverDefaultsDiffer(server: Record<string, unknown>, local: Record<string, unknown>): boolean {
+  return Object.keys(local).some((k) => JSON.stringify(server[k]) !== JSON.stringify(local[k]))
+}
+
 export function useDefaults() {
   // Stato iniziale deterministico (DEFAULTS): la lettura di localStorage è rimandata
   // al mount via useEffect. Durante la SSR `window` non esiste (readStoredDefaults
@@ -296,7 +301,20 @@ export function useDefaults() {
         const updated = buildFromStored(merged)
         setState(updated)
         lastPersistRef.current = JSON.stringify(defaultsToPayload(updated))
-        safeSetItem("badgeDefaults", JSON.stringify(defaultsToPayload(updated)))
+        const localPayload = defaultsToPayload(updated)
+        safeSetItem("badgeDefaults", JSON.stringify(localPayload))
+        // Re-sync: i valori già in localStorage non vengono mai ri-inviati dall'auto-persist
+        // (il dedup li considera "già sincronizzati"). Se in passato il PUT è fallito (cookie,
+        // origin, PIN non ancora impostato) il server resta con i default vecchi e client esterni
+        // come il plugin Jellyfin non vedono le impostazioni salvate. Qui si riallinea il server.
+        if (serverDefaultsDiffer(serverData as Record<string, unknown>, localPayload)) {
+          fetch("/api/defaults", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(localPayload),
+          })
+            .catch(() => {})
+        }
       })
       .catch(() => {})
   }, [])
