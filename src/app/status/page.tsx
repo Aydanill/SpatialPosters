@@ -51,6 +51,7 @@ interface HealthData {
     mode: "kv" | "file"
     mappingsCount: number
     dataFileExists: boolean | null
+    dataDirWritable?: boolean | null
     r2?: {
       configured: boolean
       bucket: string | null
@@ -405,6 +406,13 @@ function StatusContent() {
                 </div>
 
                 <div className="space-y-2">
+                  {data?.storage?.mode === "file" && (
+                    <StatusMetricRow
+                      label="Data folder (/data)"
+                      value={data.storage.dataDirWritable ? "Writable" : "NOT writable: settings and posters will not save"}
+                      status={data.storage.dataDirWritable ? "ok" : "error"}
+                    />
+                  )}
                   <StatusMetricRow
                     label={t("ui.statusSavedPosters") || "Saved Poster Mappings"}
                     value={`${data?.storage?.mappingsCount ?? 0} posters`}

@@ -21,6 +21,9 @@ services:
       - SPATIALPOSTERS_ADMIN_PIN=choose_a_pin
       # Behind a reverse proxy and saving fails with "Cross-origin request rejected"? Add your domain:
       # - SPATIALPOSTERS_ALLOWED_HOSTS=posters.example.com
+    # Named volume = no folder-permission problems (the container runs as uid 1000).
+    # If you use a bind mount instead (e.g. a Synology folder), that folder must be writable by uid 1000,
+    # otherwise nothing saves. The Status page shows "Data folder: Writable" when it works.
     volumes:
       - spatialposters-data:/data
 
