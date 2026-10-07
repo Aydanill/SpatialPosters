@@ -12,7 +12,6 @@ import {
   PosterComposite,
 } from "./poster-render-helpers"
 import { renderGenreBadge, renderRankingBadge, renderExtraBadge, renderQualityBadge } from "./svg-badge"
-import { renderAgeRatingBadge } from "./age-rating"
 import { renderFirstMatchingNetworkLogoBadge, renderFirstMatchingNetworkRawBadge, renderFirstMatchingNetworkLogoBadgeHybrid, renderFirstMatchingNetworkRawBadgeHybrid, type NetworkCandidate } from "./network-svgs"
 import { computeLogoLayout } from "./logo-layout"
 import fs from "fs"
@@ -470,7 +469,7 @@ export async function generatePosterBuffer(input: GenerationInput): Promise<Buff
   const yearAvailable = !!year
   // Il badge è visibile se almeno uno dei 3 componenti è abilitato E disponibile.
   const hasGenreBadge = badgesEnabled
-    && ((genreAvailable && badgeGenre) || (ratingAvailable && badgeRating) || (yearAvailable && badgeYear))
+    && ((genreAvailable && badgeGenre) || (ratingAvailable && badgeRating) || (yearAvailable && badgeYear) || !!ageRatingLabel)
 
   const needBadgeColors = hasGenreBadge || rankingEnabled
 
@@ -610,7 +609,7 @@ export async function generatePosterBuffer(input: GenerationInput): Promise<Buff
     : null
 
   const genreBadgeKey = hasGenreBadge
-    ? badgeCacheKey("genre", genreName, voteAverage, STD_W, year, badgeStyle, accentColorGenre, topLight, badgeGenre, badgeYear, badgeRating)
+    ? badgeCacheKey("genre", genreName, voteAverage, STD_W, year, badgeStyle, accentColorGenre, topLight, badgeGenre, badgeYear, badgeRating, ageRatingLabel)
     : null
 
   const forcePill = hasFormatBadge && hasQualityBadge
@@ -632,7 +631,7 @@ export async function generatePosterBuffer(input: GenerationInput): Promise<Buff
     genreBadgeKey
       ? (cacheGet<{ png: Buffer; w: number; h: number }>(genreBadgeKey)
           || coalesceBadgeRender(genreBadgeKey, () =>
-              renderGenreBadge(genreName ?? "", voteAverage ?? 0, STD_W, year, badgeStyle, accentColorGenre, topLight, { showGenre: badgeGenre, showYear: badgeYear, showRating: badgeRating })
+              renderGenreBadge(genreName ?? "", voteAverage ?? 0, STD_W, year, badgeStyle, accentColorGenre, topLight, { showGenre: badgeGenre, showYear: badgeYear, showRating: badgeRating, ageRating: ageRatingLabel ?? "" })
                 .then((r) => { if (r) cacheSet(genreBadgeKey, r, ["badge"], BADGE_CACHE_TTL); return r })
             ))
       : Promise.resolve(null),
@@ -679,25 +678,6 @@ export async function generatePosterBuffer(input: GenerationInput): Promise<Buff
     } else {
       const badgeY = STD_H - safeGenreBadgeResult.h - Math.max(0, Math.round(targetCenter - safeGenreBadgeResult.h / 2))
       composites.push({ input: safeGenreBadgeResult.png, top: badgeY, left: Math.round((STD_W - safeGenreBadgeResult.w) / 2) })
-    }
-  }
-  // Age rating: bottom-right corner; moves above the genre badge if they would collide.
-  if (ageRatingLabel && badgesEnabled) {
-    try {
-      const age = await fitBadgeToCanvas(await renderAgeRatingBadge(ageRatingLabel, STD_W), STD_W, STD_H)
-      const pad = Math.round(18 * STD_W / 380)
-      const left = STD_W - age.w - pad
-      let top = STD_H - age.h - pad
-      if (safeGenreBadgeResult) {
-        const gTop = badgeStyle === "bar" ? STD_H - safeGenreBadgeResult.h : STD_H - safeGenreBadgeResult.h - Math.max(0, Math.round(targetCenter - safeGenreBadgeResult.h / 2))
-        const gLeft = badgeStyle === "bar" ? 0 : Math.round((STD_W - safeGenreBadgeResult.w) / 2)
-        const gRight = gLeft + safeGenreBadgeResult.w
-        const overlapsY = top < gTop + safeGenreBadgeResult.h && top + age.h > gTop
-        if (gRight + 6 > left && overlapsY) top = gTop - age.h - 6
-      }
-      composites.push({ input: age.png, top: Math.max(0, top), left: Math.max(0, left) })
-    } catch {
-      // Badge opzionale: un errore di render non deve far fallire il poster.
     }
   }
   const isRightRibbon = ribbonSide === "right"

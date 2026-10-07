@@ -209,6 +209,12 @@ const server = http.createServer(async (req, res) => {
     if (detailsMatch) {
       return json(res, 200, detailFor(detailsMatch[1]))
     }
+    if (/^\/3\/movie\/\d+\/release_dates$/.test(pathname)) {
+      return json(res, 200, { results: [{ iso_3166_1: "US", release_dates: [{ certification: "PG-13", type: 3 }] }] })
+    }
+    if (/^\/3\/tv\/\d+\/content_ratings$/.test(pathname)) {
+      return json(res, 200, { results: [{ iso_3166_1: "US", rating: "TV-MA" }] })
+    }
     const imagesMatch = pathname.match(/^\/3\/(movie|tv)\/(\d+)\/images$/)
     if (imagesMatch) {
       return json(res, 200, { id: Number(imagesMatch[2]), backdrops: [], posters: [posterItem()], logos: [] })

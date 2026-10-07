@@ -1,7 +1,5 @@
-import sharp from "sharp"
 import { getCertificationData } from "@/lib/tmdb"
 import { envWithFallback } from "@/lib/env-compat"
-import { escSvg } from "@/lib/badge-svg-shared"
 
 /**
  * Age rating ("PG-13", "TV-MA", "12"…) from TMDB certifications.
@@ -50,22 +48,4 @@ export async function fetchAgeRating(
   const country = ageRatingCountry()
   const data = await getCertificationData(mediaType, tmdbId, apiKey, signal)
   return pickCertification(mediaType, data, country === "US" ? ["US"] : [country, "US"])
-}
-
-/** Small outlined pill with the rating text; sized relative to the poster width. */
-export async function renderAgeRatingBadge(
-  label: string,
-  pw: number,
-): Promise<{ png: Buffer; w: number; h: number }> {
-  const fs = Math.round(Math.max(15 * pw / 380, 11))
-  const padX = Math.round(fs * 0.7)
-  const h = Math.round(fs * 1.9)
-  const textW = Math.round(label.length * fs * 0.68)
-  const w = textW + padX * 2
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">
-  <rect x="1.5" y="1.5" width="${w - 3}" height="${h - 3}" rx="${Math.round(h * 0.25)}" fill="rgba(0,0,0,0.55)" stroke="rgba(255,255,255,0.9)" stroke-width="2"/>
-  <text x="${w / 2}" y="${h / 2}" text-anchor="middle" dominant-baseline="central" font-family="Inter, Arial, Helvetica, sans-serif" font-weight="700" font-size="${fs}" fill="#fff">${escSvg(label)}</text>
-</svg>`
-  const png = await sharp(Buffer.from(svg)).png().toBuffer()
-  return { png, w, h }
 }

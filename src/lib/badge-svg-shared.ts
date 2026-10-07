@@ -78,10 +78,13 @@ export interface GenreParts {
   readonly showGenre?: boolean
   readonly showYear?: boolean
   readonly showRating?: boolean
+  /** Age rating label (PG-13, TV-MA…) drawn as a boxed tag at the end of the bar. */
+  readonly ageRating?: string
 }
 
 function normalizeParts(parts?: GenreParts): Required<GenreParts> {
   return {
+    ageRating: parts?.ageRating?.trim() ?? "",
     showGenre: parts?.showGenre ?? true,
     showYear: parts?.showYear ?? true,
     showRating: parts?.showRating ?? true,
@@ -107,17 +110,23 @@ export function genreBadgeSvgDims(fs: number, genreName: string, voteStr: string
   const voteW = (opts.showRating && voteStr) ? estimateTextWidth(voteStr, fs) : 0
   const yearW = (opts.showYear && yearStr) ? estimateTextWidth(yearStr, fs) : 0
   const buf = Math.round(fs * 0.25)
+  const ageFs = Math.round(fs * 0.78)
+  const agePadX = Math.max(Math.round(fs * 0.32), 4)
+  const ageW = opts.ageRating ? estimateTextWidth(opts.ageRating, ageFs) + agePadX * 2 : 0
   // Segmenti condizionali separati da gap+bullet+gap.
   const segGenre = genreW > 0 ? 1 : 0
   const segRating = voteW > 0 ? 1 : 0
   const segYear = yearW > 0 ? 1 : 0
-  const segCount = segGenre + segRating + segYear
+  const segAge = ageW > 0 ? 1 : 0
+  // Il testo dell'anno è stimato per difetto: un po' di respiro prima del separatore dell'età.
+  const ageLead = ageW > 0 && yearW > 0 ? Math.round(fs * 0.3) : 0
+  const segCount = segGenre + segRating + segYear + segAge
   const textContentW = segCount > 0
-    ? (genreW + (segRating ? starW + gapStar + voteW : 0) + yearW) + (segCount - 1) * (gap + bulletW + gap)
+    ? (genreW + (segRating ? starW + gapStar + voteW : 0) + yearW + ageW + ageLead) + (segCount - 1) * (gap + bulletW + gap)
     : 0
   const totalW = textContentW + buf
   const svgH = Math.max(Math.round(fs * 1.6), 24)
-  return { starW, gap, gapStar, totalW, svgH, genreW, voteW, yearW, bulletW, textContentW }
+  return { starW, gap, gapStar, totalW, svgH, genreW, voteW, yearW, bulletW, textContentW, ageW, ageFs, agePadX, ageLead }
 }
 
 function buildGenreTextFlow({ genreName, voteStr, yearStr, fs, centerX, y, textColor = "rgba(255, 255, 255, 0.68)", starBase64, parts }: GenreTextFlowArgs) {
@@ -127,9 +136,10 @@ function buildGenreTextFlow({ genreName, voteStr, yearStr, fs, centerX, y, textC
   const hasGenre = opts.showGenre && !!genreName
   const hasRating = opts.showRating && !!voteStr
   const hasYear = opts.showYear && !!yearStr
+  const hasAge = !!opts.ageRating
 
   if (starBase64) {
-    if (!hasGenre && !hasRating && !hasYear) return ""
+    if (!hasGenre && !hasRating && !hasYear && !hasAge) return ""
     const startX = centerX - dims.textContentW / 2
     let curX = startX
     const elements: string[] = []
@@ -137,7 +147,7 @@ function buildGenreTextFlow({ genreName, voteStr, yearStr, fs, centerX, y, textC
     if (hasGenre) {
       elements.push(`<text x="${Math.round(curX)}" y="${y}" text-anchor="start" dominant-baseline="central" font-family="${fontFamilyFor(genreName)}" font-weight="${GENRE_FONT_WEIGHT}" font-size="${fs}">${escSvg(genreName)}</text>`)
       curX += dims.genreW
-      if (hasRating || hasYear) {
+      if (hasRating || hasYear || hasAge) {
         curX += dims.gap
         elements.push(`<text x="${Math.round(curX)}" y="${y}" text-anchor="start" dominant-baseline="central" font-family="Inter" font-weight="${GENRE_FONT_WEIGHT}" font-size="${fs}" fill-opacity="0.6">•</text>`)
         curX += dims.bulletW + dims.gap
@@ -153,7 +163,7 @@ function buildGenreTextFlow({ genreName, voteStr, yearStr, fs, centerX, y, textC
       elements.push(`<text x="${Math.round(curX)}" y="${y}" text-anchor="start" dominant-baseline="central" font-family="${fontFamilyFor(voteStr)}" font-weight="${GENRE_FONT_WEIGHT}" font-size="${fs}">${escSvg(voteStr)}</text>`)
       curX += dims.voteW
 
-      if (hasYear) {
+      if (hasYear || hasAge) {
         curX += dims.gap
         elements.push(`<text x="${Math.round(curX)}" y="${y}" text-anchor="start" dominant-baseline="central" font-family="Inter" font-weight="${GENRE_FONT_WEIGHT}" font-size="${fs}" fill-opacity="0.6">•</text>`)
         curX += dims.bulletW + dims.gap
@@ -162,6 +172,18 @@ function buildGenreTextFlow({ genreName, voteStr, yearStr, fs, centerX, y, textC
 
     if (hasYear) {
       elements.push(`<text x="${Math.round(curX)}" y="${y}" text-anchor="start" dominant-baseline="central" font-family="${fontFamilyFor(yearStr)}" font-weight="${GENRE_FONT_WEIGHT}" font-size="${fs}">${escSvg(yearStr)}</text>`)
+      curX += dims.yearW
+      if (hasAge) {
+        curX += dims.gap + dims.ageLead
+        elements.push(`<text x="${Math.round(curX)}" y="${y}" text-anchor="start" dominant-baseline="central" font-family="Inter" font-weight="${GENRE_FONT_WEIGHT}" font-size="${fs}" fill-opacity="0.6">•</text>`)
+        curX += dims.bulletW + dims.gap
+      }
+    }
+    if (hasAge) {
+      const boxH = Math.round(fs * 1.25)
+      const boxY = Math.round(y - boxH / 2)
+      elements.push(`<rect x="${Math.round(curX) + 1}" y="${boxY}" width="${dims.ageW - 2}" height="${boxH}" rx="${Math.round(fs * 0.25)}" fill="none" stroke="${textColor}" stroke-width="${Math.max(1.5, fs / 10)}"/>`)
+      elements.push(`<text x="${Math.round(curX + dims.ageW / 2)}" y="${y}" text-anchor="middle" dominant-baseline="central" font-family="Inter" font-weight="${GENRE_FONT_WEIGHT}" font-size="${dims.ageFs}">${escSvg(opts.ageRating)}</text>`)
     }
 
     return elements.join("")
@@ -182,6 +204,10 @@ function buildGenreTextFlow({ genreName, voteStr, yearStr, fs, centerX, y, textC
   }
   if (hasYear) {
     tspan.push(`<tspan dx="${yearGapDx}">${escSvg(yearStr)}</tspan>`)
+  }
+  if (hasAge) {
+    if (hasGenre || hasRating || hasYear) tspan.push(bullet(dims.gap))
+    tspan.push(`<tspan dx="${dims.gap}">[${escSvg(opts.ageRating)}]</tspan>`)
   }
   const separators = (hasGenre ? 1 : 0) + (hasRating ? 1 : 0) + (hasYear ? 1 : 0) - 1
   const totalDx = separators * dims.gap * 2 + (hasRating ? dims.gapStar : 0)

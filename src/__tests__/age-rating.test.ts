@@ -1,6 +1,7 @@
 // @vitest-environment node
 import { describe, it, expect } from "vitest"
-import { pickCertification, renderAgeRatingBadge } from "@/lib/age-rating"
+import { pickCertification } from "@/lib/age-rating"
+import { buildGenreTextSvg, genreBadgeSvgDims } from "@/lib/badge-svg-shared"
 import { resolvePosterRenderConfig } from "@/lib/poster-config"
 
 const movie = {
@@ -26,11 +27,19 @@ describe("pickCertification", () => {
   })
 })
 
-describe("renderAgeRatingBadge", () => {
-  it("renders a PNG with positive size", async () => {
-    const b = await renderAgeRatingBadge("PG-13", 500)
-    expect(b.w).toBeGreaterThan(20)
-    expect(b.png.subarray(1, 4).toString()).toBe("PNG")
+describe("genre bar with age rating", () => {
+  it("adds a boxed tag after the year and widens the bar", () => {
+    const plain = genreBadgeSvgDims(16, "", "6.8", "2024")
+    const withAge = genreBadgeSvgDims(16, "", "6.8", "2024", { ageRating: "PG-13" })
+    expect(withAge.textContentW).toBeGreaterThan(plain.textContentW)
+    const svg = buildGenreTextSvg("", "6.8", "2024", 16, "#fff", "shadow", 0, { ageRating: "PG-13" }, "AAAA").svg
+    expect(svg).toContain("PG-13")
+    expect(svg).toContain("<rect")
+    expect(svg.indexOf("2024")).toBeLessThan(svg.indexOf("PG-13"))
+  })
+  it("can show only the age tag", () => {
+    const svg = buildGenreTextSvg("", "", "", 16, "#fff", "shadow", 0, { showGenre: false, showYear: false, showRating: false, ageRating: "TV-MA" }, "").svg
+    expect(svg).toContain("TV-MA")
   })
 })
 
