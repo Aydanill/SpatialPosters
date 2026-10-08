@@ -138,7 +138,9 @@ function buildGenreTextFlow({ genreName, voteStr, yearStr, fs, centerX, y, textC
   const hasYear = opts.showYear && !!yearStr
   const hasAge = !!opts.ageRating
 
-  if (starBase64) {
+  // Pill/centred layout whenever no star image is needed (rating hidden or missing) too,
+  // otherwise the age rating falls back to the plain "[TV-14]" text style.
+  if (starBase64 || !hasRating) {
     if (!hasGenre && !hasRating && !hasYear && !hasAge) return ""
     const startX = centerX - dims.textContentW / 2
     let curX = startX

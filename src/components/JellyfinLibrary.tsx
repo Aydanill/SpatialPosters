@@ -42,6 +42,7 @@ export function JellyfinLibrary() {
         setImportMsg(data.error || `Import failed (HTTP ${res.status})`)
       } else {
         const parts = [`Imported ${data.imported}`]
+        if (data.updatedExisting) parts.push(`${data.updatedExisting} updated with rating info`)
         if (data.skippedExisting) parts.push(`${data.skippedExisting} already saved`)
         if (data.skippedNoTmdb) parts.push(`${data.skippedNoTmdb} without TMDB ID`)
         if (data.failed) parts.push(`${data.failed} failed`)
