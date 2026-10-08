@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
-import { RefreshCw } from "lucide-react"
+import { Download, RefreshCw } from "lucide-react"
 
 interface Item {
   id: string
@@ -29,6 +29,30 @@ export function JellyfinLibrary() {
   const [state, setState] = useState<State>({ kind: "loading" })
   const [search, setSearch] = useState("")
   const [type, setType] = useState("")
+  const [importing, setImporting] = useState(false)
+  const [importMsg, setImportMsg] = useState<string | null>(null)
+
+  const importAll = useCallback(async () => {
+    setImporting(true)
+    setImportMsg(null)
+    try {
+      const res = await fetch("/api/jellyfin/import", { method: "POST" })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setImportMsg(data.error || `Import failed (HTTP ${res.status})`)
+      } else {
+        const parts = [`Imported ${data.imported}`]
+        if (data.skippedExisting) parts.push(`${data.skippedExisting} already saved`)
+        if (data.skippedNoTmdb) parts.push(`${data.skippedNoTmdb} without TMDB ID`)
+        if (data.failed) parts.push(`${data.failed} failed`)
+        setImportMsg(parts.join(" · "))
+      }
+    } catch (e) {
+      setImportMsg(e instanceof Error ? e.message : "Network error")
+    } finally {
+      setImporting(false)
+    }
+  }, [])
 
   const load = useCallback(async (refresh = false) => {
     setState({ kind: "loading" })
@@ -103,6 +127,23 @@ export function JellyfinLibrary() {
         >
           <RefreshCw className="w-4 h-4" /> Refresh
         </button>
+        <button
+          onClick={importAll}
+          disabled={importing}
+          className="inline-flex items-center gap-2 text-sm bg-white/[0.05] border border-white/10 rounded-xl px-3 py-2 disabled:opacity-50"
+        >
+          <Download className="w-4 h-4" /> {importing ? "Importing…" : "Import all"}
+        </button>
+        {importMsg && (
+          <span role="status" className="text-xs text-zinc-200">
+            {importMsg}{" "}
+            {!importing && (
+              <Link href="/myposters" className="underline">
+                Open SpatialPosters
+              </Link>
+            )}
+          </span>
+        )}
         <span className="text-xs text-zinc-400">
           {shown.length} of {state.items.length} shown
         </span>

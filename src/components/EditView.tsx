@@ -247,7 +247,15 @@ export default function EditView() {
           <div className="flex lg:hidden items-center justify-between w-full px-2 mb-3 gap-2">
             <button
               type="button"
-              onClick={() => { setSelected(null); setPreviewPoster(null); setSelectedLogo(null); setPreviewId(null) }}
+              onClick={() => {
+                // Opened as /movie|tv/<id> (e.g. from the Jellyfin tab): go back in history.
+                if (/^\/(movie|tv)\//.test(window.location.pathname)) {
+                  if (window.history.length > 1) window.history.back()
+                  else window.location.href = "/"
+                  return
+                }
+                setSelected(null); setPreviewPoster(null); setSelectedLogo(null); setPreviewId(null)
+              }}
               className="flex items-center gap-1 px-3 py-2 rounded-xl bg-surface/90 border border-white/10 text-xs font-semibold text-zinc-300 hover:text-white active:scale-95 transition-all shrink-0 cursor-pointer shadow-md"
             >
               <ChevronLeft className="w-4 h-4" />

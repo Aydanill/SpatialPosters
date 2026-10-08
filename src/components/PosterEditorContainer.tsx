@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { ArrowLeft, Sparkles } from "lucide-react"
 import { PictoriumRoot, usePSelector } from "@/lib/context"
 import EditView from "@/components/EditView"
@@ -25,6 +25,13 @@ function PosterEditorContent({ id, mediaType }: PosterEditorContainerProps) {
   const yearOf = usePSelector((v) => v.yearOf)
   const previewUrl = usePSelector((v) => v.previewUrl)
   const [init, setInit] = useState(false)
+  const router = useRouter()
+  // Real "back": return to the page the editor was opened from (Jellyfin tab,
+  // search...), falling back to home only when there is no history to go to.
+  const goBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) router.back()
+    else router.push("/")
+  }
 
   const [, setLangTick] = useState(0)
   useEffect(() => {
@@ -51,13 +58,14 @@ function PosterEditorContent({ id, mediaType }: PosterEditorContainerProps) {
         <div className="relative z-10 max-w-[1680px] mx-auto px-3 sm:px-4 py-3 sm:py-5">
           {/* Top navigation header (desktop only, EditView handles mobile header) */}
           <div className="hidden lg:flex items-center justify-between mb-4">
-            <Link
-              href="/"
+            <button
+              type="button"
+              onClick={goBack}
               className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-zinc-300 hover:text-white transition-colors bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 px-3.5 py-2 rounded-xl cursor-pointer shadow-sm active:scale-95"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>{t("ui.back") || "Torna alla Home"}</span>
-            </Link>
+            </button>
 
             {selected ? (
               <div className="flex items-center gap-2">
