@@ -96,6 +96,8 @@ export interface SpatialCtx {
   goHome: () => void
   sourceView: "edit" | "search" | "myposters" | "cataloghi" | null
   navigateToPoster: (item: SearchResult, source?: string) => void
+  /** Opens a poster for the page the URL already points at (/movie|tv/<id>) without touching history. */
+  openPosterInPlace: (item: SearchResult) => void
   refreshLists: () => Promise<void>
   tmdbKey: string
   setQuery: React.Dispatch<React.SetStateAction<string>>
@@ -984,6 +986,7 @@ export function usePictorium(): PictoriumCtx {
     previewId: navigation.previewId, setPreviewId: navigation.setPreviewId,
     saveConfig, removeMapping, mappingsMap,
     goHome: navigation.goHome, sourceView: navigation.sourceView, navigateToPoster: (item: SearchResult, source?: string) => { navigation.navigateToPoster(item, source); openPosterBrowserRef.current(item) },
+    openPosterInPlace: (item: SearchResult) => { openPosterBrowserRef.current(item) },
     refreshLists: trending.refreshLists,
     refreshPosters,
     tmdbKey, setQuery: search.setQuery, doSearch: search.doSearch, loadMore: search.loadMore,

@@ -20,7 +20,7 @@ interface PosterEditorContainerProps {
 function PosterEditorContent({ id, mediaType }: PosterEditorContainerProps) {
   const { t } = useT()
   const selected = usePSelector((v) => v.selected)
-  const navigateToPoster = usePSelector((v) => v.navigateToPoster)
+  const openPosterInPlace = usePSelector((v) => v.openPosterInPlace)
   const titleOf = usePSelector((v) => v.titleOf)
   const yearOf = usePSelector((v) => v.yearOf)
   const previewUrl = usePSelector((v) => v.previewUrl)
@@ -46,10 +46,12 @@ function PosterEditorContent({ id, mediaType }: PosterEditorContainerProps) {
 
   useEffect(() => {
     if (!selected || selected.id !== id || selected.media_type !== mediaType) {
-      navigateToPoster({ id, media_type: mediaType, title: "", poster_path: null })
+      // The URL already points at this title, so open it in place: pushing
+      // another history entry here is what made Back land on the same page.
+      openPosterInPlace({ id, media_type: mediaType, title: "", poster_path: null })
     }
     setInit(true)
-  }, [id, mediaType, selected, navigateToPoster])
+  }, [id, mediaType, selected, openPosterInPlace])
 
   return (
     <div className="min-h-screen bg-background text-foreground relative overflow-x-hidden">

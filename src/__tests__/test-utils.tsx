@@ -47,6 +47,7 @@ export const MOCK_CTX: PictoriumCtx = {
   mappingsMap: new Map(),
   goHome: stubFn,
   navigateToPoster: stubFn,
+  openPosterInPlace: stubFn,
   refreshLists: asyncStubFn,
   refreshPosters: asyncStubFn,
   tmdbKey: "test-key",
