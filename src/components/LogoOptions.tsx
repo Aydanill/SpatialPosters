@@ -5,7 +5,7 @@ import type { TMDBImage } from "@/lib/types"
 import { LANG_NAMES, groupBy, limitBest, posterUrl } from "@/lib/utils"
 import { useT } from "@/lib/contexts/TranslationContext"
 import { usePosterEditor } from "@/lib/contexts/PosterEditorContext"
-import { Check, Plus, Trash2, ChevronDown } from "lucide-react"
+import { Check, Plus, Trash2, ChevronDown, Link as LinkIcon } from "lucide-react"
 
 interface Props {
   logos: TMDBImage[]
@@ -21,18 +21,79 @@ export const LogoOptions = React.memo(function LogoOptions({ logos, selectedLogo
   const { logoDisabled, setLogoDisabled } = usePosterEditor()
   const [activeLogoGroup, setActiveLogoGroup] = useState("all")
   const [visibleLogoCount, setVisibleLogoCount] = useState(10)
+  const [showUrlInput, setShowUrlInput] = useState(false)
+  const [urlInput, setUrlInput] = useState("")
+  const [urlError, setUrlError] = useState<string | null>(null)
+  const [urlLoading, setUrlLoading] = useState(false)
+
+  // Custom logo from a direct image link (PNG/SVG/WebP with transparency works best).
+  const addCustomUrl = (e: React.FormEvent) => {
+    e.preventDefault()
+    const url = urlInput.trim()
+    if (!/^https?:\/\//i.test(url) || url.length > 2000) {
+      setUrlError(t("ui.invalidUrl") || "Please enter a valid HTTP/HTTPS URL")
+      return
+    }
+    setUrlError(null)
+    setUrlLoading(true)
+    const probe = new window.Image()
+    probe.onload = () => {
+      setUrlLoading(false)
+      selectLogo({ file_path: url, iso_639_1: null, vote_average: 0, width: probe.naturalWidth, height: probe.naturalHeight })
+      setUrlInput("")
+      setShowUrlInput(false)
+    }
+    probe.onerror = () => {
+      setUrlLoading(false)
+      setUrlError("Couldn't load an image from that link")
+    }
+    probe.src = posterUrl(url, "w500")
+  }
+
+  const customLogoControl = (
+    <div className="mb-3">
+      {showUrlInput ? (
+        <form onSubmit={addCustomUrl} className="flex flex-col gap-1.5">
+          <div className="flex gap-1.5">
+            <input
+              type="url"
+              aria-label="Custom logo link"
+              value={urlInput}
+              onChange={(e) => setUrlInput(e.target.value)}
+              placeholder="https://… direct link to a logo image"
+              disabled={disabled || urlLoading}
+              className="flex-1 min-w-0 h-9 px-3 rounded-lg bg-white/[0.04] border border-white/10 text-xs text-zinc-100"
+            />
+            <button type="submit" disabled={disabled || urlLoading || !urlInput.trim()} className="btn-secondary px-3 text-xs">
+              {urlLoading ? "…" : t("ui.add") || "Add"}
+            </button>
+          </div>
+          {urlError && <p className="text-[11px] text-red-400">{urlError}</p>}
+        </form>
+      ) : (
+        <button type="button" disabled={disabled} onClick={() => setShowUrlInput(true)} className="btn-secondary w-full py-2 px-3 text-xs">
+          <LinkIcon className="w-3.5 h-3.5" /> {t("ui.addCustomLink") || "Add custom link"}
+        </button>
+      )}
+    </div>
+  )
+
+  const isCustomSelected = !!selectedLogo && /^https?:\/\//i.test(selectedLogo.file_path) && !logos.some((l) => l.file_path === selectedLogo.file_path)
 
   useEffect(() => {
     setVisibleLogoCount(10)
   }, [logos, activeLogoGroup, lang])
 
-  if (logos.length === 0) return (
-    <div className="grid grid-cols-2 gap-2">
-      {[1, 2, 3, 4].map((i) => (
-        <div key={i} className="h-20 rounded-xl border-2 border-dashed border-surface2 bg-surface/20 flex items-center justify-center">
-          <Plus className="w-4 h-4 text-zinc-600" />
-        </div>
-      ))}
+  if (logos.length === 0 && !isCustomSelected) return (
+    <div>
+      {customLogoControl}
+      <div className="grid grid-cols-2 gap-2">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="h-20 rounded-xl border-2 border-dashed border-surface2 bg-surface/20 flex items-center justify-center">
+            <Plus className="w-4 h-4 text-zinc-600" />
+          </div>
+        ))}
+      </div>
     </div>
   )
   const groups = groupBy(logos, (img) => img.iso_639_1 || "xx")
@@ -59,6 +120,16 @@ export const LogoOptions = React.memo(function LogoOptions({ logos, selectedLogo
 
   return (
     <div>
+      {customLogoControl}
+      {isCustomSelected && selectedLogo && (
+        <div className="grid grid-cols-2 gap-2 mb-3">
+          <div className="poster-tile poster-tile-active relative p-2 rounded-xl bg-accent-orange/10 flex items-center justify-center h-20" title="Custom logo">
+            {/* eslint-disable-next-line @next/next/no-img-element -- user-supplied URL via proxy */}
+            <img src={posterUrl(selectedLogo.file_path, "w154")} alt="" className="max-h-14 max-w-full object-contain" />
+            <div className="absolute top-1 right-1 rounded-md bg-accent-orange text-white p-0.5"><Check className="w-3 h-3" /></div>
+          </div>
+        </div>
+      )}
       <div className="flex items-center gap-1 p-1 bg-white/[0.04] border border-white/10 rounded-xl mb-3 shadow-inner overflow-x-auto scrollbar-none scroll-fade-mask w-full min-w-0">
         {logoTabs.map((tab) => (
           <button type="button"

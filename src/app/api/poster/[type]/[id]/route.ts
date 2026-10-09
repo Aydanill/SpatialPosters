@@ -484,6 +484,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<RouteP
         if (queryLogo) {
           const exact = images.logos.find((l: TMDBImage) => l.file_path === queryLogo)
           if (exact) logoPath = exact.file_path
+          // Custom logo link chosen in the editor (not a TMDB logo).
+          else if (/^https?:\/\//i.test(queryLogo) && queryLogo.length <= 2000) logoPath = queryLogo
         }
         if (!logoPath) {
           const chosenLogo = selectBestLogo(images.logos, preferredLanguage, details.original_language)
